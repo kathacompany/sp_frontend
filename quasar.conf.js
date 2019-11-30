@@ -19,7 +19,7 @@ module.exports = function (ctx) {
       // 'ionicons-v4',
       // 'mdi-v4',
       // 'fontawesome-v5',
-      // 'eva-icons',
+      'eva-icons',
       // 'themify',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
@@ -41,11 +41,50 @@ module.exports = function (ctx) {
       //            (not treeshaking Quasar; biggest bundle size; convenient)
       all: 'auto',
 
-      components: [],
-      directives: [],
+      components: [
+        'QLayout',
+        'QHeader',
+        'QDrawer',
+        'QPageContainer',
+        'QPage',
+        'QToolbar',
+        'QToolbarTitle',
+        'QBtn',
+        'QIcon',
+        'QList',
+        'QItem',
+        'QItemSection',
+        'QInput',
+        'QDialog',
+        'QItemLabel',
+        'QImg',
+        'QTabs',
+        'QTab',
+        'QRouteTab',
+        'QIcon',
+        'QHeader',
+        'QFooter',
+        'QAvatar',
+        'QForm',
+        'QBtnDropdown',
+        'QBanner',
+        'QSpace',
+        'QCard',
+        'QCardSection',
+        'QCardActions'
+      ],
+      directives: [
+        'ClosePopup',
+        'Ripple',
+        'GoBack'
+      ],
 
       // Quasar plugins
-      plugins: []
+      plugins: [
+        'Notify',
+        'LocalStorage',
+        'AppFullscreen'
+      ]
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie

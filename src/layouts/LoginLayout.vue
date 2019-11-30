@@ -1,13 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-toolbar-title>
-          JOPSIS
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-header>
-    <q-page-container>
+    <q-page-container class="bg-white">
       <router-view class="page-container"/>
     </q-page-container>
   </q-layout>
@@ -17,7 +10,6 @@
 import { openURL } from 'quasar'
 
 export default {
-  name: 'MyLayout',
   data () {
     return {
     }
@@ -29,7 +21,7 @@ export default {
 </script>
 
 <style scoped>
-.page-container{
-  background-color: #dcf5f5;
+.page-container {
+  -webkit-text-fill-color: white;
 }
 </style>
