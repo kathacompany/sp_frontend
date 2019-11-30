@@ -12,6 +12,7 @@ npm install
 quasar dev
 ```
 
+### for building
 ### Lint the files
 ```bash
 npm run lint
