@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center text-center">
-  <div style="width: 100%;">
+  <div class="banner" style="width: 100%;">
     <q-icon name="person" style="font-size: 10rem;"/>
   </div>
   <div class="q-pa-md full-width">
