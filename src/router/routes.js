@@ -48,7 +48,7 @@ const routes = [
     children: [
       { path: 'WorkerHomepage', component: () => import('pages/worker/Homepage.vue') },
       { path: 'WorkerAccount', component: () => import('pages/worker/Account.vue') },
-      { path: 'WorkerScheduleJobs', component: () => import('pages/worker/ScheduleJobs.vue') },
+      { path: 'WorkerScheduleJobs', component: () => import('pages/worker/ScheduleJobs.vue') }
     ]
   },
   {

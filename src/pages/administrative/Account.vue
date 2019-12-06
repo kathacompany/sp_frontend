@@ -64,24 +64,24 @@ export default {
   // created () {
   //   this.getUserDetails()
   // },
-  profile: '',
-  data: () => ({
-    opened: false,
-    newFirstName: '',
-    newLastName: '',
-    newMiddleName: '',
-    newSuffix: '',
-    newEmail: '',
-    profiledata: {
-      first_name: '',
-      last_name: '',
-      middle_name: '',
-      suffix_name: '',
-      profileData: [],
-      username: '',
-      email: '',
-      mobile_number: ''
-    }
+  // profile: ''
+  // data: () => ({
+  // opened: false,
+  // newFirstName: '',
+  // newLastName: '',
+  // newMiddleName: '',
+  // newSuffix: '',
+  // newEmail: '',
+  // profiledata: {
+  //  first_name: '',
+  //  last_name: '',
+  //  middle_name: '',
+  //  suffix_name: '',
+  //  profileData: [],
+  //  username: '',
+  //  email: '',
+  //  mobile_number: ''
+  // }
   //   },
   //   tableColumns: [
   //     {
@@ -169,6 +169,6 @@ export default {
   //       console.error(e)
   //     }
   //   }
-  }
+  //  }
 }
 </script>

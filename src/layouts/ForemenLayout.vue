@@ -59,7 +59,7 @@
             </q-item>
 
             <q-separator />
-            
+
             <q-item clickable v-ripple @click="$router.push('/ForemenEmployeeList')">
               <q-item-section avatar>
                 <q-icon name="person" color="white" />
