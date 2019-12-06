@@ -1,7 +1,14 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container class="bg-white">
-      <router-view class="page-container"/>
+      <transition
+        name="transitions"
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+        mode="out-in"
+      >
+        <router-view class="page-container"/>
+      </transition>
     </q-page-container>
   </q-layout>
 </template>
@@ -23,5 +30,6 @@ export default {
 <style scoped>
 .page-container {
   -webkit-text-fill-color: white;
+  text-align: center;
 }
 </style>

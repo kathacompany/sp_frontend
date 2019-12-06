@@ -3,7 +3,7 @@
       <q-header elevated class="bg-secondary">
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" icon="eva-menu-2-outline" />
-          <q-toolbar-title class="q-pa-sm">JOPSIS
+          <q-toolbar-title class="q-pa-sm">
           </q-toolbar-title>
           <!-- <q-btn flat round dense icon="person" class="q-mr-xs" /> -->
         </q-toolbar>
@@ -85,14 +85,14 @@
         </q-scroll-area>
       </q-drawer>
 
-      <q-page-container class="page-container">
+      <q-page-container >
       <transition
               name="transitions"
-              enter-active-class="animated slideInUp"
+              enter-active-class="animated fadeIn"
               leave-active-class="animated fadeOut"
               mode="out-in"
       >
-        <router-view/>
+        <router-view class="page-container"/>
       </transition>
       </q-page-container>
   </q-layout>
