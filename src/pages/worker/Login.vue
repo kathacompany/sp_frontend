@@ -4,7 +4,7 @@
             <q-input v-model="username" label="Username"></q-input>
             <q-input v-model="Email" label="Password" type="password"></q-input>
             <br/>
-            <q-btn push rounded no-caps@click="$router.push('/WorkerHomepage')" class="q-mr-sm" label="LOGIN" color="secondary"/>
+            <q-btn push rounded no-caps @click="$router.push('/WorkerHomepage')" class="q-mr-sm" label="LOGIN" color="secondary"/>
             <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/>
         </q-card>
             <q-dialog v-model="dialog">

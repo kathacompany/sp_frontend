@@ -17,7 +17,8 @@ const routes = [
     component: () => import('layouts/AdministrativeLayout.vue'),
     children: [
       { path: 'AdministrativeHomepage', component: () => import('pages/administrative/Homepage.vue') },
-      { path: 'AdministrativeAccount', component: () => import('pages/administrative/Account.vue') }
+      { path: 'AdministrativeAccount', component: () => import('pages/administrative/Account.vue') },
+      { path: 'AdministrativeJobOrders', component: () => import('pages/administrative/JobOrders.vue') }
     ]
   },
   {
@@ -25,7 +26,9 @@ const routes = [
     component: () => import('layouts/InventoryLayout.vue'),
     children: [
       { path: 'InventoryHomepage', component: () => import('pages/inventory/Homepage.vue') },
-      { path: 'InventoryAccount', component: () => import('pages/inventory/Account.vue') }
+      { path: 'InventoryAccount', component: () => import('pages/inventory/Account.vue') },
+      { path: 'Inventory', component: () => import('pages/inventory/Inventory.vue') },
+      { path: 'InventoryEmployeeList', component: () => import('pages/inventory/EmployeeList.vue') }
     ]
   },
   {
@@ -33,7 +36,10 @@ const routes = [
     component: () => import('layouts/ForemenLayout.vue'),
     children: [
       { path: 'ForemenHomepage', component: () => import('pages/foremen/Homepage.vue') },
-      { path: 'ForemenAccount', component: () => import('pages/foremen/Account.vue') }
+      { path: 'ForemenAccount', component: () => import('pages/foremen/Account.vue') },
+      { path: 'ForemenJobOrders', component: () => import('pages/foremen/JobOrders.vue') },
+      { path: 'ForemenScheduleJobs', component: () => import('pages/foremen/ScheduleJobs.vue') },
+      { path: 'ForemenEmployeeList', component: () => import('pages/foremen/EmployeeList.vue') }
     ]
   },
   {
@@ -41,7 +47,8 @@ const routes = [
     component: () => import('layouts/WorkerLayout.vue'),
     children: [
       { path: 'WorkerHomepage', component: () => import('pages/worker/Homepage.vue') },
-      { path: 'WorkerAccount', component: () => import('pages/worker/Account.vue') }
+      { path: 'WorkerAccount', component: () => import('pages/worker/Account.vue') },
+      { path: 'WorkerScheduleJobs', component: () => import('pages/worker/ScheduleJobs.vue') },
     ]
   },
   {
@@ -50,7 +57,8 @@ const routes = [
     children: [
 
       { path: 'UserHomepage', component: () => import('pages/user/Homepage.vue') },
-      { path: 'UserAccount', component: () => import('pages/user/Account.vue') }
+      { path: 'UserAccount', component: () => import('pages/user/Account.vue') },
+      { path: 'UserJobOrders', component: () => import('pages/user/JobOrders.vue') }
     ]
   }
 ]

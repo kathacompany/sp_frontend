@@ -24,7 +24,7 @@
       >
         <q-scroll-area class="fit q-pa-sm">
           <q-list padding class="q-mr-ma">
-            <q-item clickable v-ripple @click="$router.push('/AdministrativeHomepage')">
+            <q-item clickable v-ripple @click="$router.push('/ForemenHomepage')">
               <q-item-section avatar>
                 <q-icon name="home" color="white"/>
               </q-item-section>
@@ -36,7 +36,7 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple>
+            <q-item clickable v-ripple @click="$router.push('/ForemenJobOrders')">
               <q-item-section avatar>
                 <q-icon name="inbox" color="white"/>
               </q-item-section>
@@ -48,19 +48,31 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple>
+            <q-item clickable v-ripple @click="$router.push('/ForemenScheduleJobs')">
               <q-item-section avatar>
-                <q-icon name="drafts" color="white" />
+                <q-icon name="calendar" color="white" />
               </q-item-section>
 
               <q-item-section>
-                Employees / Staff
+                Schedule A Job
+              </q-item-section>
+            </q-item>
+
+            <q-separator />
+            
+            <q-item clickable v-ripple @click="$router.push('/ForemenEmployeeList')">
+              <q-item-section avatar>
+                <q-icon name="person" color="white" />
+              </q-item-section>
+
+              <q-item-section>
+                Employee List
               </q-item-section>
             </q-item>
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/AdministrativeAccount')">
+            <q-item clickable v-ripple @click="$router.push('/ForemenAccount')">
               <q-item-section avatar>
                 <q-icon name="person" color="white" />
               </q-item-section>
@@ -88,7 +100,7 @@
       <q-page-container class="page-container">
       <transition
               name="transitions"
-              enter-active-class="animated slideInUp"
+              enter-active-class="animated fadeIn"
               leave-active-class="animated fadeOut"
               mode="out-in"
       >

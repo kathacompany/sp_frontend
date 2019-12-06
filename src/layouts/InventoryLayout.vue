@@ -24,7 +24,7 @@
       >
         <q-scroll-area class="fit q-pa-sm">
           <q-list padding class="q-mr-ma">
-            <q-item clickable v-ripple @click="$router.push('/AdministrativeHomepage')">
+            <q-item clickable v-ripple @click="$router.push('/InventoryHomepage')">
               <q-item-section avatar>
                 <q-icon name="home" color="white"/>
               </q-item-section>
@@ -36,31 +36,31 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple>
+            <q-item clickable v-ripple @click="$router.push('/Inventory')">
               <q-item-section avatar>
                 <q-icon name="inbox" color="white"/>
               </q-item-section>
 
               <q-item-section>
-                Job Order Requests
+                Inventory
               </q-item-section>
             </q-item>
 
             <q-separator />
 
-            <q-item clickable v-ripple>
+            <q-item clickable v-ripple @click="$router.push('/InventoryEmployeeList')">
               <q-item-section avatar>
                 <q-icon name="drafts" color="white" />
               </q-item-section>
 
               <q-item-section>
-                Employees / Staff
+                Employees List
               </q-item-section>
             </q-item>
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/AdministrativeAccount')">
+            <q-item clickable v-ripple @click="$router.push('/InventoryAccount')">
               <q-item-section avatar>
                 <q-icon name="person" color="white" />
               </q-item-section>
@@ -88,7 +88,7 @@
       <q-page-container class="page-container">
       <transition
               name="transitions"
-              enter-active-class="animated slideInUp"
+              enter-active-class="animated fadeIn"
               leave-active-class="animated fadeOut"
               mode="out-in"
       >
