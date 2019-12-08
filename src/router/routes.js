@@ -18,7 +18,8 @@ const routes = [
     children: [
       { path: 'AdministrativeHomepage', component: () => import('pages/administrative/Homepage.vue') },
       { path: 'AdministrativeAccount', component: () => import('pages/administrative/Account.vue') },
-      { path: 'AdministrativeJobOrders', component: () => import('pages/administrative/JobOrders.vue') }
+      { path: 'AdministrativeJobOrders', component: () => import('pages/administrative/JobOrders.vue') },
+      { path: 'AdministrativeEmployee', component: () => import('pages/administrative/EmployeeList.vue') }
     ]
   },
   {
