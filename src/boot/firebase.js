@@ -1,5 +1,12 @@
 import * as firebase from 'firebase/app'
 
+<<<<<<< HEAD
+=======
+// If you enabled Analytics in your project, add the Firebase SDK for Analytics
+import 'firebase/analytics'
+
+// Add the Firebase products that you want to use
+>>>>>>> fb9dc9c4679c70435ddc3779583988adcf9c090e
 import 'firebase/auth'
 
 var firebaseConfig = {
@@ -15,5 +22,9 @@ var firebaseConfig = {
 
 let firebaseApp = firebase.initializeApp(firebaseConfig)
 let firebaseAuth = firebaseApp.auth()
+<<<<<<< HEAD
+=======
+firebase.analytics()
+>>>>>>> fb9dc9c4679c70435ddc3779583988adcf9c090e
 
 export { firebaseAuth }
