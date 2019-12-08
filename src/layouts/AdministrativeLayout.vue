@@ -99,12 +99,21 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+import { openURL } from 'quasar'
 export default {
   data () {
     return {
       drawer: false,
       miniState: true
     }
+  },
+  computed: {
+    ...mapState('auth', ['loggedIn'])
+  },
+  methods: {
+    ...mapActions('auth', ['logoutUser']),
+    openURL
   }
 }
 </script>
