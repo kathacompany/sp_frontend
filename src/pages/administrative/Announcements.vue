@@ -22,20 +22,8 @@
           </div>
           <div class="q-gutter-sm flex flex-row text-center">
             <q-card rounded class="bg-primary">
-                <q-icon name="inbox" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/AdministrativeJobOrders')" class="q-mr-sm" label="Job Order Requests" color="secondary"/>
-            </q-card>
-            <!-- <q-card rounded class="bg-primary text-center">
-                <q-icon name="people" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/AdministrativeEmployees')" class="q-mr-sm" label="Employees / Staff" color="secondary"/>
-            </q-card> -->
-             <q-card rounded class="bg-primary text-center">
-                <q-icon name="eva-calendar" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/AdministrativeAnnouncements')" class="q-mr-sm" label="Add Announcement" color="secondary"/>
-            </q-card>
-            <q-card rounded class="bg-primary text-center">
-                <q-icon name="person" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/AdministrativeAccount')" class="q-mr-sm" label="Account Details" color="secondary"/>
+                <q-icon name="camera" style="font-size: 4rem;"/><br>
+                <q-btn no-caps rounded push @click="$router.push('/AdministrativeHomepage')" class="q-mr-sm" label="Upload Photo Announcement" color="secondary"/>
             </q-card>
           </div>
         </q-page>

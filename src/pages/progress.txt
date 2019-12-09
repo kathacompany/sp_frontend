@@ -1,0 +1,54 @@
+ALL ARE INTERFACES/PAGES
+
+Administrative staff:
+- job orders page
+    * 2 tables done (received requests, done job orders)
+    - to edit the status page/pop up
+    - to forward to the foreman page/pop up
+* account page
+* add announcement
+* search function
+
+Inventory staff:
+- inventory page
+    * edit name
+    * add row
+    * edit quantity
+    * generate file (only redirects to the homepage dont know what to do with this after)
+    * search
+* account details
+
+Foremen:
+- schedule a job page
+    * job orders received
+    - to edit the status page/pop up
+    - to add workers page/pop up
+    - to add materials page/pop up
+
+*job orders page
+    * received job orders
+
+-- employee list
+    -- add/modify employee details
+    * search
+
+* account details
+
+Worker:
+* job orders page
+    * job orders received
+* account details
+
+Unit:
+- job orders page
+    * job orders sent page
+    * search
+    
+- file job orders page
+    -- form
+    - the signature din/pano i butang/i note
+
+
+- kulang
+-- what im working
+* done

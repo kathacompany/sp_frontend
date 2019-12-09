@@ -10,14 +10,6 @@
                 <q-icon name="inbox" style="font-size: 4rem;"/><br>
                 <q-btn no-caps rounded push @click="$router.push('/Inventory')" class="q-mr-sm" label="Inventory" color="secondary"/>
             </q-card>
-            <q-card rounded class="bg-primary text-center">
-                <q-icon name="drafts" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/ForemenScheduleJobs')" class="q-mr-sm" label="Schedule a Job" color="secondary"/>
-            </q-card>
-            <q-card rounded class="bg-primary text-center">
-                <q-icon name="person" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/ForemenEmployeeList')" class="q-mr-sm" label="Employee List" color="secondary"/>
-            </q-card>
           </div>
         </q-page>
         <router-view/>

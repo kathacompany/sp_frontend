@@ -46,15 +46,27 @@
               </q-item-section>
             </q-item>
 
-            <q-separator />
+            <!-- <q-separator />
 
-            <q-item clickable v-ripple>
+            <q-item clickable v-ripple @click="$router.push('/AdministrativeEmployees')">
               <q-item-section avatar>
-                <q-icon name="drafts" color="white" />
+                <q-icon name="people" color="white" />
               </q-item-section>
 
               <q-item-section>
                 Employees / Staff
+              </q-item-section>
+            </q-item> -->
+
+            <q-separator />
+
+            <q-item clickable v-ripple @click="$router.push('/AdministrativeAnnouncements')">
+              <q-item-section avatar>
+                <q-icon name="eva-calendar" color="white" />
+              </q-item-section>
+
+              <q-item-section>
+                Add Announcement
               </q-item-section>
             </q-item>
 

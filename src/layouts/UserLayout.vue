@@ -48,6 +48,18 @@
 
             <q-separator />
 
+            <q-item clickable v-ripple @click="$router.push('/UserFileJobOrders')">
+              <q-item-section avatar>
+                <q-icon name="inbox" color="white"/>
+              </q-item-section>
+
+              <q-item-section>
+                File Job Order Request
+              </q-item-section>
+            </q-item>
+
+            <q-separator />
+
             <q-item clickable v-ripple @click="$router.push('/UserAccount')">
               <q-item-section avatar>
                 <q-icon name="person" color="white" />

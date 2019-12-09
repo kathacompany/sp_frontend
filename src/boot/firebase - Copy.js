@@ -2,7 +2,7 @@ import * as firebase from 'firebase/app'
 
 // If you enabled Analytics in your project, add the Firebase SDK for Analytics
 // Add the Firebase products that you want to use
-import 'firebase/auth'
+ import 'firebase/store-auth'
 
 var firebaseConfig = {
   apiKey: 'AIzaSyA34MAQpn8VN1VvswT357d9pFI3MfPx-hA',

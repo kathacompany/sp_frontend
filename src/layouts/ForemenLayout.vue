@@ -50,7 +50,7 @@
 
             <q-item clickable v-ripple @click="$router.push('/ForemenScheduleJobs')">
               <q-item-section avatar>
-                <q-icon name="calendar" color="white" />
+                <q-icon name="eva-calendar" color="white" />
               </q-item-section>
 
               <q-item-section>

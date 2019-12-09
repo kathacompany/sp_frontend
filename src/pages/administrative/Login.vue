@@ -7,7 +7,6 @@
             :rules="[ val => isValidEmailAddress(val) || 'Please enter a valid email address.']"
             ref="email"
             lazy-rules
-            outlined
             label="Email"
             stack-label />
             <q-input
@@ -17,13 +16,13 @@
             :rules="[ val => val.length >= 6 || 'Please enter at least 6 characters.']"
             ref="password"
             lazy-rules
-            outlined
             stack-label/>
             <br/>
-            <q-btn push rounded no-caps type="submit" class="q-mr-sm" label="Login" color="secondary"/>
-            <!-- <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/> -->
+            <q-btn push rounded no-caps type="submit" class="q-mr-sm" label="Login" color="secondary" @click="$router.push('/AdministrativeHomepage')"/>
+            <!-- <q-btn push rounded no-caps type="submit" class="q-mr-sm" label="Login" color="secondary"/> -->
+            <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/>
         </q-card>
-            <!-- <q-dialog v-model="dialog">
+            <q-dialog v-model="dialog">
             <q-card container class="bg-white" style="padding:40px;">
                 <q-card-section>
                 <div class="text-h6">Enter Email Address</div>
@@ -37,8 +36,8 @@
                 <q-btn flat label="Cancel" v-close-popup />
                 </q-card-actions>
             </q-card>
-            </q-dialog> -->
-        <!-- <div>
+            </q-dialog>
+          <div>
             <q-dialog v-model="sentEmail">
             <q-card container class="flex flex-center">
                 <q-card-section>
@@ -49,7 +48,7 @@
                 </q-card-section>
             </q-card>
             </q-dialog>
-        </div> -->
+        </div>
     </q-page>
 </form>
 </template>
@@ -58,37 +57,38 @@
 </style>
 
 <script>
-import { mapActions } from 'vuex'
+// import { mapActions } from 'vuex'
 export default {
   data () {
     return {
       formData: {
         email: '',
         password: ''
-      }
-    //   layout: false,
-    //   dialog: false,
-    //   sentEmail: false
-    }
-  },
-  methods: {
-    ...mapActions('auth', ['loginUser']),
-    isValidEmailAddress (email) {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/
-      return re.test(String(email).toLowerCase())
-    },
-    submitForm () {
-      this.$refs.email.validate()
-      this.$refs.password.validate()
-      if (!this.$refs.email.hasError && !this.$refs.password.hasError) {
-        this.loginUser(this.formData)
-      }
-    }
-  },
-  filters: {
-    titleCase (value) {
-      return value.charAt(0).toUpperCase() + value.slice(1)
+      },
+      layout: false,
+      dialog: false,
+      sentEmail: false
     }
   }
+  // },
+  // methods: {
+  //   ...mapActions('auth', ['loginUser']),
+  //   isValidEmailAddress (email) {
+  //     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/
+  //     return re.test(String(email).toLowerCase())
+  //   },
+  //   submitForm () {
+  //     this.$refs.email.validate()
+  //     this.$refs.password.validate()
+  //     if (!this.$refs.email.hasError && !this.$refs.password.hasError) {
+  //       this.loginUser(this.formData)
+  //     }
+  //   }
+  // },
+  // filters: {
+  //   titleCase (value) {
+  //     return value.charAt(0).toUpperCase() + value.slice(1)
+  //   }
+  // }
 }
 </script>

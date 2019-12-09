@@ -3,11 +3,10 @@
     <q-page-container>
     <q-page class="flex flex-center text-center">
       <div style="width: 100%; height: 50%;">
-        <q-icon name="person" style="font-size:100px;"/>
+        <q-icon name="person" style="font-size:200px;"/>
       </div>
-      <div class="q-gutter-sm flex flex-row">
+      <div class="q-gutter-md">
         <q-table
-          grid
           card-class="bg-primary"
           :data="tableData"
           :columns="tableColumns"
@@ -15,14 +14,13 @@
           style="width:500px;"
         />
         <q-table
-          grid
           card-class="bg-primary"
           :data="profileData"
           :columns="profileColumns"
           hide-bottom
           style="width:500px;"
         />
-        <q-btn rounded no-caps push class="q-pa-sm q-ma-sm" color="primary" @click="opened=true" label="Edit Information"/>
+        <q-btn rounded no-caps push class="q-pa-sm q-ma-sm" color="secondary" @click="opened=true" label="Edit Information"/>
 
           <q-dialog v-model="opened" maximized class="bg-white">
             <q-layout class="no-shadow">

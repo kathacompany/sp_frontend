@@ -19,7 +19,8 @@ const routes = [
       { path: 'AdministrativeHomepage', component: () => import('pages/administrative/Homepage.vue') },
       { path: 'AdministrativeAccount', component: () => import('pages/administrative/Account.vue') },
       { path: 'AdministrativeJobOrders', component: () => import('pages/administrative/JobOrders.vue') },
-      { path: 'AdministrativeEmployee', component: () => import('pages/administrative/EmployeeList.vue') }
+      { path: 'AdministrativeEmployees', component: () => import('pages/administrative/EmployeeList.vue') },
+      { path: 'AdministrativeAnnouncements', component: () => import('pages/administrative/Announcements.vue') }
     ]
   },
   {
@@ -59,7 +60,8 @@ const routes = [
 
       { path: 'UserHomepage', component: () => import('pages/user/Homepage.vue') },
       { path: 'UserAccount', component: () => import('pages/user/Account.vue') },
-      { path: 'UserJobOrders', component: () => import('pages/user/JobOrders.vue') }
+      { path: 'UserJobOrders', component: () => import('pages/user/JobOrders.vue') },
+      { path: 'UserFileJobOrder', component: () => import('pages/user/FileJobOrder.vue') }
     ]
   }
 ]

@@ -46,7 +46,7 @@
               </q-item-section>
             </q-item>
 
-            <q-separator />
+            <!-- <q-separator />
 
             <q-item clickable v-ripple @click="$router.push('/InventoryEmployeeList')">
               <q-item-section avatar>
@@ -56,7 +56,7 @@
               <q-item-section>
                 Employees List
               </q-item-section>
-            </q-item>
+            </q-item> -->
 
             <q-separator />
 

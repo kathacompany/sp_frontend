@@ -8,6 +8,10 @@
           <div class="q-gutter-sm flex flex-row text-center">
             <q-card rounded class="bg-primary">
                 <q-icon name="inbox" style="font-size: 4rem;"/><br>
+                <q-btn no-caps rounded push @click="$router.push('/UserFileJobOrder')" class="q-mr-sm" label="File Job Order" color="secondary"/>
+            </q-card>
+            <q-card rounded class="bg-primary">
+                <q-icon name="inbox" style="font-size: 4rem;"/><br>
                 <q-btn no-caps rounded push @click="$router.push('/UserJobOrders')" class="q-mr-sm" label="Job Orders" color="secondary"/>
             </q-card>
             <q-card rounded class="bg-primary text-center">
