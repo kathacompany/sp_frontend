@@ -38,7 +38,7 @@
       />
 
       <div>
-        <q-btn rounded label="Submit" type="submit" color="primary" @click="$router.push('/UserHomepage')"/>
+        <q-btn rounded label="Submit" type="submit" color="primary" @click="$router.push('/Homepage')"/>
       </div>
     </q-form>
   </div>
