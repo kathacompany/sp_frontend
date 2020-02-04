@@ -88,42 +88,14 @@ export default {
         {
           id: 1,
           name: 'Construction',
-          unit: 'CAS',
-          location: 'Miagao',
-          date: '2018/12/01'
-        },
-        {
-          id: 2,
-          name: 'Construction',
-          unit: 'Humanities',
-          location: 'Miagao',
-          date: '2018/12/01'
-        },
-        {
-          id: 3,
-          name: 'Electricity',
-          unit: 'CAS',
-          location: 'Miagao',
-          date: '2018/12/01'
-        },
-        {
-          id: 4,
-          name: 'Plumbing',
           unit: 'DPSM',
           location: 'Miagao',
           date: '2018/12/01'
         },
         {
-          id: 5,
-          name: 'Construction',
-          unit: 'Balay Ilonggo',
-          location: 'Iloilo City',
-          date: '2018/12/01'
-        },
-        {
-          id: 6,
-          name: 'Construction',
-          unit: 'CFOS',
+          id: 2,
+          name: 'Plumbing',
+          unit: 'DPSM',
           location: 'Miagao',
           date: '2018/12/01'
         }
