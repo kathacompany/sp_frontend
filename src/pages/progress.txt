@@ -52,3 +52,8 @@ Unit:
 - kulang
 -- what im working
 * done
+
+
+
+unit (job order req) -> administrative (change the status to ongoing, forward to the foreman)-> foreman (schedule,
+add employee, add materials) -> inventory staff (automated na ni dapat man idk how) -> implementation -> foreman (change the status to fin)

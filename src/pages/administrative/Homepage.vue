@@ -18,7 +18,6 @@
               <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />
               <q-carousel-slide :name="5" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
             </q-carousel>
-            <!-- <img src="statics/btr1.jpg" /> -->
           </div>
           <div class="q-gutter-sm flex flex-row text-center">
             <q-card rounded class="bg-primary">
