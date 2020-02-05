@@ -24,7 +24,7 @@
       >
         <q-scroll-area class="fit q-pa-sm">
           <q-list padding class="q-mr-ma">
-            <q-item clickable v-ripple @click="$router.push('/UserHomepage')">
+            <q-item clickable v-ripple @click="$router.push('/Homepage')">
               <q-item-section avatar>
                 <q-icon name="home" color="white"/>
               </q-item-section>

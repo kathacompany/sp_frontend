@@ -1,4 +1,3 @@
-
 const routes = [
   {
     path: '/',
@@ -10,7 +9,10 @@ const routes = [
       { path: 'ForemenLogin', component: () => import('pages/foremen/Login.vue') },
       { path: 'WorkerLogin', component: () => import('pages/worker/Login.vue') },
       { path: 'UserLogin', component: () => import('pages/user/Login.vue') }
-    ]
+    ],
+    meta: {
+      requiresGuest: true
+    }
   },
   {
     path: '/',
@@ -21,7 +23,10 @@ const routes = [
       { path: 'AdministrativeJobOrders', component: () => import('pages/administrative/JobOrders.vue') },
       { path: 'AdministrativeEmployees', component: () => import('pages/administrative/EmployeeList.vue') },
       { path: 'AdministrativeAnnouncements', component: () => import('pages/administrative/Announcements.vue') }
-    ]
+    ],
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/',
@@ -31,7 +36,10 @@ const routes = [
       { path: 'InventoryAccount', component: () => import('pages/inventory/Account.vue') },
       { path: 'Inventory', component: () => import('pages/inventory/Inventory.vue') },
       { path: 'InventoryEmployeeList', component: () => import('pages/inventory/EmployeeList.vue') }
-    ]
+    ],
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/',
@@ -42,7 +50,10 @@ const routes = [
       { path: 'ForemenJobOrders', component: () => import('pages/foremen/JobOrders.vue') },
       { path: 'ForemenScheduleJobs', component: () => import('pages/foremen/ScheduleJobs.vue') },
       { path: 'ForemenEmployeeList', component: () => import('pages/foremen/EmployeeList.vue') }
-    ]
+    ],
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/',
@@ -51,7 +62,10 @@ const routes = [
       { path: 'WorkerHomepage', component: () => import('pages/worker/Homepage.vue') },
       { path: 'WorkerAccount', component: () => import('pages/worker/Account.vue') },
       { path: 'WorkerScheduleJobs', component: () => import('pages/worker/ScheduleJobs.vue') }
-    ]
+    ],
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/',
@@ -62,10 +76,41 @@ const routes = [
       { path: 'UserAccount', component: () => import('pages/user/Account.vue') },
       { path: 'UserJobOrders', component: () => import('pages/user/JobOrders.vue') },
       { path: 'UserFileJobOrder', component: () => import('pages/user/FileJobOrder.vue') }
-    ]
+    ],
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
+// import firebase from 'firebase'
 
+// routes.beforeEach((to, from, next) => {
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     if (!firebase.auth().currentUser) {
+//       next({
+//         path: '/login',
+//         query: {
+//           redirect: to.fullPath
+//         }
+//       })
+//     } else {
+//       next()
+//     }
+//   } else if (to.matched.some(record => record.meta.requiresGuest)) {
+//     if (firebase.auth().currentUser) {
+//       next({
+//         path: '/',
+//         query: {
+//           redirect: to.fullPath
+//         }
+//       })
+//     } else {
+//       next()
+//     }
+//   } else {
+//     next()
+//   }
+// })
 // Always leave this as last one
 if (process.env.MODE !== 'ssr') {
   routes.push({

@@ -1,10 +1,12 @@
 <template>
     <q-page class="flex flex-center">
         <q-card rounded class="bg-primary" style="padding:50px;">
-            <q-input v-model="username" label="Username"></q-input>
-            <q-input v-model="Email" label="Password" type="password"></q-input>
+            <q-input v-model="email"
+            label="Email"></q-input>
+            <q-input v-model="password" label="Password" type="password"></q-input>
             <br/>
-            <q-btn push rounded no-caps @click="$router.push('/InventoryHomepage')" class="q-mr-sm" label="LOGIN" color="secondary"/>
+            <q-btn push rounded no-caps @click="login" class="q-mr-sm" label="LOGIN" color="secondary"/>
+            <q-btn push rounded no-caps v-go-back="'/'" class="q-mr-sm" label="CANCEL" color="light"/>
             <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/>
         </q-card>
             <q-dialog v-model="dialog">
@@ -41,17 +43,38 @@
 </style>
 
 <script>
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/database'
+
 export default {
   data () {
     return {
-      username: '',
-      password: '',
       email: '',
+      password: '',
+      error: '',
       layout: false,
       dialog: false,
       sentEmail: false
-
+    }
+  },
+  methods: {
+    login: function (e) {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then(
+          user => {
+            this.$router.push('/InventoryHomepage')
+            alert(`You are logged in as ${this.email}`)
+          },
+          err => {
+            alert(err.message)
+          }
+        )
+      e.preventDefault()
     }
   }
 }
+
 </script>

@@ -62,6 +62,10 @@
           val => val !== null && val !== '' || 'Please type your telephone number'
         ]"
       />
+
+      <div>
+        <q-btn rounded label="Submit" type="submit" color="primary" @click="$router.push('/Homepage')"/>
+      </div
       <q-input
         filled
         v-model="description"
