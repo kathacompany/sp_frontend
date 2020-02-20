@@ -21,6 +21,63 @@
                 row-key="id"
                 :filter="filter"
             >
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                  <q-td key="id" :props="props">
+                    {{ props.row.id }}
+                  </q-td>
+                  <q-td key="name" :props="props">
+                    {{ props.row.name }}
+                  </q-td>
+                  <q-td key="unit" :props="props">
+                    {{ props.row.id }}
+                  </q-td>
+                  <q-td key="location" :props="props">
+                    {{ props.row.location }}
+                  </q-td>
+                  <q-td key="date" :props="props">
+                    {{ props.row.date }}
+                  </q-td>
+                  <q-td key="status" :props="props">
+                    {{ props.row.status }}
+                     <q-popup-edit v-model="props.row.status" title="Update status" buttons persistent>
+                      <q-btn-dropdown push no-caps v-model="probType" color="primary" label="Forward to">
+                      <q-list>
+                      <q-item clickable v-model="props.row.status" v-close-popup>
+                          <q-item-section>
+                          <q-item-label v-model="props.row.status"> Plumbing</q-item-label>
+                          </q-item-section>
+                      </q-item>
+                      <q-item clickable v-model="props.row.status" v-close-popup>
+                          <q-item-section>
+                          <q-item-label v-model="props.row.status"> Electricity</q-item-label>
+                          </q-item-section>
+                      </q-item>
+                      <q-item clickable v-model="props.row.status" v-close-popup>
+                          <q-item-section>
+                          <q-item-label v-model="props.row.status"> Electricity</q-item-label>
+                          </q-item-section>
+                      </q-item>
+                      <q-item clickable v-model="props.row.status" v-close-popup>
+                          <q-item-section>
+                          <q-item-label v-model="props.row.status"> Electricity</q-item-label>
+                          </q-item-section>
+                      </q-item>
+                      </q-list>
+                      </q-btn-dropdown>
+                      <q-btn-dropdown push no-caps v-model="probType" color="primary" label="Update Status to">
+                      <q-list>
+                      <q-item clickable v-model="props.row.status" v-close-popup>
+                          <q-item-section>
+                          <q-item-label v-model="props.row.status">Ongoing</q-item-label>
+                          </q-item-section>
+                      </q-item>
+                      </q-list>
+                      </q-btn-dropdown>
+                    </q-popup-edit>
+                  </q-td>
+                </q-tr>
+              </template>
             </q-table>
             <q-table
                 title="Completed Job Orders"
@@ -58,7 +115,8 @@ export default {
       filter: '',
       columns: [
         {
-          id: 'Job Order Number',
+          id: 'id',
+          name: 'id',
           required: true,
           label: 'Job Order Number',
           align: 'left',

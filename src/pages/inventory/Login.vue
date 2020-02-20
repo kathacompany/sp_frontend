@@ -1,16 +1,16 @@
 <template>
     <q-page class="flex flex-center">
-        <q-card rounded class="bg-primary" style="padding:50px;">
+        <q-card rounded class="bg-primary" style="padding:30px;">
             <q-input v-model="email"
             label="Email"></q-input>
             <q-input v-model="password" label="Password" type="password"></q-input>
             <br/>
-            <q-btn push rounded no-caps @click="login" class="q-mr-sm" label="LOGIN" color="secondary"/>
-            <q-btn push rounded no-caps v-go-back="'/'" class="q-mr-sm" label="CANCEL" color="light"/>
-            <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/>
+            <q-btn push rounded no-caps @click="login" class="q-mr-xs" label="LOGIN" color="secondary"/>
+            <q-btn push rounded no-caps v-go-back="'/'" class="q-mr-xs" label="CANCEL" color="secondary"/>
+            <q-btn flat class="q-mr-xs" label="Forgot password?" color="primary" @click="dialog = true"/>
         </q-card>
             <q-dialog v-model="dialog">
-            <q-card container class="bg-white" style="padding:40px;">
+            <q-card container class="bg-white">
                 <q-card-section>
                 <div class="text-h6">Enter Email Address</div>
                 </q-card-section>
@@ -65,8 +65,7 @@ export default {
         .signInWithEmailAndPassword(this.email, this.password)
         .then(
           user => {
-            this.$router.push('/InventoryHomepage')
-            alert(`You are logged in as ${this.email}`)
+            this.$router.push('/UserHomepage')
           },
           err => {
             alert(err.message)

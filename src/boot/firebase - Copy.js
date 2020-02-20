@@ -4,6 +4,10 @@ import * as firebase from 'firebase/app'
 // Add the Firebase products that you want to use
  import 'firebase/store-auth'
 
+const firebase = require("firebase");
+// Required for side-effects
+require("firebase/firestore");
+
 var firebaseConfig = {
   apiKey: 'AIzaSyA34MAQpn8VN1VvswT357d9pFI3MfPx-hA',
   authDomain: 'jopsis-cfca3.firebaseapp.com',
@@ -17,5 +21,6 @@ var firebaseConfig = {
 
 let firebaseApp = firebase.initializeApp(firebaseConfig)
 let firebaseAuth = firebaseApp.auth()
+let firebaseDb = firebaseApp.database()
 
-export { firebaseAuth }
+export { firebaseAuth, firebaseDb }

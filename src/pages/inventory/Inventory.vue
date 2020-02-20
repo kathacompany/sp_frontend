@@ -27,10 +27,10 @@
                       <q-input v-model="props.row.name" dense autofocus counter />
                     </q-popup-edit>
                   </q-td>
-                  <q-td key="stocks" :props="props">
-                    {{ props.row.stocks }}
-                    <q-popup-edit v-model="props.row.stocks" title="Update stocks" buttons persistent>
-                      <q-input type="number" v-model="props.row.stocks" dense autofocus hint="Use buttons to close" />
+                  <q-td key="department" :props="props">
+                    {{ props.row.department }}
+                    <q-popup-edit v-model="props.row.department" title="Update department" buttons persistent>
+                      <q-input type="number" v-model="props.row.department" dense autofocus hint="Use buttons to close" />
                     </q-popup-edit>
                   </q-td>
                 </q-tr>
@@ -72,42 +72,42 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'stocks', label: 'Stocks', field: 'stocks', sortable: true }
+        { name: 'department', label: 'Stocks', field: 'department', sortable: true }
       ],
       data: [
         {
           name: 'Small Nails',
-          stocks: 1
+          department: 1
         },
         {
           name: 'Big Nails',
-          stocks: 10
+          department: 10
         },
         {
           name: 'Medium Nails',
-          stocks: 15
+          department: 15
         },
         {
           name: '1 Litter can of paint White',
-          stocks: 20
+          department: 20
         },
         {
           name: '1 Litter can of paint Black',
-          stocks: 22
+          department: 22
         },
         {
           name: '1 Litter can of paint Gray',
-          stocks: 30
+          department: 30
         },
         {
           name: 'Bulb',
-          stocks: 30
+          department: 30
         }
       ],
       original: [
         {
           name: 'new stock',
-          stocks: 0
+          department: 0
         }
       ]
     }
