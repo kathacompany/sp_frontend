@@ -122,6 +122,7 @@ export default {
           field: 'description'
         }
       ],
+<<<<<<< HEAD
       columnB: [
         {
           name: 'unit',
@@ -146,6 +147,22 @@ export default {
           align: 'left',
           label: 'REQUESTOR NAME',
           field: 'requestor'
+=======
+      data: [
+        {
+          id: 1,
+          name: 'Construction',
+          unit: 'DPSM',
+          location: 'Miagao',
+          date: '2018/12/01'
+        },
+        {
+          id: 2,
+          name: 'Plumbing',
+          unit: 'DPSM',
+          location: 'Miagao',
+          date: '2018/12/01'
+>>>>>>> 886acabcb22a184274edc4ddae3d7912310e917c
         }
       ]
     }
