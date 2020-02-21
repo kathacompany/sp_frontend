@@ -10,9 +10,7 @@ const routes = [
       { path: 'WorkerLogin', component: () => import('pages/worker/Login.vue') },
       { path: 'UserLogin', component: () => import('pages/user/Login.vue') }
     ],
-    meta: {
-      requiresGuest: true
-    }
+    meta: { requiresGuest: true }
   },
   {
     path: '/',
@@ -24,9 +22,7 @@ const routes = [
       { path: 'AdministrativeEmployees', component: () => import('pages/administrative/EmployeeList.vue') },
       { path: 'AdministrativeAnnouncements', component: () => import('pages/administrative/Announcements.vue') }
     ],
-    meta: {
-      requiresAuth: true
-    }
+    meta: { requiresAuth: true }
   },
   {
     path: '/',
@@ -64,9 +60,7 @@ const routes = [
       { path: 'WorkerAccount', component: () => import('pages/worker/Account.vue') },
       { path: 'WorkerScheduleJobs', component: () => import('pages/worker/ScheduleJobs.vue') }
     ],
-    meta: {
-      requiresAuth: true
-    }
+    meta: { requiresAuth: true }
   },
   {
     path: '/',
@@ -78,40 +72,10 @@ const routes = [
       { path: 'UserJobOrders', component: () => import('pages/user/JobOrders.vue') },
       { path: 'UserFileJobOrder', component: () => import('pages/user/FileJobOrder.vue') }
     ],
-    meta: {
-      requiresAuth: true
-    }
+    meta: { requiresAuth: true }
   }
 ]
-// import firebase from 'firebase'
 
-// routes.beforeEach((to, from, next) => {
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     if (!firebase.auth().currentUser) {
-//       next({
-//         path: '/login',
-//         query: {
-//           redirect: to.fullPath
-//         }
-//       })
-//     } else {
-//       next()
-//     }
-//   } else if (to.matched.some(record => record.meta.requiresGuest)) {
-//     if (firebase.auth().currentUser) {
-//       next({
-//         path: '/',
-//         query: {
-//           redirect: to.fullPath
-//         }
-//       })
-//     } else {
-//       next()
-//     }
-//   } else {
-//     next()
-//   }
-// })
 // Always leave this as last one
 if (process.env.MODE !== 'ssr') {
   routes.push({

@@ -78,7 +78,7 @@
               </q-item-section>
 
               <q-item-section>
-                Account Deatils
+                Account Details
               </q-item-section>
             </q-item>
 
