@@ -24,7 +24,7 @@
       >
         <q-scroll-area class="fit q-pa-sm">
           <q-list padding class="q-mr-ma">
-            <q-item clickable v-ripple @click="$router.push('/AdministrativeHomepage')">
+            <q-item clickable v-ripple @click="$router.push('/WorkerHomepage')">
               <q-item-section avatar>
                 <q-icon name="home" color="white"/>
               </q-item-section>
@@ -54,7 +54,7 @@
               </q-item-section>
 
               <q-item-section>
-                Account Deatils
+                Account Details
               </q-item-section>
             </q-item>
 

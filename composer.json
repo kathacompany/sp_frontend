@@ -1,0 +1,5 @@
+{
+    "require": {
+        "awes-io/form-builder": "^1.6"
+    }
+}
