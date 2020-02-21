@@ -65,7 +65,7 @@
 
       <div>
         <q-btn rounded label="Submit" type="submit" color="primary" @click="$router.push('/Homepage')"/>
-      </div
+      </div>
       <q-input
         filled
         v-model="description"

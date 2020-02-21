@@ -23,22 +23,48 @@
                 <q-tr :props="props">
                   <q-td key="name" :props="props">
                     {{ props.row.name }}
-                    <q-popup-edit v-model="props.row.name">
-                      <q-input v-model="props.row.name" dense autofocus counter />
-                    </q-popup-edit>
                   </q-td>
-                  <q-td key="department" :props="props">
-                    {{ props.row.department }}
-                    <q-popup-edit v-model="props.row.department" title="Update department" buttons persistent>
-                      <q-input type="number" v-model="props.row.department" dense autofocus hint="Use buttons to close" />
-                    </q-popup-edit>
+                  <q-td key="quantity" :props="props">
+                    {{ props.row.quantity }}
+                    <!-- <q-popup-edit v-model="props.row.quantity" title="Update quantity" buttons persistent>
+                      <q-input type="number" v-model="props.row.quantity" dense autofocus hint="Use buttons to close" />
+                    </q-popup-edit> -->
+                  </q-td>
+                  <q-td key="toEdit" :props="props">
+                    {{ props.row.toEdit }}
+                    <q-btn flat label="Edit" @click="toEdit=true">
+                      <!-- <q-icon name="eva-trash"/> -->
+                    </q-btn>
+                  </q-td>
+                  <q-td key="toDelete" :props="props">
+                    {{ props.row.toDelete }}
+                    <q-btn flat label="Delete" @click="toDelete(index, item.id)">
+                      <q-space/>
+                      <!-- <q-icon name="eva-trash"/> -->
+                    </q-btn>
                   </q-td>
                 </q-tr>
               </template>
             </q-table>
             </div>
-          <q-btn no-caps rounded dense class="q-mr-sm" color="secondary" label="Add row" @click="addRow"/>
-          <q-btn no-caps rounded push @click="$router.push('/InventoryHomepage')" class="q-mr-sm" label="Generate File" color="secondary"/>
+          <q-btn no-caps push class="q-mr-sm" color="secondary" label="Add Material" @click="add=true"/>
+            <q-dialog v-model="add" class="bg-secondary">
+              <q-card>
+                <q-card-section class="row items-center q-pb-none">
+                  <div class="text-h6">Add Material</div>
+                  <q-space />
+                  <q-btn icon="close" flat round dense v-close-popup />
+                </q-card-section>
+
+                <q-card-section>
+                  <q-input dense v-model="new_name" label="Material Name"/>
+                  <q-input dense v-model="new_quantity" label="Quantity" />
+                  <br/>
+                  <q-btn @click="addMaterial" label="Submit" v-close-popup/>
+                </q-card-section>
+              </q-card>
+            </q-dialog>
+          <q-btn no-caps push @click="$router.push('/InventoryHomepage')" class="q-mr-sm" label="Generate File" color="secondary"/>
           </div>
           </q-page>
         <router-view/>
@@ -59,9 +85,18 @@
 </style>
 
 <script>
+import { db } from 'boot/firebase'
+
 export default {
   data () {
     return {
+      filter: '',
+      new_name: '',
+      new_quantity: '',
+      mat: [],
+      add: false,
+      // toEdit: false,
+      // toDelete: false,
       columns: [
         {
           name: 'name',
@@ -72,63 +107,90 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'department', label: 'Stocks', field: 'department', sortable: true }
+        { name: 'quantity', label: 'Quantity', field: 'quantity', sortable: true, align: 'left' },
+        { name: 'toEdit', field: 'toEdit', align: 'left' },
+        { name: 'toDelete', field: 'toDelete', align: 'left' }
       ],
       data: [
         {
-          name: 'Small Nails',
-          department: 1
-        },
-        {
           name: 'Big Nails',
-          department: 10
-        },
-        {
-          name: 'Medium Nails',
-          department: 15
-        },
-        {
-          name: '1 Litter can of paint White',
-          department: 20
-        },
-        {
-          name: '1 Litter can of paint Black',
-          department: 22
-        },
-        {
-          name: '1 Litter can of paint Gray',
-          department: 30
-        },
-        {
-          name: 'Bulb',
-          department: 30
-        }
-      ],
-      original: [
-        {
-          name: 'new stock',
-          department: 0
+          quantity: 1
         }
       ]
     }
   },
+  created () {
+    this.getMaterial()
+    this.addMaterial()
+  },
   methods: {
-    // emulate fetching data from server
-    addRow () {
-      this.loading = true
-      setTimeout(() => {
-        const
-          index = Math.floor(Math.random() * (this.data.length + 1)),
-          row = this.original[Math.floor(Math.random() * this.original.length)]
-        if (this.data.length === 0) {
-          this.rowCount = 0
+    async getMaterial () {
+      try {
+        const matDb = await db.collection('materials').get()
+
+        matDb.forEach(res => {
+          console.log(res)
+          const matData = { id: res.id, name: res.data().name, quantity: res.data().quantity }
+          this.data.push(matData)
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async addMaterial () {
+      try {
+        const matDb = await db.collection('materials').add({
+          name: this.new_name,
+          quantity: this.new_quantity
+        })
+        this.new_name = ''
+        this.new_quantity = ''
+        this.mat.push({
+          name: this.new_name,
+          quantity: this.new_quantity,
+          id: matDb.id
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    toDelete (index, id) {
+      this.$q.dialog({
+        title: 'Cuidado!',
+        message: 'Desea eliminar la nota?',
+        cancel: true,
+        persistent: true
+      }).onOk(async () => {
+        try {
+          // const matDb = await db.collection('materials').get()
+
+          // matDb.forEach(res => {
+          //   const matId = res.id
+          // })
+
+          await db.collection('materials').doc(id).delete()
+          this.tasks.splice(index, 1)
+        } catch (error) {
+          console.log(error)
         }
-        row.id = ++this.rowCount
-        const addRow = { ...row } // extend({}, row, { name: `${row.name} (${row.__count})` })
-        this.data = [...this.data.slice(0, index), addRow, ...this.data.slice(index)]
-        this.loading = false
-      }, 500)
+      })
     }
+    // emulate fetching data from server
+    // addRow () {
+    //   this.loading = true
+    //   setTimeout(() => {
+    //     const
+    //       index = Math.floor(Math.random() * (this.data.length + 1)),
+    //       row = this.original[Math.floor(Math.random() * this.original.length)]
+    //     if (this.data.length === 0) {
+    //       this.rowCount = 0
+    //     }
+    //     row.id = ++this.rowCount
+    //     const addRow = { ...row } // extend({}, row, { name: `${row.name} (${row.__count})` })
+    //     this.data = [...this.data.slice(0, index), addRow, ...this.data.slice(index)]
+    //     this.loading = false
+    //   }, 500)
+    // }
   }
 }
 </script>

@@ -10,6 +10,10 @@
                 <q-icon name="inbox" style="font-size: 4rem;"/><br>
                 <q-btn no-caps rounded push @click="$router.push('/Inventory')" class="q-mr-sm" label="Inventory" color="secondary"/>
             </q-card>
+            <q-card rounded class="bg-primary">
+                <q-icon name="inbox" style="font-size: 4rem;"/><br>
+                <q-btn no-caps rounded push @click="$router.push('/MaterialRequests')" class="q-mr-sm" label="Material Requests" color="secondary"/>
+            </q-card>
           </div>
         </q-page>
         <router-view/>

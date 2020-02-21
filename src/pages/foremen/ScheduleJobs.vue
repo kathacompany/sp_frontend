@@ -8,6 +8,22 @@
               <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
+                  <q-btn flat @click="calendar = true">
+                    <q-icon name="eva-calendar"/>
+                    <q-dialog v-model="calendar">
+                      <q-card>
+                        <q-card-section class="row items-center q-pb-none">
+                          <div class="text-h6">Close icon</div>
+                          <q-space />
+                          <q-btn icon="close" flat round dense v-close-popup />
+                        </q-card-section>
+
+                        <q-card-section>
+                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.
+                        </q-card-section>
+                      </q-card>
+                    </q-dialog>
+                  </q-btn>
                 </template>
               </q-input>
               <q-table
@@ -56,7 +72,7 @@
                       </q-item>
                       </q-list>
                     </q-btn-dropdown>
-                    <q-btn push no-caps v-model="probType" color="primary" label="Add Materials" @click="opened=true"/>
+                    <q-btn push no-caps v-model="probType" color="primary" label="Request For Materials" @click="opened=true"/>
 
                     <q-dialog v-model="opened" class="bg-white" >
                     <q-table
@@ -130,6 +146,7 @@ export default {
     return {
       opened: false,
       filter: '',
+      calendar: false,
       columns: [
         {
           name: 'id',

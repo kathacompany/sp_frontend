@@ -35,7 +35,8 @@ const routes = [
       { path: 'InventoryHomepage', component: () => import('pages/inventory/Homepage.vue') },
       { path: 'InventoryAccount', component: () => import('pages/inventory/Account.vue') },
       { path: 'Inventory', component: () => import('pages/inventory/Inventory.vue') },
-      { path: 'InventoryEmployeeList', component: () => import('pages/inventory/EmployeeList.vue') }
+      { path: 'InventoryEmployeeList', component: () => import('pages/inventory/EmployeeList.vue') },
+      { path: 'MaterialRequests', component: () => import('pages/inventory/MaterialRequests.vue') }
     ],
     meta: {
       requiresAuth: true

@@ -12,7 +12,7 @@
             </q-card>
             <q-card rounded class="bg-primary text-center">
                 <q-icon name="drafts" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/ForemenScheduleJobs')" class="q-mr-sm" label="Schedule a Job" color="secondary"/>
+                <q-btn no-caps rounded push @click="$router.push('/ForemenScheduleJobs')" class="q-mr-sm" label="Job Schedule" color="secondary"/>
             </q-card>
             <q-card rounded class="bg-primary text-center">
                 <q-icon name="person" style="font-size: 4rem;"/><br>

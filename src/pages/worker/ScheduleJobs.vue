@@ -10,9 +10,7 @@
                   <q-icon name="search" />
                 </template>
               </q-input>
-            </div>
-            <div style="width: 100%;">
-            <q-table
+              <q-table
                 class="my-sticky-column-table"
                 :data="data"
                 :columns="columns"
