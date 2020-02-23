@@ -1,42 +1,18 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-page-container>
-        <q-page class="flex flex-center text-center">
-          <div style="width: 100%; height: 50%;">
-            <q-carousel
-              animated
-              v-model="slide"
-              navigation
-              infinite
-              autoplay
-              transition-prev="slide-right"
-              transition-next="slide-left"
-            >
-              <q-carousel-slide :name="1" img-src="statics/btr1.jpg" />
-              <q-carousel-slide :name="2" img-src="https://cdn.quasar.dev/img/mountains.jpg" />
-              <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />
-              <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />
-              <q-carousel-slide :name="5" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
-            </q-carousel>
+
+      <q-page class="flex flex-center text-center">
+        <div class="container" style="width: 100%; height: 100%;">
+          <img src="statics/bg4.jpg" width="100%" height="60%" align="right"/>
+          <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 70px;font-weight: 800; margin-left: -800px; margin-top: -160px;">
+            JOPSIS
           </div>
-          <div class="q-gutter-sm flex flex-row text-center">
-            <q-card rounded class="bg-primary">
-                <q-icon name="inbox" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/AdministrativeJobOrders')" class="q-mr-sm" label="Job Order Requests" color="secondary"/>
-            </q-card>
-            <!-- <q-card rounded class="bg-primary text-center">
-                <q-icon name="people" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/AdministrativeEmployees')" class="q-mr-sm" label="Employees / Staff" color="secondary"/>
-            </q-card> -->
-             <q-card rounded class="bg-primary text-center">
-                <q-icon name="eva-calendar" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/AdministrativeAnnouncements')" class="q-mr-sm" label="Add Announcement" color="secondary"/>
-            </q-card>
-            <q-card rounded class="bg-primary text-center">
-                <q-icon name="person" style="font-size: 4rem;"/><br>
-                <q-btn no-caps rounded push @click="$router.push('/AdministrativeAccount')" class="q-mr-sm" label="Account Details" color="secondary"/>
-            </q-card>
+          <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 20px;font-weight: 100; margin-left: -650px; margin-top: -50px;">
+            Job Order Processing and Inventory System
+
           </div>
+        </div>
         </q-page>
         <router-view/>
     </q-page-container>

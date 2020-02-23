@@ -1,7 +1,5 @@
 import * as firebase from 'firebase/app'
 
-// If you enabled Analytics in your project, add the Firebase SDK for Analytics
-// Add the Firebase products that you want to use
 import 'firebase/auth'
 import 'firebase/database'
 import 'firebase/firestore'
@@ -19,9 +17,9 @@ var firebaseConfig = {
 
 let firebaseApp = firebase.initializeApp(firebaseConfig)
 let firebaseAuth = firebaseApp.auth()
+
 let firebaseDb = firebaseApp.database()
 let db = firebase.firestore()
-// let materialsRef = firebaseApp.database.ref('materials')
 
 export { firebaseAuth, firebaseDb, db }
 // export { materialsRef }

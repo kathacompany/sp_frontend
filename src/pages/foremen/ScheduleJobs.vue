@@ -1,264 +1,225 @@
 <template>
-  <q-layout view="hHh lpR fFf">
-    <q-page-container>
-        <q-page class="flex flex-center text-center">
-          <div class="q-gutter-sm flex text-center">
-            <div style="width: 100%; height: 50%;">
-              <h2> Schedule Job Implementation </h2>
-              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-                <template v-slot:append>
-                  <q-icon name="search" />
-                  <q-btn flat @click="calendar = true">
-                    <q-icon name="eva-calendar"/>
-                    <q-dialog v-model="calendar">
-                      <q-card>
-                        <q-card-section class="row items-center q-pb-none">
-                          <div class="text-h6">Close icon</div>
-                          <q-space />
-                          <q-btn icon="close" flat round dense v-close-popup />
-                        </q-card-section>
-
-                        <q-card-section>
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.
-                        </q-card-section>
-                      </q-card>
-                    </q-dialog>
-                  </q-btn>
-                </template>
-              </q-input>
-              <q-table
-                class="my-sticky-column-table"
-                :data="data"
-                :columns="columns"
-                hide-bottom
-                row-key="id"
-                :filter="filter"
+    <div style="max-width: 800px; width: 100%; margin-left: 300px; margin-top: 100px;">
+      <q-toolbar>
+        <q-btn stretch flat label="Prev" @click="calendarPrev" />
+        <q-separator vertical />
+        <q-btn stretch flat label="Next" @click="calendarNext" />
+        <q-space />
+      </q-toolbar>
+      <q-separator />
+      <q-calendar
+        ref="calendar"
+        v-model="selectedDate"
+        view="month"
+        locale="en-us"
+        :day-height="100"
+        show-day-of-year-label
+        animated
+        transition-prev="slide-right"
+        transition-next="slide-left"
+      >
+        <template #week="{ week, weekdays, miniMode }">
+          <template v-if="!miniMode">
+            <template v-for="(computedEvent, index) in getWeekEvents(week, weekdays)">
+              <q-badge
+                :key="index"
+                class="q-row-event"
+                :class="badgeClasses(computedEvent, 'day')"
+                :style="badgeStyles(computedEvent, 'day', week.length)"
               >
-            <template v-slot:body="props">
-              <q-tr :props="props">
-                  <q-td key="id" :props="props">
-                    {{ props.row.id }}
-                      <q-popup-edit v-model="props.row.status" title="Schedule Job" buttons persistent>
-                        <q-input filled v-model="date" mask="date" :rules="['date']">
-                          <template v-slot:append>
-                            <q-icon name="event" class="cursor-pointer">
-                              <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                <q-date v-model="date" @input="() => $refs.qDateProxy.hide()" />
-                              </q-popup-proxy>
-                            </q-icon>
-                          </template>
-                        </q-input>
-                      <q-btn-dropdown push no-caps v-model="probType" color="primary" label="Add Employee">
-                      <q-list>
-                      <q-item clickable v-model="props.row.id" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.id">Juan Dela Cruz</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      <q-item clickable v-model="props.row.id" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.id">Juanita Dela Cruz</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      <q-item clickable v-model="props.row.id" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.id">Juana Dela Cruz</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      <q-item clickable v-model="props.row.id" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.id">Juan Cruz</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      </q-list>
-                    </q-btn-dropdown>
-                    <q-btn push no-caps v-model="probType" color="primary" label="Request For Materials" @click="opened=true"/>
-
-                    <q-dialog v-model="opened" class="bg-white" >
-                    <q-table
-                      class="my-sticky-column-table"
-                      :data="fakeData"
-                      :columns="fakeColumns"
-                      hide-bottom
-                    >
-                    <template v-slot:body="props">
-                      <q-tr :props="props">
-                          <q-td key="name" :props="props">
-                            {{ props.row.name }}
-                          </q-td>
-                          <q-td key="quantity" :props="props">
-                            {{ props.row.quantity }}
-                            <q-popup-edit v-model="props.row.quantity" title="Needed Quantity" buttons persistent>
-                              <q-input filled v-model="props.row.quantity"/>
-                            </q-popup-edit>
-                          </q-td>
-                        </q-tr>
-                      </template>
-                    </q-table>
-                    </q-dialog>
-                    <p>Job Workers: Juana Dela Cruz, Juan Dela Cruz
-                    </p>
-                    <p>Materials Added: Nails, Paint
-                    </p>
-                    </q-popup-edit>
-                  </q-td>
-                  <q-td key="name" :props="props">
-                    {{ props.row.name }}
-                  </q-td>
-                  <q-td key="unit" :props="props">
-                    {{ props.row.id }}
-                  </q-td>
-                  <q-td key="location" :props="props">
-                    {{ props.row.location }}
-                  </q-td>
-                  <q-td key="date" :props="props">
-                    {{ props.row.date }}
-                  </q-td>
-                  <q-td key="status" :props="props">
-                    {{ props.row.status }}
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
-            </div>
-          </div>
-        </q-page>
-        <router-view/>
-    </q-page-container>
-  </q-layout>
-</template>
-
-<style lang="sass">
-
-  td:first-child
-    background-color: #e8a87c
-
-  th:first-child,
-  td:first-child
-    position: sticky
-    left: 0
-    z-index: 1
-</style>
-
+                <template v-if="computedEvent.event">
+                  <q-icon :name="computedEvent.event.icon" class="q-mr-xs"></q-icon>
+                  <span class="ellipsis">{{ computedEvent.event.title }}</span>
+                </template>
+              </q-badge>
+            </template>
+          </template>
+        </template>
+      </q-calendar>
+    </div>
+  </template>
 <script>
+import QCalendar from '@quasar/quasar-ui-qcalendar'
+const CURRENT_DAY = new Date()
+function getCurrentDay (day) {
+  const newDay = new Date(CURRENT_DAY)
+  newDay.setDate(day)
+  const tm = QCalendar.parseDate(newDay)
+  return tm.date
+}
 export default {
   data () {
     return {
-      opened: false,
-      filter: '',
-      calendar: false,
-      columns: [
+      selectedDate: '',
+      events: [
         {
-          name: 'id',
-          id: 'id',
-          required: true,
-          label: 'Job Order Number',
-          align: 'left',
-          field: row => row.id,
-          format: val => `${val}`,
-          sortable: true
+          title: '1st of the Month',
+          color: 'orange',
+          start: getCurrentDay(1),
+          end: getCurrentDay(1)
         },
         {
-          name: 'name',
-          align: 'center',
-          label: 'Name',
-          field: 'name',
-          sortable: true
+          title: 'Sisters Birthday',
+          color: 'green',
+          start: getCurrentDay(4),
+          end: getCurrentDay(4),
+          icon: 'cake'
         },
         {
-          name: 'unit',
-          align: 'center',
-          label: 'Unit',
-          field: 'unit',
-          sortable: true
+          title: 'Meeting',
+          color: 'red',
+          start: getCurrentDay(8),
+          end: getCurrentDay(8),
+          icon: 'group'
         },
         {
-          name: 'location',
-          align: 'center',
-          label: 'Location',
-          field: 'location',
-          sortable: true
+          title: 'Lunch',
+          color: 'teal',
+          start: getCurrentDay(8),
+          end: getCurrentDay(8),
+          icon: 'free_breakfast'
         },
         {
-          name: 'date',
-          align: 'center',
-          label: 'Date Filed',
-          field: 'date',
-          sortable: true
-        }
-      ],
-      data: [
-        {
-          id: 1,
-          name: 'Construction',
-          unit: 'CAS',
-          location: 'Miagao',
-          date: '2018/12/01'
+          title: 'Visit Mom',
+          color: 'blue-grey',
+          start: getCurrentDay(20),
+          end: getCurrentDay(20),
+          icon: 'card_giftcard'
         },
         {
-          id: 2,
-          name: 'Construction',
-          unit: 'Humanities',
-          location: 'Miagao',
-          date: '2018/12/01'
+          title: 'Conference',
+          color: 'blue',
+          start: getCurrentDay(22),
+          end: getCurrentDay(22),
+          icon: 'ondemand_video'
         },
         {
-          id: 3,
-          name: 'Electricity',
-          unit: 'CAS',
-          location: 'Miagao',
-          date: '2018/12/01'
+          title: 'Girlfriend',
+          color: 'teal',
+          start: getCurrentDay(22),
+          end: getCurrentDay(22),
+          icon: 'fastfood'
         },
         {
-          id: 4,
-          name: 'Plumbing',
-          unit: 'DPSM',
-          location: 'Miagao',
-          date: '2018/12/01'
+          title: 'Rowing',
+          color: 'purple',
+          start: getCurrentDay(27),
+          end: getCurrentDay(28),
+          icon: 'rowing'
         },
         {
-          id: 5,
-          name: 'Construction',
-          unit: 'Balay Ilonggo',
-          location: 'Iloilo City',
-          date: '2018/12/01'
-        },
-        {
-          id: 6,
-          name: 'Construction',
-          unit: 'CFOS',
-          location: 'Miagao',
-          date: '2018/12/01'
-        }
-      ],
-      fakeColumns: [
-        {
-          name: 'name',
-          align: 'center',
-          label: 'Name',
-          field: 'name',
-          sortable: true
-        },
-        {
-          name: 'quantity',
-          align: 'center',
-          label: 'Quantity',
-          field: 'quantity',
-          sortable: true
-        }
-      ],
-      fakeData: [
-        {
-          id: 1,
-          name: 'Small Nails',
-          quantity: '3'
-        },
-        {
-          id: 2,
-          name: 'Big Nails',
-          quantity: '2'
+          title: 'Vacation',
+          color: 'purple',
+          start: getCurrentDay(22),
+          end: getCurrentDay(29),
+          icon: 'flight'
         }
       ]
+    }
+  },
+  methods: {
+    isCssColor (color) {
+      return !!color && !!color.match(/^(#|(rgb|hsl)a?\()/)
+    },
+    badgeClasses (infoEvent, type) {
+      const color = infoEvent.event !== void 0 ? infoEvent.event.color : 'transparent'
+      const cssColor = this.isCssColor(color)
+      const isHeader = type === 'header'
+      return {
+        [`text-white bg-${color}`]: !cssColor,
+        'full-width': !isHeader && (!infoEvent.side || infoEvent.side === 'full'),
+        'left-side': !isHeader && infoEvent.side === 'left',
+        'right-side': !isHeader && infoEvent.side === 'right',
+        'cursor-pointer': infoEvent.event !== void 0,
+        'event-void': infoEvent.event === void 0 // height: 0, padding: 0
+      }
+    },
+    badgeStyles (infoEvent, type, weekLength, timeStartPos, timeDurationHeight) {
+      const s = {}
+      if (timeStartPos) {
+        s.top = timeStartPos(infoEvent.event.time) + 'px'
+      }
+      if (timeDurationHeight) {
+        s.height = timeDurationHeight(infoEvent.event.duration) + 'px'
+      }
+      if (infoEvent.size !== void 0) {
+        s.width = ((100 / weekLength) * infoEvent.size) + '% !important'
+      }
+      return s
+    },
+    getWeekEvents (week, weekdays) {
+      const tsFirstDay = QCalendar.parsed(week[0].date + ' 00:00')
+      const tsLastDay = QCalendar.parsed(week[week.length - 1].date + ' 23:59')
+      const firstDay = QCalendar.getDayIdentifier(tsFirstDay)
+      const lastDay = QCalendar.getDayIdentifier(tsLastDay)
+      const eventsWeek = []
+      this.events.forEach((event, id) => {
+        const tsStartDate = QCalendar.parsed(event.start + ' 00:00')
+        const tsEndDate = QCalendar.parsed(event.end + ' 23:59')
+        const startDate = QCalendar.getDayIdentifier(tsStartDate)
+        const endDate = QCalendar.getDayIdentifier(tsEndDate)
+        if (this.isBetweenDatesWeek(startDate, endDate, firstDay, lastDay)) {
+          const left = QCalendar.daysBetween(tsFirstDay, tsStartDate, true)
+          const right = QCalendar.daysBetween(tsEndDate, tsLastDay, true)
+          eventsWeek.push({
+            id, // index event
+            left, // Position initial day [0-6]
+            right, // Number days available
+            size: week.length - (left + right), // Size current event (in days)
+            event // Info
+          })
+        }
+      })
+      const events = []
+      if (eventsWeek.length > 0) {
+        const infoWeek = eventsWeek.sort((a, b) => a.left - b.left)
+        infoWeek.forEach((event, i) => {
+          this.insertEvent(events, week.length, infoWeek, i, 0, 0)
+        })
+      }
+      return events
+    },
+    insertEvent (events, weekLength, infoWeek, index, availableDays, level) {
+      const iEvent = infoWeek[index]
+      if (iEvent !== void 0 && iEvent.left >= availableDays) {
+        if (iEvent.left - availableDays) {
+          events.push({ size: iEvent.left - availableDays })
+        }
+        events.push({ size: iEvent.size, event: iEvent.event })
+        if (level !== 0) {
+          infoWeek.splice(index, 1)
+        }
+        const currentAvailableDays = iEvent.left + iEvent.size
+        if (currentAvailableDays < weekLength) {
+          const indexNextEvent = QCalendar.indexOf(infoWeek, e => e.id !== iEvent.id && e.left >= currentAvailableDays)
+          this.insertEvent(
+            events,
+            weekLength,
+            infoWeek,
+            indexNextEvent !== -1 ? indexNextEvent : index,
+            currentAvailableDays,
+            level + 1
+          )
+        }
+      } else {
+        events.push({ size: weekLength - availableDays })
+      }
+    },
+    isBetweenDates (date, start, end) {
+      return date >= start && date <= end
+    },
+    isBetweenDatesWeek (dateStart, dateEnd, weekStart, weekEnd) {
+      return (
+        (dateEnd < weekEnd && dateEnd >= weekStart) ||
+         dateEnd === weekEnd ||
+        (dateEnd > weekEnd && dateStart <= weekEnd)
+      )
+    },
+    calendarNext () {
+      this.$refs.calendar.next()
+    },
+    calendarPrev () {
+      this.$refs.calendar.prev()
     }
   }
 }

@@ -34,7 +34,8 @@ const actions = {
       } else {
         commit('setLoggedIn', false)
         LocalStorage.set('loggedIn', false)
-        this.$router.replace('')
+        this.$router.replace('/')
+
       }
     })
   }
