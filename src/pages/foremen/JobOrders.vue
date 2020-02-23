@@ -1,138 +1,235 @@
 <template>
-  <div class="q-pa-md">
-    <q-table
-      title="Treats"
-      :data="data"
-      :columns="columns"
-      row-key="name"
-      dark
-      color="amber"
-    />
-  </div>
+  <q-layout view="hHh lpR fFf">
+    <q-page-container>
+        <q-page class="flex flex-center text-center">
+          <div class="q-gutter-sm flex text-center">
+            <div style="width: 100%; height: 50%;">
+              <h2> Job Order Requests </h2>
+              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
+            <div style="width: 100%;" class="q-ma-md">
+            <q-table
+                title="Received Job Order Requests"
+                class="my-sticky-column-table"
+                :data="data"
+                :columns="columns"
+                hide-bottom
+                row-key="id"
+                :filter="filter"
+            >
+            </q-table>
+            <q-table
+                title="Completed Job Orders"
+                class="my-sticky-column-table"
+                :data="completedData"
+                :columns="completedColumns"
+                hide-bottom
+                row-key="id"
+                :filter="filter"
+            />
+            </div>
+          </div>
+        </q-page>
+        <router-view/>
+    </q-page-container>
+  </q-layout>
 </template>
+
+<style lang="sass">
+
+  td:first-child
+    background-color: #e8a87c
+
+  th:first-child,
+  td:first-child
+    position: sticky
+    left: 0
+    z-index: 1
+</style>
 
 <script>
 export default {
   data () {
     return {
+      filter: '',
       columns: [
         {
-          name: 'desc',
+          id: 'Job Order Number',
           required: true,
-          label: 'Dessert (100g serving)',
+          label: 'Job Order Number',
           align: 'left',
-          field: row => row.name,
+          field: row => row.id,
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+        {
+          name: 'name',
+          align: 'center',
+          label: 'Name',
+          field: 'name',
+          sortable: true
+        },
+        {
+          name: 'unit',
+          align: 'center',
+          label: 'Unit',
+          field: 'unit',
+          sortable: true
+        },
+        {
+          name: 'location',
+          align: 'center',
+          label: 'Location',
+          field: 'location',
+          sortable: true
+        },
+        {
+          name: 'date',
+          align: 'center',
+          label: 'Date Filed',
+          field: 'date',
+          sortable: true
+        },
+        {
+          name: 'status',
+          align: 'center',
+          label: 'Status',
+          field: 'status',
+          sortable: true
+        }
       ],
       data: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
+          id: 1,
+          name: 'Construction',
+          unit: 'CAS',
+          location: 'Miagao',
+          date: '2018/12/01',
+          status: 'Ongoing'
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
+          id: 2,
+          name: 'Construction',
+          unit: 'Humanities',
+          location: 'Miagao',
+          date: '2018/12/01',
+          status: 'Ongoing'
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
+          id: 5,
+          name: 'Construction',
+          unit: 'Balay Ilonggo',
+          location: 'Iloilo City',
+          date: '2018/12/01',
+          status: 'Ongoing'
         },
         {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
+          id: 6,
+          name: 'Construction',
+          unit: 'CFOS',
+          location: 'Miagao',
+          date: '2018/12/01',
+          status: 'Ongoing'
+        }
+      ],
+      completedColumns: [
+        {
+          id: 'Job Order Number',
+          required: true,
+          label: 'Job Order Number',
+          align: 'left',
+          field: row => row.id,
+          format: val => `${val}`,
+          sortable: true
         },
         {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
+          name: 'name',
+          align: 'center',
+          label: 'Name',
+          field: 'name',
+          sortable: true
         },
         {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
+          name: 'unit',
+          align: 'center',
+          label: 'Unit',
+          field: 'unit',
+          sortable: true
         },
         {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
+          name: 'location',
+          align: 'center',
+          label: 'Location',
+          field: 'location',
+          sortable: true
         },
         {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
+          name: 'date',
+          align: 'center',
+          label: 'Date Filed',
+          field: 'date',
+          sortable: true
         },
         {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
+          name: 'status',
+          align: 'center',
+          label: 'Status',
+          field: 'status',
+          sortable: true
+        }
+      ],
+      completedData: [
+        {
+          id: 1,
+          name: 'Construction',
+          unit: 'CAS',
+          location: 'Miagao',
+          date: '2018/12/01',
+          status: 'Completed'
         },
         {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
+          id: 2,
+          name: 'Construction',
+          unit: 'Humanities',
+          location: 'Miagao',
+          date: '2018/12/01',
+          status: 'Completed'
+        },
+        {
+          id: 3,
+          name: 'Electricity',
+          unit: 'CAS',
+          location: 'Miagao',
+          date: '2018/12/01',
+          status: 'Completed'
+        },
+        {
+          id: 4,
+          name: 'Plumbing',
+          unit: 'DPSM',
+          location: 'Miagao',
+          date: '2018/12/01',
+          status: 'Completed'
+        },
+        {
+          id: 5,
+          name: 'Construction',
+          unit: 'Balay Ilonggo',
+          location: 'Iloilo City',
+          date: '2018/12/01',
+          status: 'Completed'
+        },
+        {
+          id: 6,
+          name: 'Construction',
+          unit: 'CFOS',
+          location: 'Miagao',
+          date: '2018/12/01',
+          status: 'Completed'
         }
       ]
     }

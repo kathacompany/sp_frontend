@@ -1,6 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-page-container>
+
       <q-page class="flex flex-center text-center">
         <div class="container" style="width: 100%; height: 100%;">
           <img src="statics/bg4.jpg" width="100%" height="60%" align="right"/>
@@ -9,6 +10,7 @@
           </div>
           <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 20px;font-weight: 100; margin-left: -650px; margin-top: -50px;">
             Job Order Processing and Inventory System
+
           </div>
         </div>
         </q-page>
@@ -24,5 +26,11 @@
 }
 </style>
 <script>
-
+export default {
+  data () {
+    return {
+      slide: 1
+    }
+  }
+}
 </script>

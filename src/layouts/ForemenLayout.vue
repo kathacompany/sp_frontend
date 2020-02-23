@@ -53,6 +53,7 @@
             <q-item clickable v-ripple @click="$router.push('/ForemenScheduleJobs')">
               <q-item-section avatar>
                 <q-icon name="calendar_today" color="white" />
+
               </q-item-section>
 
               <q-item-section>
@@ -80,7 +81,7 @@
               </q-item-section>
 
               <q-item-section>
-                Account Deatils
+                Account Details
               </q-item-section>
             </q-item>
 

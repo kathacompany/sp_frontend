@@ -1,141 +1,171 @@
-<template>
-  <div class="q-pa-md">
-    <q-table
-      title="Treats"
-      :data="data"
-      :columns="columns"
-      row-key="name"
-      dark
-      color="amber"
-    />
-  </div>
+<template v-slot:top-right>
+  <q-layout view="hHh lpR fFf">
+    <q-page-container>
+        <q-page class="flex flex-center text-center">
+          <div class="q-ma-md q-pa-md">
+            <h4 style="margin-top: 20px"> Job Order Requests </h4>
+              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search by Category">
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
+            <div style="width: 100%; height: 50%; margin-top: -30px; margin-bottom: 10px">
+              <q-separator />
+                <div><h6 style="margin-top: 10px">PENDING</h6></div>
+              <q-card class="my-card" v-for="job in job_orders" v-bind:key="job.id" >
+                <q-card-section class="bg-primary text-white">
+                  JOB ID: {{job.id}} <pre></pre>
+                  CATEGORY: {{job.category}} <pre></pre>
+                </q-card-section>
+                <q-card-actions align="center">
+                   <q-btn no-caps push color="secondary" label="Open" class="text-white" @click="medium = true"/>
+                     <q-dialog v-model="medium">
+                      <q-card style="width: 100%; max-width: 50vw;">
+                        <q-card-section>
+                          <div class="text-h6 text-center">University of the Philippines Visayas</div>
+                        </q-card-section>
+                        <q-separator />
+                        <q-card-section class="bg-secondary text-center text-white">
+                          <div>JOB REQUEST DETAILS</div>
+                        </q-card-section>
+                          <q-card-section>
+                            <div class="q-pa-md q-gutter-sm">
+                              <q-table
+                                card-class="bg-primary"
+                                :data="job_orders"
+                                :columns="columnA"
+                                row-key="name"
+                                hide-bottom
+                              />
+                              <q-table
+                                card-class="bg-primary"
+                                :data="job_orders"
+                                :columns="columnB"
+                                row-key="name"
+                                hide-bottom
+                              />
+                            </div>
+                          </q-card-section>
+                        <q-separator />
+                        <q-card-actions align="right" class="q-pa-sm">
+                          <q-btn icon-right="archive" color="primary" label="Export to pdf" no-caps push/>
+                          <q-btn no-caps push label="CLOSE" color="secondary" v-close-popup />
+                        </q-card-actions>
+                      </q-card>
+                    </q-dialog>
+                   <q-btn no-caps push color="secondary" label="View Status" class="text-white"/>
+                </q-card-actions>
+              </q-card>
+          </div>
+          <div style="width: 100%; height: 50%; margin-bottom: 10px">
+            <q-separator />
+                <div><h6 style="margin-top: 10px">ONGOING</h6></div>
+          </div>
+          <div style="width: 100%; height: 50%;">
+            <q-separator />
+                <div><h6 style="margin-top: 10px margin-bottom: 10px">COMPLETED</h6></div>
+          </div>
+        </q-page>
+        <router-view/>
+    </q-page-container>
+  </q-layout>
 </template>
 
+<style lang="sass" scoped>
+.q-card.my-card
+    display: inline-block
+    width: 20%
+    margin: 10px
+</style>
+
 <script>
+import * as firebase from 'firebase/app'
+import 'firebase/firestore'
+
 export default {
   data () {
     return {
-      columns: [
+      medium: false,
+      filter: '',
+      job_orders: [],
+      category: null,
+      unit: null,
+      location: null,
+      description: null,
+      telephone: null,
+      requestor: null,
+      columnA: [
         {
-          name: 'desc',
-          required: true,
-          label: 'Dessert (100g serving)',
+          name: 'id',
           align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
+          label: 'JOB ID',
+          field: 'id'
+        },
+        {
+          name: 'category',
+          align: 'left',
+          label: 'CATEGORY',
+          field: 'category',
           sortable: true
         },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+        {
+          name: 'location',
+          align: 'left',
+          label: 'LOCATION',
+          field: 'location'
+        },
+        {
+          name: 'description',
+          align: 'left',
+          label: 'DESCRIPTION',
+          field: 'description'
+        }
       ],
-      data: [
+      columnB: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
+          name: 'unit',
+          align: 'left',
+          label: 'REQUESTING UNIT',
+          field: 'unit'
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
+          name: 'date',
+          align: 'left',
+          label: 'DATE',
+          field: 'date'
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
+          name: 'telephone',
+          align: 'left',
+          label: 'TELEPHONE',
+          field: 'telephone'
         },
         {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
+          name: 'requestor',
+          align: 'left',
+          label: 'REQUESTOR NAME',
+          field: 'requestor'
         }
       ]
     }
+  },
+  created () {
+    firebase.firestore().collection('job_orders').get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        const data = {
+          id: doc.id,
+          category: doc.data().category,
+          unit: doc.data().unit,
+          location: doc.data().location,
+          description: doc.data().description,
+          date: doc.data().date,
+          telephone: doc.data().telephone,
+          requestor: doc.data().requestor
+        }
+        this.job_orders.push(data)
+      })
+    })
   }
 }
 </script>

@@ -1,140 +1,171 @@
 <template>
-  <div class="q-pa-md">
-    <q-table
-      title="Treats"
-      :data="data"
-      :columns="columns"
-      row-key="name"
-      dark
-      color="amber"
-    />
-  </div>
+  <q-layout view="hHh lpR fFf">
+    <q-page-container>
+    <q-page class="flex flex-center text-center">
+      <div style="width: 100%; height: 50%;">
+        <q-icon name="person" style="font-size:100px;"/>
+      </div>
+      <div class="q-gutter-sm" style="margin-top: -70px">
+        <q-table
+          card-class="bg-primary"
+          :data="account"
+          :columns="profileColumns"
+          hide-bottom
+          style="width:500px;"
+        />
+         <q-table
+          card-class="bg-primary"
+          :data="account"
+          :columns="tableColumns"
+          hide-bottom
+          style="width:500px;"
+        />
+        <q-btn rounded no-caps push class="q-pa-auto q-ma-auto" size="12px" color="secondary" @click="updateAccount" label="Edit Information"/>
+
+        <q-btn rounded no-caps push class="q-pa-auto q-ma-auto" size="12px" color="secondary" @click="opened=true" label="Add Information"/>
+
+          <q-dialog v-model="opened" maximized class="bg-white">
+            <q-layout class="no-shadow">
+              <q-page-container>
+                <q-page class="flex flex-center">
+                  <q-card container class="bg-primary q-pa-auto q-ma-auto" style="width:30%;">
+                    <q-card-section>
+                      <div class="q-pa-auto full-width">
+                        <q-input class="q-ma-auto" required v-model="first_name" label="First Name"></q-input>
+                        <q-input class="q-ma-auto" required v-model="last_name" label="Last Name"></q-input>
+                        <q-input class="q-ma-auto" required v-model="middle_name" label="Middle Name"></q-input>
+                         <q-input class="q-ma-auto" required v-model="unit" label="Unit"></q-input>
+                        <q-input class="q-ma-auto" required v-model="position" label="Position"></q-input>
+                        <q-input class="q-ma-auto" required v-model="mobile_number" label="Mobile Number"></q-input>
+                        <q-input class="q-ma-auto" required v-model="email" label="Email"></q-input>
+                      <q-card-actions >
+                        <q-btn rounded no-caps push color="secondary" class="text-white" label="Save" @click="saveChanges" disable="false"/>
+                        <q-btn rounded no-caps push color="secondary" label="Cancel" class="text-white" v-close-popup/>
+                      </q-card-actions>
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </q-page>
+              </q-page-container>
+            </q-layout>
+          </q-dialog>
+        </div>
+    </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
+<style lang="sass">
+  .q-pa-auto
+    -webkit-text-fill-color: white;
+</style>
+
 <script>
+import * as firebase from 'firebase/app'
+import 'firebase/firestore'
+
 export default {
   data () {
     return {
-      columns: [
+      account: [],
+      opened: false,
+      id: null,
+      first_name: null,
+      last_name: null,
+      middle_name: null,
+      unit: null,
+      position: null,
+      mobile_number: null,
+      email: null,
+      tableColumns: [
         {
-          name: 'desc',
+          name: 'unit',
           required: true,
-          label: 'Dessert (100g serving)',
+          label: 'Unit',
           align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
+          field: 'unit'
         },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+        {
+          name: 'position',
+          required: true,
+          label: 'Position',
+          align: 'left',
+          field: 'position'
+        },
+        {
+          name: 'mobile_number',
+          required: true,
+          label: 'Mobile Number',
+          align: 'left',
+          field: 'mobile_number'
+        },
+        {
+          name: 'email',
+          required: true,
+          label: 'Email Address',
+          align: 'left',
+          field: 'email'
+        }
       ],
-      data: [
+      profileColumns: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
+          name: 'first_name',
+          required: true,
+          label: 'First Name',
+          align: 'left',
+          field: 'first_name'
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
+          name: 'last_name',
+          required: true,
+          label: 'Last Name',
+          align: 'left',
+          field: 'last_name'
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
+          name: 'middle_name',
+          required: true,
+          label: 'Middle Name',
+          align: 'left',
+          field: 'middle_name'
         }
       ]
+    }
+  },
+  created () {
+    firebase.firestore().collection('account').get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        const data = {
+          first_name: doc.data().first_name,
+          last_name: doc.data().last_name,
+          middle_name: doc.data().middle_name,
+          unit: doc.data().unit,
+          position: doc.data().position,
+          mobile_number: doc.data().mobile_number,
+          email: doc.data().email
+        }
+        this.account.push(data)
+      })
+    })
+  },
+  methods: {
+    saveChanges () {
+      firebase.firestore().collection('account').add({
+        first_name: this.first_name,
+        last_name: this.last_name,
+        middle_name: this.middle_name,
+        unit: this.unit,
+        position: this.position,
+        mobile_number: this.mobile_number,
+        email: this.email
+      })
+        .then(docRef => {
+          console.log('Account added: ', docRef.id)
+          location.reload()
+        })
+        .catch(error => {
+          console.error('Error saving account: ', error)
+        })
     }
   }
 }

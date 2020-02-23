@@ -1,15 +1,61 @@
 <template>
-  <div class="q-pa-md">
-    <q-table
-      title="Treats"
-      :data="data"
-      :columns="columns"
-      row-key="name"
-      dark
-      color="amber"
-    />
-  </div>
+   <q-layout view="hHh lpR fFf">
+    <q-page-container>
+        <q-page class="flex flex-center text-center">
+          <div class="q-gutter-sm flex text-center">
+            <div style="width: 100%; height: 50%;">
+              <h2> Employee List </h2>
+              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
+            <div style="width: 100%;">
+            <q-table
+              class="my-sticky-column-table"
+              :data="data"
+              :columns="columns"
+              row-key="name"
+              :filter="filter"
+            >
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td key="name" :props="props">
+                    {{ props.row.name }}
+                    <q-popup-edit v-model="props.row.name">
+                      <q-input v-model="props.row.name" dense autofocus counter />
+                    </q-popup-edit>
+                  </q-td>
+                  <q-td key="department" :props="props">
+                    {{ props.row.department }}
+                  </q-td>
+                  <q-td key="position" :props="props">
+                    {{ props.row.position }}
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+            </div>
+          <q-btn no-caps rounded dense class="q-mr-sm" color="secondary" label="Add employee" @click="addRow"/>
+          </div>
+          </q-page>
+        <router-view/>
+    </q-page-container>
+  </q-layout>
 </template>
+
+<style lang="sass">
+
+  td:first-child
+    background-color: #e8a87c
+
+  th:first-child,
+  td:first-child
+    position: sticky
+    left: 0
+    z-index: 1
+</style>
 
 <script>
 export default {
@@ -17,124 +63,73 @@ export default {
     return {
       columns: [
         {
-          name: 'desc',
+          name: 'name',
           required: true,
-          label: 'Dessert (100g serving)',
+          label: 'Name',
           align: 'left',
           field: row => row.name,
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+        { name: 'department', label: 'Department', field: 'department', sortable: true },
+        { name: 'position', label: 'Position', field: 'position', sortable: true }
       ],
       data: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
+          name: 'Juan Dela Cruz',
+          position: 'Administrative Staff',
+          department: 'CDMO'
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
+          name: 'Johny Doe',
+          position: 'Foremen',
+          department: 'CDMO'
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
+          name: 'John Doe',
+          position: 'Workier',
+          department: 'Plumbing'
         },
         {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
+          name: 'Juany Dela',
+          position: 'Worker',
+          department: 'Electrical'
         },
         {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
+          name: 'Juana Cruz',
+          position: 'Worker',
+          department: 'Electricity'
         },
         {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
-        },
+          name: 'Juanita Dela Cruz',
+          position: 'Worker',
+          department: 'Electricity'
+        }
+      ],
+      original: [
         {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
+          name: 'new employee',
+          department: 0
         }
       ]
+    }
+  },
+  methods: {
+    // emulate fetching data from server
+    addRow () {
+      this.loading = true
+      setTimeout(() => {
+        const
+          index = Math.floor(Math.random() * (this.data.length + 1)),
+          row = this.original[Math.floor(Math.random() * this.original.length)]
+        if (this.data.length === 0) {
+          this.rowCount = 0
+        }
+        row.id = ++this.rowCount
+        const addRow = { ...row } // extend({}, row, { name: `${row.name} (${row.__count})` })
+        this.data = [...this.data.slice(0, index), addRow, ...this.data.slice(index)]
+        this.loading = false
+      }, 500)
     }
   }
 }

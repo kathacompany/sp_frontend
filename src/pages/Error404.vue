@@ -3,11 +3,11 @@
     <p>
       <img
         src="~assets/sad.svg"
-        style="width:30vw;max-width:150px;"
+        style="width:50vw;max-width:300px;"
       >
     </p>
-    <p class="text-faded">Sorry, nothing here...<strong>(404)</strong></p>
-    <q-btn
+    <p class="text-fad">Sorry, nothing here...<strong>(404)</strong></p>
+    <q-btn class="q-ma-md"
       color="secondary"
       style="width:200px;"
       to="/"

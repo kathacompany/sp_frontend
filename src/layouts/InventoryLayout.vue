@@ -50,13 +50,13 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/InventoryEmployeeList')">
+            <q-item clickable v-ripple @click="$router.push('/MaterialRequests')">
               <q-item-section avatar>
-                <q-icon name="drafts" color="white" />
+                <q-icon name="inbox" color="white" />
               </q-item-section>
 
               <q-item-section>
-                Employees List
+                Material Requests
               </q-item-section>
             </q-item>
 
@@ -68,7 +68,7 @@
               </q-item-section>
 
               <q-item-section>
-                Account Deatils
+                Account Details
               </q-item-section>
             </q-item>
 

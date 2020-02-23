@@ -76,7 +76,11 @@ module.exports = function (ctx) {
         'QTable',
         'QTh',
         'QTr',
-        'QTd'
+        'QTd',
+        'QCarousel',
+        'QCarouselControl',
+        'QCarouselSlide',
+        'QDate'
       ],
       directives: [
         'ClosePopup',
@@ -88,7 +92,8 @@ module.exports = function (ctx) {
       plugins: [
         'Notify',
         'LocalStorage',
-        'AppFullscreen'
+        'AppFullscreen',
+        'Dialog'
       ]
     },
 
