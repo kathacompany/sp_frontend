@@ -65,7 +65,7 @@ export default {
         .signInWithEmailAndPassword(this.email, this.password)
         .then(
           user => {
-            this.$router.push('/UserHomepage')
+            this.$router.push('/InventoryHomepage')
           },
           err => {
             alert(err.message)

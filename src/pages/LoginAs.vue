@@ -2,7 +2,7 @@
     <q-page class="flex flex-center">
         <q-card rounded class="bg-primary" style="padding:20px;">
             <h4> Welcome to JOPSIS </h4>
-            <!--<div class="q-gutter-sm">
+            <div class="q-gutter-sm">
                 <q-btn no caps push v-model="usertype" color="secondary" label="University Unit" @click="$router.push('/UserLogin')"/>
                  <q-btn-dropdown push no caps v-model="usertype" color="secondary" label="CDMO Staff" dropdown-icon="change_history">
                     <q-list>
@@ -32,7 +32,8 @@
                     </q-list>
                     </q-btn-dropdown>
                 </div>
-        <q-card rounded class="bg-primary" style="padding:50px;"> -->
+        </q-card>
+        <!-- <q-card rounded class="bg-primary" style="padding:50px;">
             <q-input v-model="email"
             label="Email"></q-input>
             <q-input v-model="password" label="Password" type="password"></q-input>
@@ -65,10 +66,9 @@
                     <q-card-actions align="right">
                     <q-btn flat label="Close" color="secondary" v-close-popup/>
                     </q-card-actions>
-                </q-card-section>
-            </q-card>
+             </q-card>
             </q-dialog>
-        </div>
+        </div> -->
     </q-page>
 </template>
 
@@ -76,7 +76,7 @@
 </style>
 
 <script>
-import * as firebase from 'firebase/app'
+// import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
 // import 'firebase/database/account'
@@ -91,45 +91,46 @@ export default {
       dialog: false,
       sentEmail: false
     }
-  },
-  methods: {
-    login: function (e) {
-      // firebase.database.collection('account').doc(account.user_type).get().then(doc => {})
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then(
-          user => {
-            if (this.user_type === 'unit') {
-              this.$router.push('/UnitHomepage')
-              alert(`You are logged in as ${this.email}`)
-            }
-            if (this.user_type === 'staff') {
-              this.$router.push('/AdministrativeHomepage')
-              alert(`You are logged in as ${this.email}`)
-            }
-            if (this.user_type === 'foreman') {
-              this.$router.push('/ForemenHomepage')
-              alert(`You are logged in as ${this.email}`)
-            }
-            if (this.user_type === 'worker') {
-              this.$router.push('/WorkerHomepage')
-              alert(`You are logged in as ${this.email}`)
-            }
-            if (this.user_type === 'inventory') {
-              this.$router.push('/InventoryHomepage')
-              alert(`You are logged in as ${this.email}`)
-            }
-            this.$router.push('/InventoryHomepage')
-            alert(`You are logged in as ${this.email}`)
-          },
-          err => {
-            alert(err.message)
-          }
-        )
-      e.preventDefault()
-    }
   }
+  // },
+  // methods: {
+  //   login: function (e) {
+  //     // firebase.database.collection('account').doc(account.user_type).get().then(doc => {})
+  //     firebase
+  //       .auth()
+  //       .signInWithEmailAndPassword(this.email, this.password)
+  //       .then(
+  //         user => {
+  //           if (this.user_type === 'unit') {
+  //             this.$router.push('/UnitHomepage')
+  //             alert(`You are logged in as ${this.email}`)
+  //           }
+  //           if (this.user_type === 'staff') {
+  //             this.$router.push('/AdministrativeHomepage')
+  //             alert(`You are logged in as ${this.email}`)
+  //           }
+  //           if (this.user_type === 'foreman') {
+  //             this.$router.push('/ForemenHomepage')
+  //             alert(`You are logged in as ${this.email}`)
+  //           }
+  //           if (this.user_type === 'worker') {
+  //             this.$router.push('/WorkerHomepage')
+  //             alert(`You are logged in as ${this.email}`)
+  //           }
+  //           if (this.user_type === 'inventory') {
+  //             this.$router.push('/InventoryHomepage')
+  //             alert(`You are logged in as ${this.email}`)
+  //           }
+  //           this.$router.push('/InventoryHomepage')
+  //           alert(`You are logged in as ${this.email}`)
+  //         },
+  //         err => {
+  //           alert(err.message)
+  //         }
+  //       )
+  //     e.preventDefault()
+  //   }
+  // }
 }
 
 </script>

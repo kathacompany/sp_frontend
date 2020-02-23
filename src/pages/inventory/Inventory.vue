@@ -26,21 +26,22 @@
                   </q-td>
                   <q-td key="quantity" :props="props">
                     {{ props.row.quantity }}
-                    <!-- <q-popup-edit v-model="props.row.quantity" title="Update quantity" buttons persistent>
-                      <q-input type="number" v-model="props.row.quantity" dense autofocus hint="Use buttons to close" />
-                    </q-popup-edit> -->
                   </q-td>
                   <q-td key="toEdit" :props="props">
                     {{ props.row.toEdit }}
-                    <q-btn flat label="Edit" @click="toEdit=true">
-                      <!-- <q-icon name="eva-trash"/> -->
+                    <q-btn flat label="Edit" @click="change=true">
+                        <q-popup-edit v-model="change" title="Update quantity" persistent>
+                        <q-input type="number" v-model="props.row.quantity" dense autofocus hint="Use buttons to close"
+                        />
+                        <q-btn flat label="Close" v-close-popup/>
+                        <q-btn flat label="Set" @click="toEdit(props.row.id)"/>
+                        </q-popup-edit>
                     </q-btn>
                   </q-td>
                   <q-td key="toDelete" :props="props">
                     {{ props.row.toDelete }}
-                    <q-btn flat label="Delete" @click="toDelete(index, item.id)">
+                    <q-btn flat label="Delete" @click="toDelete(props.row.id)">
                       <q-space/>
-                      <!-- <q-icon name="eva-trash"/> -->
                     </q-btn>
                   </q-td>
                 </q-tr>
@@ -60,7 +61,7 @@
                   <q-input dense v-model="new_name" label="Material Name"/>
                   <q-input dense v-model="new_quantity" label="Quantity" />
                   <br/>
-                  <q-btn @click="addMaterial" label="Submit" v-close-popup/>
+                  <q-btn @click="addMaterial" label="Submit"/>
                 </q-card-section>
               </q-card>
             </q-dialog>
@@ -93,8 +94,9 @@ export default {
       filter: '',
       new_name: '',
       new_quantity: '',
-      mat: [],
+      data: [],
       add: false,
+      change: false,
       // toEdit: false,
       // toDelete: false,
       columns: [
@@ -110,18 +112,11 @@ export default {
         { name: 'quantity', label: 'Quantity', field: 'quantity', sortable: true, align: 'left' },
         { name: 'toEdit', field: 'toEdit', align: 'left' },
         { name: 'toDelete', field: 'toDelete', align: 'left' }
-      ],
-      data: [
-        {
-          name: 'Big Nails',
-          quantity: 1
-        }
       ]
     }
   },
   created () {
     this.getMaterial()
-    this.addMaterial()
   },
   methods: {
     async getMaterial () {
@@ -145,52 +140,37 @@ export default {
         })
         this.new_name = ''
         this.new_quantity = ''
-        this.mat.push({
+        this.data.push({
           name: this.new_name,
           quantity: this.new_quantity,
           id: matDb.id
         })
+        window.location.reload()
       } catch (error) {
         console.log(error)
       }
     },
-    toDelete (index, id) {
+    toDelete (id) {
       this.$q.dialog({
-        title: 'Cuidado!',
-        message: 'Desea eliminar la nota?',
+        title: 'Delete material?',
         cancel: true,
-        persistent: true
+        persistentL: true
       }).onOk(async () => {
         try {
-          // const matDb = await db.collection('materials').get()
-
-          // matDb.forEach(res => {
-          //   const matId = res.id
-          // })
-
           await db.collection('materials').doc(id).delete()
-          this.tasks.splice(index, 1)
+          // const matDb = await db.collection('materials').doc(id).delete()
+          // console.log('Material deleted: ', matDb.id)
+          window.location.reload()
         } catch (error) {
           console.log(error)
         }
-      })
+      }
+      )
+    },
+    toEdit (id) {
+      console.log('Gasulod sa method')
+      // window.location.reload()
     }
-    // emulate fetching data from server
-    // addRow () {
-    //   this.loading = true
-    //   setTimeout(() => {
-    //     const
-    //       index = Math.floor(Math.random() * (this.data.length + 1)),
-    //       row = this.original[Math.floor(Math.random() * this.original.length)]
-    //     if (this.data.length === 0) {
-    //       this.rowCount = 0
-    //     }
-    //     row.id = ++this.rowCount
-    //     const addRow = { ...row } // extend({}, row, { name: `${row.name} (${row.__count})` })
-    //     this.data = [...this.data.slice(0, index), addRow, ...this.data.slice(index)]
-    //     this.loading = false
-    //   }, 500)
-    // }
   }
 }
 </script>
