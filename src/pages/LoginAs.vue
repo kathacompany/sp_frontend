@@ -1,5 +1,5 @@
 <template>
-    <q-page class="flex flex-center">
+    <q-page class="flex flex-center" color="primary">
         <q-card rounded class="bg-primary text-center" style="padding:40px;">
             <h3> Welcome to JOPSIS </h3>
             <div class="q-gutter-sm">

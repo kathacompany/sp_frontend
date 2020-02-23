@@ -21,9 +21,9 @@
             stack-label/>
             <br/>
             <q-btn push rounded no-caps type="submit" class="q-mr-sm" label="Login" color="secondary"/>
-            <!-- <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/> -->
+            <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/>
         </q-card>
-            <!-- <q-dialog v-model="dialog">
+            <q-dialog v-model="dialog">
             <q-card container class="bg-white" style="padding:40px;">
                 <q-card-section>
                 <div class="text-h6">Enter Email Address</div>
@@ -37,8 +37,8 @@
                 <q-btn flat label="Cancel" v-close-popup />
                 </q-card-actions>
             </q-card>
-            </q-dialog> -->
-        <!-- <div>
+            </q-dialog>
+          <div>
             <q-dialog v-model="sentEmail">
             <q-card container class="flex flex-center">
                 <q-card-section>
@@ -49,7 +49,7 @@
                 </q-card-section>
             </q-card>
             </q-dialog>
-        </div> -->
+        </div>
     </q-page>
 </form>
 </template>
@@ -65,10 +65,11 @@ export default {
       formData: {
         email: '',
         password: ''
-      }
-    //   layout: false,
-    //   dialog: false,
-    //   sentEmail: false
+      },
+      layout: false,
+      dialog: false,
+      sentEmail: false
+    // submitForm: false,
     }
   },
   methods: {

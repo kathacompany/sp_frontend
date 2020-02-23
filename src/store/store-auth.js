@@ -34,7 +34,7 @@ const actions = {
       } else {
         commit('setLoggedIn', false)
         LocalStorage.set('loggedIn', false)
-        this.$router.replace('/pages/administrative/Login')
+        this.$router.replace('/')
       }
     })
   }
