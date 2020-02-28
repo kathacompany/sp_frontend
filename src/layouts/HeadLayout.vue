@@ -26,7 +26,7 @@
       >
         <q-scroll-area class="fit q-pa-sm">
           <q-list padding class="q-mr-ma">
-            <q-item clickable v-ripple @click="$router.push('/UserHomepage')">
+            <q-item clickable v-ripple @click="$router.push('/HeadHomepage')">
               <q-item-section avatar>
                 <q-icon name="home" color="white"/>
               </q-item-section>
@@ -38,31 +38,19 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/UserJobOrders')">
+            <q-item clickable v-ripple @click="$router.push('/HeadJobOrders')">
               <q-item-section avatar>
-                <q-icon name="inbox" color="white"/>
+                <q-icon name="inbox" color="white" />
               </q-item-section>
 
               <q-item-section>
-                Job Order Requests
+                Job Orders
               </q-item-section>
             </q-item>
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/UserFileJobOrder')">
-              <q-item-section avatar>
-                <q-icon name="create" color="white"/>
-              </q-item-section>
-
-              <q-item-section>
-                File Job Order Request
-              </q-item-section>
-            </q-item>
-
-            <q-separator />
-
-            <q-item clickable v-ripple @click="$router.push('/UserAccount')">
+            <q-item clickable v-ripple @click="$router.push('/HeadAccount')">
               <q-item-section avatar>
                 <q-icon name="person" color="white" />
               </q-item-section>

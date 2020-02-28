@@ -1,11 +1,26 @@
 <template>
-    <q-page class="flex flex-center" color="primary">
-        <q-card rounded class="bg-primary text-center" style="padding:40px;">
-            <h3> Welcome to JOPSIS </h3>
-
+    <q-page class="flex flex-center" style="background:linear-gradient(to right, purple , pink">
+        <q-card class="bg-primary text-center" shadow-3 style="padding:20px;">
+            <h3 style="-webkit-text-stroke-width: thin">
+              Welcome to JOPSIS
+            </h3>
             <div class="q-gutter-sm">
-                <q-btn no caps push v-model="usertype" color="secondary" label="University Unit" @click="$router.push('/UserLogin')"/>
-                 <q-btn-dropdown push no caps v-model="usertype" color="secondary" label="CDMO Staff" dropdown-icon="change_history">
+                <q-btn-dropdown no caps v-model="usertype" color="secondary" label="UNIT" dropdown-icon="change_history">
+                    <q-list>
+                    <q-item clickable v-close-popup @click="$router.push('/UserLogin')">
+                        <q-item-section>
+                        <q-item-label> Unit Requestor</q-item-label>
+                        </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="$router.push('/UserLogin')">
+                        <q-item-section>
+                        <q-item-label>Unit Head</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-btn-dropdown>
+                 <q-btn-dropdown no caps v-model="usertype" color="secondary" label="CDMO Staff" dropdown-icon="change_history">
                     <q-list>
                     <q-item clickable v-close-popup @click="$router.push('/AdministrativeLogin')">
                         <q-item-section>

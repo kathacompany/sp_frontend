@@ -73,6 +73,17 @@ const routes = [
       { path: 'UserFileJobOrder', component: () => import('pages/user/FileJobOrder.vue') }
     ],
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/',
+    component: () => import('layouts/HeadLayout.vue'),
+    children: [
+
+      { path: 'HeadHomepage', component: () => import('pages/head/Homepage.vue') },
+      { path: 'HeadAccount', component: () => import('pages/head/Account.vue') },
+      { path: 'HeadJobOrders', component: () => import('pages/head/JobOrders.vue') }
+    ],
+    meta: { requiresAuth: true }
   }
 ]
 
