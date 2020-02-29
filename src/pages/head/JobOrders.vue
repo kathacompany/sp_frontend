@@ -10,37 +10,57 @@
                 </template>
               </q-input>
             <div style="width: 100%; height: 50%; margin-bottom: 10px">
-             <q-table
+              <q-table
                 title="PENDING"
                 class="my-sticky-column-table"
                 :data="pending"
                 :columns="column"
-                hide-bottom
-                row-key="category"
-                :filter="filter"
-              />
-            </div>
-            <div style="width: 100%; height: 50%; margin-bottom: 10px">
-             <q-table
-                title="ONGOING"
-                class="my-sticky-column-table"
-                :data="ongoing"
-                :columns="column"
-                hide-bottom
-                row-key="category"
-                :filter="filter"
-              />
-            </div>
-             <div style="width: 100%; height: 50%; margin-bottom: 10px">
-             <q-table
-                title="COMPLETED"
-                class="my-sticky-column-table"
-                :data="ongoing"
-                :columns="column"
-                hide-bottom
                 row-key="id"
-                :filter="filter"
+                :selected-rows-label="getSelectedString"
+                hide-bottom
+                selection="multiple"
+                :selected.sync="selected"
               />
+              <q-btn no caps label="APPROVE" class="q-ma-md bg-secondary text-white" @click="dialog = true"/>
+              <q-dialog v-model="dialog">
+                <q-card class="bg-primary">
+                    <q-card-section>
+                      <cap>Please input details to proceed</cap>
+                    </q-card-section>
+                    <q-separator/>
+                    <q-card-section>
+                        <q-form class="q-gutter-md">
+                          <q-input
+                            square
+                            filled
+                            clearable
+                            v-model="unit_head"
+                            label="Name"
+                          />
+                          <q-input
+                            square
+                            filled
+                            clearable
+                            class="q-pa-xs"
+                            v-model="password"
+                            :disable="disable"
+                            label="Password"
+                            :type="isPwd ? 'password' : 'text'">
+                                <template v-slot:append>
+                                  <q-icon
+                                    :name="isPwd ? 'visibility_off' : 'visibility'"
+                                    class="cursor-pointer"
+                                    @click="isPwd = !isPwd"
+                                  />
+                                </template>
+                            </q-input>
+                        </q-form>
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn no caps label="SUBMIT" v-close-popup color="secondary"/>
+                    </q-card-actions>
+                </q-card>
+              </q-dialog>
             </div>
           </div>
         </q-page>
@@ -49,7 +69,6 @@
 </template>
 
 <style lang="sass">
-
   td:first-child
     background-color: #e1bee7
 
@@ -67,11 +86,12 @@ import 'firebase/firestore'
 export default {
   data () {
     return {
+      unit_head: '',
+      password: '',
+      dialog: false,
       medium: false,
       filter: '',
       pending: [],
-      ongoing: [],
-      completed: [],
       category: null,
       unit: null,
       location: null,

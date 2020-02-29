@@ -7,7 +7,7 @@
       <div class="row">
         <q-card class="bg-primary shadow-3">
           <q-card-section class="bg-secondary">
-            <div class="text-h6">CDMO Login</div>
+            <div class="text-h6">Unit Login</div>
           </q-card-section>
           <q-separator/>
           <q-card-section>
@@ -87,7 +87,7 @@ export default {
         .signInWithEmailAndPassword(this.email, this.password)
         .then(
           user => {
-            this.$router.push('/ForemenHomepage')
+            this.$router.push('/HeadHomepage')
           },
           err => {
             alert(err.message)
