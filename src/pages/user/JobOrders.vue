@@ -70,7 +70,7 @@
                   :filter="filter"
                   hide-bottom
                 >
-                                <template v-slot:body="props">
+                <template v-slot:body="props">
                   <q-tr :props="props">
                   <q-td key="id" :props="props">
                     {{ props.row.id }}
@@ -163,7 +163,6 @@
             </div>
           </div>
         </q-page>
-        <router-view/>
     </q-page-container>
   </q-layout>
 </template>
@@ -213,7 +212,7 @@ export default {
           requestor: doc.data().requestor,
           status: doc.data().status
         }
-        this.job_orders.push(data)
+        this.pending.push(data)
       })
     })
   }

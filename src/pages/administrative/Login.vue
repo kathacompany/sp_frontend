@@ -13,30 +13,32 @@
             <q-card container class="bg-white">
                 <q-card-section>
                 <div class="text-h6">Enter Email Address</div>
-                </q-card-section>
+              </q-card-section>
 
-                <q-card-section>
+              <q-card-section>
                 <q-input dense v-model="email" label="Press Enter to continue" autofocus @keyup.enter="sentEmail = true" />
-                </q-card-section>
-                <br>
-                <q-card-actions align="right" class="text-primary">
+              </q-card-section>
+              <br>
+              <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Cancel" v-close-popup />
                 </q-card-actions>
             </q-card>
             </q-dialog>
         <div>
             <q-dialog v-model="sentEmail">
-            <q-card container class="flex flex-center">
+              <q-card container class="flex flex-center">
                 <q-card-section>
-                A link was sent to your email
+                  A link was sent to your email
                     <q-card-actions align="right">
                     <q-btn flat label="Close" color="secondary" v-close-popup/>
                     </q-card-actions>
                 </q-card-section>
-            </q-card>
+              </q-card>
             </q-dialog>
         </div>
-    </q-page>
+      </div>
+    </div>
+  </q-page>
 </template>
 
 <style>

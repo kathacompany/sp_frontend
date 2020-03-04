@@ -1,42 +1,64 @@
 <template>
-    <q-page class="flex flex-center">
-        <q-card rounded class="bg-primary" style="padding:30px;">
-            <q-input v-model="email"
-            label="Email"></q-input>
-            <q-input v-model="password" label="Password" type="password"></q-input>
-            <br/>
-            <q-btn push rounded no-caps @click="login" class="q-mr-xs" label="LOGIN" color="secondary"/>
-            <q-btn push rounded no-caps v-go-back="'/'" class="q-mr-xs" label="CANCEL" color="secondary"/>
-            <q-btn flat class="q-mr-xs" label="Forgot password?" color="primary" @click="dialog = true"/>
+  <q-page class="window-height window-width row justify-center items-center" style="background:linear-gradient(to right, purple , pink">
+    <div class="column">
+      <div class="q-pa-sm">
+        <q-btn flat size="10px" icon="arrow_back" style="float: left" label="Go Back" v-go-back=" '/' "/>
+      </div>
+      <div class="row">
+        <q-card class="bg-primary shadow-3">
+          <q-card-section class="bg-secondary">
+            <div class="text-h6">CDMO Login</div>
+          </q-card-section>
+          <q-separator/>
+          <q-card-section>
+            <q-form class="q-gutter-md">
+              <q-input square filled clearable icon="email" v-model="email" type="email" color="secondary" label="Email">
+                <template v-slot:prepend>
+                  <q-icon name="email"/>
+                </template>
+              </q-input>
+              <q-input square filled clearable v-model="password" type="password" color="secondary" label="Password">
+                 <template v-slot:prepend>
+                  <q-icon name="lock"/>
+                </template>
+              </q-input>
+            </q-form>
+          </q-card-section>
+          <q-card-actions class="q-px-md">
+            <q-btn unelevated class="full-width" label="LOGIN"  color="secondary" @click="login"/>
+            <q-btn flat label="Forgot password?" @click="dialog = true"/>
+          </q-card-actions>
         </q-card>
-            <q-dialog v-model="dialog">
-            <q-card container class="bg-white">
-                <q-card-section>
+        <q-dialog v-model="dialog">
+          <q-card container class="bg-white">
+              <q-card-section>
                 <div class="text-h6">Enter Email Address</div>
-                </q-card-section>
+              </q-card-section>
 
-                <q-card-section>
+              <q-card-section>
                 <q-input dense v-model="email" label="Press Enter to continue" autofocus @keyup.enter="sentEmail = true" />
-                </q-card-section>
-                <br>
-                <q-card-actions align="right" class="text-primary">
+              </q-card-section>
+              <br>
+              <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Cancel" v-close-popup />
-                </q-card-actions>
-            </q-card>
-            </q-dialog>
-        <div>
+              </q-card-actions>
+          </q-card>
+        </q-dialog>
+          <div>
             <q-dialog v-model="sentEmail">
-            <q-card container class="flex flex-center">
+              <q-card container class="flex flex-center">
                 <q-card-section>
-                A link was sent to your email
+                  A link was sent to your email
                     <q-card-actions align="right">
                     <q-btn flat label="Close" color="secondary" v-close-popup/>
                     </q-card-actions>
                 </q-card-section>
-            </q-card>
+              </q-card>
             </q-dialog>
         </div>
-    </q-page>
+      </div>
+    </div>
+  </q-page>
 </template>
 
 <style>

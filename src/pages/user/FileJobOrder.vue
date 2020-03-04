@@ -1,15 +1,15 @@
 <template>
-  <q-page class="q-ma-sm flex flex-center">
+<q-layout view="hHh lpR fFf">
+  <q-page  class="window-height window-width row justify-center items-center">
     <q-card>
-      <q-card-section>
-        <div class="text-h5 text-center">JOB REQUEST FORM</div>
+      <q-card-section class="bg-primary">
+        <h6 class="text-center q-ma-xs">JOB REQUEST FORM</h6>
       </q-card-section>
       <q-separator/>
       <q-card-section>
-        <div style="width: 495px;">
           <div class="col">
-            <div class="row">
-              <q-input style="margin-top: 20px; margin-left: 8px;"
+            <div class="row justify-center">
+              <q-input
                 filled
                 v-model="date"
                 mask="date"
@@ -26,7 +26,7 @@
               <q-select
                 filled
                 class="q-ma-sm"
-                style="width: 17vw"
+                style="width: 18vw; margin-top: -10px;"
                 v-model="category"
                 :options="options"
                 label="Category"
@@ -48,11 +48,11 @@
                 />
             </div>
             <div class="col q-ma-sm">
-              <div class="row">
+              <div class="row full-height justify-center">
                 <q-input
                   filled
                   class="q-ma-xs"
-                  style="width: 10vw"
+                  style="width: 12vw"
                   v-model="unit"
                   label="Unit"
                   lazy-rules
@@ -61,7 +61,7 @@
                 <q-input
                   filled
                   class="q-ma-xs"
-                  style="width: 12vw"
+                  style="width: 11vw"
                   v-model="location"
                   label="Location / Building"
                   lazy-rules
@@ -70,7 +70,7 @@
                 <q-input
                   filled
                   class="q-ma-xs"
-                  style="width: 11vw"
+                  style="width: 10vw"
                   v-model="telephone"
                   label="Telephone"
                   lazy-rules
@@ -81,7 +81,7 @@
               </div>
             </div>
             <div class="col q-ma-sm">
-              <div class="row">
+              <div class="row full-height justify-center">
                 <q-input
                   filled
                   class="q-pa-xs"
@@ -107,24 +107,18 @@
                   </q-input>
               </div>
             </div>
-          </div>
         </q-card-section>
         <q-separator/>
-        <q-card-actions>
-          <q-toggle
-            v-model="disable"
-            class="q-ma-sm"
-            label="Forward"
-            dark
-          />
-          <q-btn no-caps push
-            class="q-ma-sm"
-            label="Submit"
-            @click="filedJob" color="primary"
+        <q-card-actions align="center">
+          <q-btn no-caps
+            class="q-ma-sm size: 15x"
+            label="FORWARD"
+            @click="filedJob" color="secondary"
           />
         </q-card-actions>
-    </q-card>
-  </q-page>
+      </q-card>
+    </q-page>
+  </q-layout>
 </template>
 
 <script>
