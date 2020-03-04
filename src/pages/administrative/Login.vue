@@ -36,8 +36,6 @@
               </q-card>
             </q-dialog>
         </div>
-      </div>
-    </div>
   </q-page>
 </template>
 
