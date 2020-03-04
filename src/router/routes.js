@@ -19,8 +19,7 @@ const routes = [
       { path: 'AdministrativeHomepage', component: () => import('pages/administrative/Homepage.vue') },
       { path: 'AdministrativeAccount', component: () => import('pages/administrative/Account.vue') },
       { path: 'AdministrativeJobOrders', component: () => import('pages/administrative/JobOrders.vue') },
-      { path: 'AdministrativeEmployees', component: () => import('pages/administrative/EmployeeList.vue') },
-      { path: 'AdministrativeAnnouncements', component: () => import('pages/administrative/Announcements.vue') }
+      { path: 'AdministrativeEmployees', component: () => import('pages/administrative/EmployeeList.vue') }
     ],
     meta: { requiresAuth: true }
   },

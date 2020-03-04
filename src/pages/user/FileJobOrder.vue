@@ -146,7 +146,8 @@ export default {
       unit: null,
       location: null,
       description: null,
-      requestor: null
+      requestor: null,
+      status: 'Pending'
     }
   },
   methods: {
@@ -159,7 +160,8 @@ export default {
         location: this.location,
         description: this.description,
         requestor: this.requestor,
-        password: this.password
+        password: this.password,
+        status: this.status
       })
         .then(docRef => {
           console.log('Job Filed: ', docRef.id)

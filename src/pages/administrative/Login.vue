@@ -5,13 +5,12 @@
             label="Email"></q-input>
             <q-input v-model="password" label="Password" type="password"></q-input>
             <br/>
-            <q-btn push rounded no-caps type="submit" class="q-mr-sm" label="Login" color="secondary"/>
-            <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/>
+            <q-btn push rounded no-caps @click="login" class="q-mr-xs" label="LOGIN" color="secondary"/>
+            <q-btn push rounded no-caps v-go-back="'/'" class="q-mr-xs" label="CANCEL" color="secondary"/>
+            <q-btn flat class="q-mr-xs" label="Forgot password?" color="primary" @click="dialog = true"/>
         </q-card>
             <q-dialog v-model="dialog">
-            <q-card container class="bg-white" style="padding:40px;">
-
-
+            <q-card container class="bg-white">
                 <q-card-section>
                 <div class="text-h6">Enter Email Address</div>
                 </q-card-section>
@@ -25,8 +24,7 @@
                 </q-card-actions>
             </q-card>
             </q-dialog>
-          <div>
-
+        <div>
             <q-dialog v-model="sentEmail">
             <q-card container class="flex flex-center">
                 <q-card-section>
@@ -52,14 +50,12 @@ import 'firebase/database'
 export default {
   data () {
     return {
-      formData: {
-        email: '',
-        password: ''
-      },
+      email: '',
+      password: '',
+      error: '',
       layout: false,
       dialog: false,
       sentEmail: false
-    // submitForm: false,
     }
   },
   methods: {
@@ -69,7 +65,7 @@ export default {
         .signInWithEmailAndPassword(this.email, this.password)
         .then(
           user => {
-            this.$router.push('/UserHomepage')
+            this.$router.push('/AdministrativeHomepage')
           },
           err => {
             alert(err.message)

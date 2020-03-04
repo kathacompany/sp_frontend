@@ -1,70 +1,166 @@
-<template v-slot:top-right>
+<template>
   <q-layout view="hHh lpR fFf">
     <q-page-container>
         <q-page class="flex flex-center text-center">
-          <div class="q-ma-md q-pa-md">
-            <h4 style="margin-top: 20px"> Job Order Requests </h4>
-              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search by Category">
+          <div class="q-gutter-sm flex text-center">
+            <div style="width: 100%; height: 50%;">
+              <h2> Inventory </h2>
+              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
+              <div style="width: 100%; text-align:left;">
+                <h6>Pending Job Requests</h6>
+                <q-table
+                  class="my-sticky-header-table"
+                  :data="job_orders"
+                  :columns="columnA"
+                  row-key="name"
+                  :filter="filter"
+                  hide-bottom
+                >
+                <template v-slot:body="props">
+                  <q-tr :props="props">
+                  <q-td key="id" :props="props">
+                    {{ props.row.id }}
+                  </q-td>
+                  <q-td key="category" :props="props">
+                    {{ props.row.category }}
+                  </q-td>
+                  <q-td key="status" :props="props">
+                    {{ props.row.status }}
+                  </q-td>
+                  <q-tr :props="props">
+                    <q-td key="details" :props="props">
+                      <q-btn class="bg-primary" push label="More Details" @click="details=true">
+                        <q-dialog v-model="details">
+                          <q-card class="q-pa-md">
+                            <q-card-section>
+                              <div class="text-h6">Job Order Details: </div>
+                            </q-card-section>
+
+                            <q-card-section>
+                              Unit: {{ props.row.unit }} <q-separator/>
+                              Location: {{ props.row.location }} <q-separator/>
+                              Description: {{ props.row.description }} <q-separator />
+                              Date: {{ props.row.date }} <q-separator/>
+                              Telephone: {{ props.row.telephone }} <q-separator/>
+                              Requestor: {{ props.row.requestor }} <q-separator/>
+                            </q-card-section>
+                            <q-card-actions align="right">
+                              <q-btn flat label="OK" class= "bg-primary" v-close-popup />
+                            </q-card-actions>
+                          </q-card>
+                        </q-dialog>
+                      </q-btn>
+                    </q-td>
+                    </q-tr>
+                  </q-tr>
+                </template>
+                </q-table>
+              </div>
+              <div style="width: 100%; text-align:left;">
+                <h6>Ongoing Job Requests</h6>
+                <q-table
+                  class="my-sticky-header-table"
+                  :data="job_orders"
+                  :columns="columnA"
+                  row-key="name"
+                  :filter="filter"
+                  hide-bottom
+                >
+                                <template v-slot:body="props">
+                  <q-tr :props="props">
+                  <q-td key="id" :props="props">
+                    {{ props.row.id }}
+                  </q-td>
+                  <q-td key="category" :props="props">
+                    {{ props.row.category }}
+                  </q-td>
+                  <q-td key="status" :props="props">
+                    {{ props.row.status }}
+                  </q-td>
+                  <q-tr :props="props">
+                    <q-td key="details" :props="props">
+                      <q-btn class="bg-primary" push label="More Details" @click="details=true">
+                        <q-dialog v-model="details">
+                          <q-card class="q-pa-md">
+                            <q-card-section>
+                              <div class="text-h6">Job Order Details: </div>
+                            </q-card-section>
+
+                            <q-card-section>
+                              Unit: {{ props.row.unit }} <q-separator/>
+                              Location: {{ props.row.location }} <q-separator/>
+                              Description: {{ props.row.description }} <q-separator />
+                              Date: {{ props.row.date }} <q-separator/>
+                              Telephone: {{ props.row.telephone }} <q-separator/>
+                              Requestor: {{ props.row.requestor }} <q-separator/>
+                            </q-card-section>
+                            <q-card-actions align="right">
+                              <q-btn flat label="OK" class= "bg-primary" v-close-popup />
+                            </q-card-actions>
+                          </q-card>
+                        </q-dialog>
+                      </q-btn>
+                    </q-td>
+                    </q-tr>
+                  </q-tr>
+                </template>
+                </q-table>
+              </div>
+              <div style="width: 100%; text-align:left;">
+                <h6>Completed Job Requests</h6>
+                <q-table
+                  class="my-sticky-header-table"
+                  :data="job_orders"
+                  :columns="columnA"
+                  row-key="name"
+                  :filter="filter"
+                  hide-bottom
+                >
+                  <template v-slot:body="props">
+                  <q-tr :props="props">
+                  <q-td key="id" :props="props">
+                    {{ props.row.id }}
+                  </q-td>
+                  <q-td key="category" :props="props">
+                    {{ props.row.category }}
+                  </q-td>
+                  <q-td key="status" :props="props">
+                    {{ props.row.status }}
+                  </q-td>
+                  <q-tr :props="props">
+                    <q-td key="details" :props="props">
+                      <q-btn class="bg-primary" push label="More Details" @click="details=true">
+                        <q-dialog v-model="details">
+                          <q-card class="q-pa-md">
+                            <q-card-section>
+                              <div class="text-h6">Job Order Details: </div>
+                            </q-card-section>
+
+                            <q-card-section>
+                              Unit: {{ props.row.unit }} <q-separator/>
+                              Location: {{ props.row.location }} <q-separator/>
+                              Description: {{ props.row.description }} <q-separator />
+                              Date: {{ props.row.date }} <q-separator/>
+                              Telephone: {{ props.row.telephone }} <q-separator/>
+                              Requestor: {{ props.row.requestor }} <q-separator/>
+                            </q-card-section>
+                            <q-card-actions align="right">
+                              <q-btn flat label="OK" class= "bg-primary" v-close-popup />
+                            </q-card-actions>
+                          </q-card>
+                        </q-dialog>
+                      </q-btn>
+                    </q-td>
+                    </q-tr>
+                  </q-tr>
+                </template>
+                </q-table>
+              </div>
             </div>
-            <div style="width: 100%; height: 50%; margin-top: -30px; margin-bottom: 10px">
-              <q-separator />
-                <div><h6 style="margin-top: 10px">PENDING</h6></div>
-              <q-card class="my-card" v-for="job in job_orders" v-bind:key="job.id" >
-                <q-card-section class="bg-primary text-white">
-                  JOB ID: {{job.id}} <pre></pre>
-                  CATEGORY: {{job.category}} <pre></pre>
-                </q-card-section>
-                <q-card-actions align="center">
-                   <q-btn no-caps push color="secondary" label="Open" class="text-white" @click="medium = true"/>
-                     <q-dialog v-model="medium">
-                      <q-card style="width: 100%; max-width: 50vw;">
-                        <q-card-section>
-                          <div class="text-h6 text-center">University of the Philippines Visayas</div>
-                        </q-card-section>
-                        <q-separator />
-                        <q-card-section class="bg-secondary text-center text-white">
-                          <div>JOB REQUEST DETAILS</div>
-                        </q-card-section>
-                          <q-card-section>
-                            <div class="q-pa-md q-gutter-sm">
-                              <q-table
-                                card-class="bg-primary"
-                                :data="job_orders"
-                                :columns="columnA"
-                                row-key="name"
-                                hide-bottom
-                              />
-                              <q-table
-                                card-class="bg-primary"
-                                :data="job_orders"
-                                :columns="columnB"
-                                row-key="name"
-                                hide-bottom
-                              />
-                            </div>
-                          </q-card-section>
-                        <q-separator />
-                        <q-card-actions align="right" class="q-pa-sm">
-                          <q-btn icon-right="archive" color="primary" label="Export to pdf" no-caps push/>
-                          <q-btn no-caps push label="CLOSE" color="secondary" v-close-popup />
-                        </q-card-actions>
-                      </q-card>
-                    </q-dialog>
-                   <q-btn no-caps push color="secondary" label="View Status" class="text-white"/>
-                </q-card-actions>
-              </q-card>
-          </div>
-          <div style="width: 100%; height: 50%; margin-bottom: 10px">
-            <q-separator />
-                <div><h6 style="margin-top: 10px">ONGOING</h6></div>
-          </div>
-          <div style="width: 100%; height: 50%;">
-            <q-separator />
-                <div><h6 style="margin-top: 10px margin-bottom: 10px">COMPLETED</h6></div>
           </div>
         </q-page>
         <router-view/>
@@ -72,11 +168,17 @@
   </q-layout>
 </template>
 
-<style lang="sass" scoped>
-.q-card.my-card
-    display: inline-block
-    width: 20%
-    margin: 10px
+<style lang="sass">
+.my-sticky-header-table
+  .q-table__top,
+  thead tr:first-child th
+    background-color: #e8a87c
+
+  thead tr th
+    position: sticky
+    z-index: 1
+  thead tr:first-child th
+    top: 0
 </style>
 
 <script>
@@ -86,67 +188,14 @@ import 'firebase/firestore'
 export default {
   data () {
     return {
-      medium: false,
+      details: false,
       filter: '',
       job_orders: [],
-      category: null,
-      unit: null,
-      location: null,
-      description: null,
-      telephone: null,
-      requestor: null,
       columnA: [
-        {
-          name: 'id',
-          align: 'left',
-          label: 'JOB ID',
-          field: 'id'
-        },
-        {
-          name: 'category',
-          align: 'left',
-          label: 'CATEGORY',
-          field: 'category',
-          sortable: true
-        },
-        {
-          name: 'location',
-          align: 'left',
-          label: 'LOCATION',
-          field: 'location'
-        },
-        {
-          name: 'description',
-          align: 'left',
-          label: 'DESCRIPTION',
-          field: 'description'
-        }
-      ],
-      columnB: [
-        {
-          name: 'unit',
-          align: 'left',
-          label: 'REQUESTING UNIT',
-          field: 'unit'
-        },
-        {
-          name: 'date',
-          align: 'left',
-          label: 'DATE',
-          field: 'date'
-        },
-        {
-          name: 'telephone',
-          align: 'left',
-          label: 'TELEPHONE',
-          field: 'telephone'
-        },
-        {
-          name: 'requestor',
-          align: 'left',
-          label: 'REQUESTOR NAME',
-          field: 'requestor'
-        }
+        { name: 'id', align: 'left', label: 'JOB ID', field: 'id' },
+        { name: 'category', align: 'left', label: 'CATEGORY', field: 'category', sortable: true },
+        { name: 'status', align: 'left', field: 'status', label: 'STATUS' },
+        { name: 'details', field: 'details', align: 'left' }
       ]
     }
   },
@@ -161,7 +210,8 @@ export default {
           description: doc.data().description,
           date: doc.data().date,
           telephone: doc.data().telephone,
-          requestor: doc.data().requestor
+          requestor: doc.data().requestor,
+          status: doc.data().status
         }
         this.job_orders.push(data)
       })

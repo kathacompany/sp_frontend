@@ -1,5 +1,5 @@
 <template>
-   <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh lpR fFf">
     <q-page-container>
         <q-page class="flex flex-center text-center">
           <div class="q-gutter-sm flex text-center">
@@ -13,11 +13,12 @@
             </div>
             <div style="width: 100%;">
             <q-table
-              class="my-sticky-column-table"
+              class="my-sticky-header-table"
               :data="data"
               :columns="columns"
               row-key="name"
               :filter="filter"
+              hide-bottom
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
@@ -29,7 +30,7 @@
                   </q-td>
                   <q-td key="toEdit" :props="props">
                     {{ props.row.toEdit }}
-                    <q-btn flat label="Edit" @click="change=true">
+                    <q-btn class="bg-primary" push label="Edit" @click="change=true">
                         <q-popup-edit v-model="change" title="Update quantity" persistent>
                         <q-input type="number" v-model="props.row.quantity" dense autofocus hint="Use buttons to close"
                         />
@@ -40,7 +41,7 @@
                   </q-td>
                   <q-td key="toDelete" :props="props">
                     {{ props.row.toDelete }}
-                    <q-btn flat label="Delete" @click="toDelete(props.row.id)">
+                    <q-btn class="bg-primary" push label="Delete" @click="toDelete(props.row.id)">
                       <q-space/>
                     </q-btn>
                   </q-td>
@@ -74,8 +75,9 @@
 </template>
 
 <style lang="sass">
-
-  td:first-child
+.my-sticky-header-table
+  .q-table__top,
+  thead tr:first-child th
     background-color: #e8a87c
 
   th:first-child,
