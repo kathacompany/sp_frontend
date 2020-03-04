@@ -4,7 +4,7 @@
         <q-page class="flex flex-center text-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h2> Inventory </h2>
+              <h2> Job Orders </h2>
               <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
@@ -181,8 +181,9 @@
 </style>
 
 <script>
-import * as firebase from 'firebase/app'
+// import * as firebase from 'firebase/app'
 import 'firebase/firestore'
+import { db } from 'boot/firebase'
 
 export default {
   data () {
@@ -199,22 +200,32 @@ export default {
     }
   },
   created () {
-    firebase.firestore().collection('job_orders').get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        const data = {
-          id: doc.id,
-          category: doc.data().category,
-          unit: doc.data().unit,
-          location: doc.data().location,
-          description: doc.data().description,
-          date: doc.data().date,
-          telephone: doc.data().telephone,
-          requestor: doc.data().requestor,
-          status: doc.data().status
-        }
-        this.pending.push(data)
-      })
-    })
+    this.getMaterial()
+  },
+  methods: {
+    async getMaterial () {
+      try {
+        await db.collection('job_orders').get().then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            const matData = {
+              id: doc.id,
+              category: doc.data().category,
+              unit: doc.data().unit,
+              location: doc.data().location,
+              description: doc.data().description,
+              date: doc.data().date,
+              telephone: doc.data().telephone,
+              requestor: doc.data().requestor,
+              status: doc.data().status
+            }
+            // console.log(matData)
+            this.job_orders.push(matData)
+          })
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 }
 </script>
