@@ -1,20 +1,23 @@
 <template>
 <q-layout view="hHh lpR fFf">
   <q-page  class="window-height window-width row justify-center items-center">
-    <q-card>
-      <q-card-section class="bg-primary">
-        <h6 class="text-center q-ma-xs">JOB REQUEST FORM</h6>
-      </q-card-section>
-      <q-separator/>
-      <q-card-section>
-          <div class="col">
-            <div class="row justify-center">
-              <q-input
+    <div class="absolute-center q-pa-sm" style="margin-top: -40px; min-width: 350px; max-width: 500px; max-height: 100%; border: solid #9C3B3B 2px;">
+      <div class="q-pa-sm bg-accent text-h5 text-center text-white">JOB REQUEST FORM</div>
+      <q-separator color="secondary"/>
+        <q-form @submit.prevent.stop="onSubmit" @reset="onReset">
+        <div class="col">
+            <div class="row justify-center items-center">
+              <q-select
                 filled
+                ref="date"
+                color="secondary"
                 v-model="date"
                 mask="date"
                 label="Date"
-                :rules="['date']">
+                lazy-rules
+                :rules="[
+                   val => val !== null && val !== '' || 'Date is required'
+                ]">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -22,101 +25,98 @@
                     </q-popup-proxy>
                   </q-icon>
                 </template>
-              </q-input>
+              </q-select>
               <q-select
                 filled
+                ref="category"
+                color="secondary"
                 class="q-ma-sm"
-                style="width: 18vw; margin-top: -10px;"
+                style="min-width: 16vw; margin-top: 5px;"
                 v-model="category"
-                :options="options"
+                :options="['Plumbing', 'Eletricity', 'Grounds', 'Transportation']"
                 label="Category"
+                lazy-rules
+                :rules="[
+                   val => val !== null && val !== '' || 'Category is required'
+                ]"
               />
+              </div>
             </div>
-          </div>
-            <div class="q-pa-sm">
-                 <q-input
-                  filled
-                  v-model="description"
-                  type="textarea"
-                  label="Description"
-                  :max-height="50"
-                  rows="5"
-                  lazy-rules
-                  :rules="[
-                    val => val !== null && val !== '' || 'Please describe the request'
-                  ]"
-                />
-            </div>
-            <div class="col q-ma-sm">
-              <div class="row full-height justify-center">
+            </q-form>
+            <q-form @submit.prevent.stop="onSubmit" @reset="onReset">
+            <div>
+               <q-input
+                filled
+                ref="description"
+                clearable
+                color="secondary"
+                v-model="description"
+                type="textarea"
+                label="Description"
+                :max-height="50"
+                rows="5"
+                lazy-rules
+                :rules="[
+                  val => val !== null && val !== '' || 'Description is required'
+                ]"
+              />
+              </div>
+              </q-form>
+              <q-form @submit.prevent.stop="onSubmit" @reset="onReset">
+              <div class="col">
+              <div class="row">
                 <q-input
                   filled
+                  ref="unit"
+                  clearable
+                  color="secondary"
                   class="q-ma-xs"
-                  style="width: 12vw"
+                  style="min-width: auto; width: 11vw;"
                   v-model="unit"
                   label="Unit"
                   lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Please type something']"
+                  :rules="[ val => val !== null && val !== '' || 'Unit Name is required']"
                 />
                 <q-input
                   filled
+                  ref="location"
+                  clearable
+                  color="secondary"
                   class="q-ma-xs"
-                  style="width: 11vw"
+                  style="min-width: auto; width: 12vw;"
                   v-model="location"
                   label="Location / Building"
                   lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Please type something']"
+                  :rules="[ val => val !== null && val !== '' || 'Location is required']"
                 />
                 <q-input
                   filled
-                  class="q-ma-xs"
-                  style="width: 10vw"
+                  clearable
+                  ref="telephone"
                   v-model="telephone"
                   label="Telephone"
+                  mask="###"
+                  hint="###"
+                  color="secondary"
+                  class="q-ma-xs"
+                  style="min-width: auto; width: 10vw;"
                   lazy-rules
                   :rules="[
-                    val => val !== null && val !== '' || 'Please type your telephone number'
+                    val => val !== null && val !== '' || 'Telephone is required'
                   ]"
                 />
+                </div>
+                </div>
+                </q-form>
+
+              <q-separator color="secondary"/>
+              <q-form @submit.prevent.stop="onSubmit" @reset="onReset">
+              <div class="q-pa-sm row justify-center">
+                <q-btn no-caps type="submit" label="FORWARD" color="secondary"/>
+                <q-btn flat type="reset" class="q-ml-sm" label="RESET" color="secondary"/>
               </div>
-            </div>
-            <div class="col q-ma-sm">
-              <div class="row full-height justify-center">
-                <q-input
-                  filled
-                  class="q-pa-xs"
-                  v-model="requestor" :disable="disable"
-                  label="Requestor's Name"
-                  lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Please type your name']"
-                />
-                  <q-input
-                  filled
-                  class="q-pa-xs"
-                  v-model="password"
-                  :disable="disable"
-                  label="Password"
-                  :type="isPwd ? 'password' : 'text'">
-                    <template v-slot:append>
-                      <q-icon
-                        :name="isPwd ? 'visibility_off' : 'visibility'"
-                        class="cursor-pointer"
-                        @click="isPwd = !isPwd"
-                      />
-                    </template>
-                  </q-input>
-              </div>
-            </div>
-        </q-card-section>
-        <q-separator/>
-        <q-card-actions align="center">
-          <q-btn no-caps
-            class="q-ma-sm size: 15x"
-            label="FORWARD"
-            @click="filedJob" color="secondary"
-          />
-        </q-card-actions>
-      </q-card>
+            </q-form>
+      </div>
     </q-page>
   </q-layout>
 </template>
@@ -128,40 +128,65 @@ import 'firebase/firestore'
 export default {
   data () {
     return {
-      disable: false,
-      password: '',
-      isPwd: true,
-      category: 'null',
-      options: [
-        'Plumbing', 'Eletricity', 'Grounds', 'Transportation'
-      ],
+      category: null,
       date: null,
       telephone: null,
       unit: null,
       location: null,
       description: null,
-      requestor: null
+      status: null,
+      requestor: null,
+      foreman: 'N/A'
     }
   },
   methods: {
-    filedJob () {
-      firebase.firestore().collection('job_orders').add({
-        category: this.category,
-        date: this.date,
-        telephone: this.telephone,
-        unit: this.unit,
-        location: this.location,
-        description: this.description,
-        requestor: this.requestor,
-        password: this.password
-      })
-        .then(docRef => {
-          console.log('Job Filed: ', docRef.id)
-          this.$router.push('/UserJobOrders')
+    onSubmit () {
+      let jobRef = firebase.firestore().collection('job_orders')
+      if (this.date === null || this.category === null || this.telephone === null || this.location === null || this.description === null || this.unit === null) {
+        this.$refs.date.validate()
+        this.$refs.category.validate()
+        this.$refs.description.validate()
+        this.$refs.unit.validate()
+        this.$refs.location.validate()
+        this.$refs.telephone.validate()
+      } else {
+        jobRef.add({
+          status: 'for Unit Head approval',
+          category: this.category,
+          date: this.date,
+          telephone: this.telephone,
+          unit: this.unit,
+          location: this.location,
+          description: this.description,
+          requestor: this.requestor,
+          foreman: this.foreman
         })
-        .catch(error => {
-          console.error('Error filing job orders: ', error)
-        })
+          .then(doc => {
+            this.$router.push('/UserJobOrders')
+            this.$q.notify({
+              color: 'secondary',
+              message: 'Forwarded Successfully'
+            })
+          })
+          .catch(error => {
+            console.error('Error fowarding job order: ', error)
+          })
+      }
+    },
+    onReset () {
+      this.date = null
+      this.category = null
+      this.description = null
+      this.unit = null
+      this.location = null
+      this.telephone = null
+
+      this.$refs.date.resetValidation()
+      this.$refs.category.resetValidation()
+      this.$refs.description.resetValidation()
+      this.$refs.unit.resetValidation()
+      this.$refs.location.resetValidation()
+      this.$refs.telephone.resetValidation()
     }
   }
 }

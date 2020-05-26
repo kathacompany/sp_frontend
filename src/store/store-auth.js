@@ -7,7 +7,7 @@ const state = {
 
 const mutations = {
   setLoggedIn (state, value) {
-    state.loggedIn = value
+    this.loggedIn = value
   }
 }
 
@@ -17,8 +17,8 @@ const actions = {
       .then(response => {
         console.log('response: ', response)
       })
-      .catch(error => {
-        console.log('error.message:', error.message)
+      .catch(err => {
+        console.log('error.message:', err.message)
       })
   },
   logoutUser () {
@@ -30,11 +30,15 @@ const actions = {
       if (user) {
         commit('setLoggedIn', true)
         LocalStorage.set('loggedIn', true)
-      //  this.$router.push('/AdministrativeHomepage')
+        this.$router.push().catch(err => {
+          console.log('error.message:', err)
+        })
       } else {
         commit('setLoggedIn', false)
         LocalStorage.set('loggedIn', false)
-        this.$router.replace('/')
+        this.$router.replace('/').catch(err => {
+          console.log('error.message:', err)
+        })
       }
     })
   }

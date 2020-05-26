@@ -19,10 +19,10 @@ VueRouter.prototype.push = function push (location) {
 
 const router = new VueRouter({ })
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  if (to.matched.some(routes => routes.meta.requiresAuth)) {
     if (!firebase.auth().currentUser) {
       next({
-        path: '/ login',
+        path: '/',
         query: {
           redirect: to.fullPath
         }
@@ -30,7 +30,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next()
     }
-  } else if (to.matched.some(record => record.meta.requiresGuest)) {
+  } else if (to.matched.some(routes => routes.meta.requiresGuest)) {
     if (firebase.auth().currentUser) {
       next({
         path: '/',

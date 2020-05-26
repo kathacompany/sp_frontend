@@ -2,7 +2,7 @@ import * as firebase from 'firebase/app'
 
 // If you enabled Analytics in your project, add the Firebase SDK for Analytics
 // Add the Firebase products that you want to use
- import 'firebase/store-auth'
+import 'firebase/store-auth'
 
 const firebase = require("firebase");
 // Required for side-effects

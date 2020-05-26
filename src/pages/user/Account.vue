@@ -1,36 +1,36 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-page-container>
-    <q-page class="flex flex-center text-center">
-      <div style="width: 100%; height: 50%;">
-        <q-icon name="person" style="font-size:100px;"/>
-      </div>
-      <div class="q-gutter-sm" style="margin-top: -70px">
-        <q-table
-          card-class="bg-primary"
-          :data="account"
-          :columns="profileColumns"
-          hide-bottom
-          style="width:500px;"
-        />
-         <q-table
-          card-class="bg-primary"
-          :data="account"
-          :columns="tableColumns"
-          hide-bottom
-          style="width:500px;"
-        />
-        <q-btn no-caps class="q-pa-auto q-ma-auto" size="12px" color="secondary" @click="updateAccount" label="EDIT INFO"/>
+        <q-page class="flex flex-center text-center">
+          <div class="q-ma-md q-pa-md bg-primary">
+            <div style="width: 100%; height: 50%;">
+              <q-icon name="person" style="font-size:200px;"/>
+            </div>
+            <div style="width: 100%; height: 50%; margin-bottom: 10px">
+             <q-table
+                class="my-sticky-column-table"
+                :data="account"
+                :columns="personal"
+                hide-bottom
+              />
+            </div>
+            <div style="width: 100%; height: 50%; margin-bottom: 10px">
+             <q-table
+                class="my-sticky-column-table"
+                :data="account"
+                :columns="secondary"
+                hide-bottom
+              />
+            </div>
+            <q-btn no-caps class="q-pa-xs q-ma-xs" ref="btn" color="secondary" @click="opened=true" label="ADD INFO"/>
 
-        <q-btn no-caps class="q-pa-auto q-ma-auto" size="12px" color="secondary" @click="opened=true" label="ADD INFO"/>
-
-          <q-dialog v-model="opened" maximized class="bg-white">
+          <q-dialog v-model="opened" maximized>
             <q-layout class="no-shadow">
               <q-page-container>
                 <q-page class="flex flex-center">
-                  <q-card container class="bg-primary q-pa-auto q-ma-auto" style="width:30%;">
+                  <q-card container class="bg-primary q-pa-auto q-ma-auto" style="width:40%;">
                     <q-card-section>
-                      <div class="q-pa-auto full-width">
+                      <div class="q-pa-auto">
                         <q-input class="q-ma-auto" required v-model="first_name" label="First Name"></q-input>
                         <q-input class="q-ma-auto" required v-model="last_name" label="Last Name"></q-input>
                         <q-input class="q-ma-auto" required v-model="middle_name" label="Middle Name"></q-input>
@@ -39,8 +39,8 @@
                         <q-input class="q-ma-auto" required v-model="mobile_number" label="Mobile Number"></q-input>
                         <q-input class="q-ma-auto" required v-model="email" label="Email"></q-input>
                       <q-card-actions >
-                        <q-btn rounded no-caps push color="secondary" class="text-white" label="Save" @click="saveChanges" disable="false"/>
-                        <q-btn rounded no-caps push color="secondary" label="Cancel" class="text-white" v-close-popup/>
+                        <q-btn no-caps color="secondary" class="text-white" label="Save" @click="saveChanges" disable="false"/>
+                        <q-btn no-caps color="secondary" label="Cancel" class="text-white" v-close-popup/>
                       </q-card-actions>
                       </div>
                     </q-card-section>
@@ -49,15 +49,22 @@
               </q-page-container>
             </q-layout>
           </q-dialog>
-        </div>
-    </q-page>
+          </div>
+        </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <style lang="sass">
-  .q-pa-auto
-    -webkit-text-fill-color: white;
+
+  td:first-child
+    background-color: white
+
+  th:first-child,
+  td:first-child
+    position: sticky
+    left: 0
+    z-index: 1
 </style>
 
 <script>
@@ -67,67 +74,60 @@ import 'firebase/firestore'
 export default {
   data () {
     return {
-      account: [],
+      disabled: false,
       opened: false,
-      id: null,
-      first_name: null,
+      account: [],
+      firtst_name: null,
       last_name: null,
       middle_name: null,
-      unit: null,
-      position: null,
       mobile_number: null,
+      unit: null,
       email: null,
-      tableColumns: [
-        {
-          name: 'unit',
-          required: true,
-          label: 'Unit',
-          align: 'left',
-          field: 'unit'
-        },
-        {
-          name: 'position',
-          required: true,
-          label: 'Position',
-          align: 'left',
-          field: 'position'
-        },
-        {
-          name: 'mobile_number',
-          required: true,
-          label: 'Mobile Number',
-          align: 'left',
-          field: 'mobile_number'
-        },
-        {
-          name: 'email',
-          required: true,
-          label: 'Email Address',
-          align: 'left',
-          field: 'email'
-        }
-      ],
-      profileColumns: [
+      position: null,
+      personal: [
         {
           name: 'first_name',
-          required: true,
-          label: 'First Name',
           align: 'left',
+          label: 'FIRST NAME',
           field: 'first_name'
         },
         {
           name: 'last_name',
-          required: true,
-          label: 'Last Name',
           align: 'left',
+          label: 'LAST NAME',
           field: 'last_name'
         },
         {
           name: 'middle_name',
-          required: true,
-          label: 'Middle Name',
           align: 'left',
+          label: 'MIDDLE NAME',
           field: 'middle_name'
+        },
+        {
+          name: 'mobile_number',
+          align: 'left',
+          label: 'MOBILE NUMBER',
+          field: 'mobile_number'
+        }
+      ],
+      secondary: [
+        {
+          name: 'unit',
+          align: 'left',
+          label: 'UNIT',
+          field: 'unit'
+        },
+        {
+          name: 'email',
+          align: 'left',
+          label: 'EMAIL',
+          field: 'email'
+        },
+        {
+          name: 'position',
+          align: 'left',
+          label: 'POSITION',
+          field: 'position'
         }
       ]
     }
@@ -139,10 +139,10 @@ export default {
           first_name: doc.data().first_name,
           last_name: doc.data().last_name,
           middle_name: doc.data().middle_name,
-          unit: doc.data().unit,
-          position: doc.data().position,
           mobile_number: doc.data().mobile_number,
-          email: doc.data().email
+          unit: doc.data().unit,
+          email: doc.data().email,
+          position: doc.data().position
         }
         this.account.push(data)
       })
