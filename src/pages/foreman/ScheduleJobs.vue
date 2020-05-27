@@ -1,5 +1,5 @@
 <template>
-    <div style="max-width: 800px; width: 100%; margin-left: 300px; margin-top: 100px;">
+    <div style="max-width: 900px; width: 100%; margin-left: 200px; margin-top: 50px;">
       <q-toolbar>
         <q-btn stretch flat label="Prev" @click="calendarPrev" />
         <q-separator vertical />
@@ -40,6 +40,7 @@
   </template>
 <script>
 import QCalendar from '@quasar/quasar-ui-qcalendar'
+
 const CURRENT_DAY = new Date()
 function getCurrentDay (day) {
   const newDay = new Date(CURRENT_DAY)

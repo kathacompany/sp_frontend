@@ -6,7 +6,7 @@
         style="width:50vw;max-width:300px;"
       >
     </p>
-    <p class="text-fad">Sorry, nothing here...<strong>(404)</strong></p>
+    <p class="text-fad">Sorry, nothing is here...<strong>(404)</strong></p>
     <q-btn class="q-ma-md"
       color="secondary"
       style="width:200px;"
