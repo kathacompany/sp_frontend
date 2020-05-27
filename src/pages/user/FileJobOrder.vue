@@ -128,49 +128,12 @@ import 'firebase/firestore'
 export default {
   data () {
     return {
-<<<<<<< HEAD
-      disable: false,
-      password: '',
-      isPwd: true,
-      category: '',
-      options: [
-        'Plumbing', 'Eletricity', 'Grounds', 'Transportation'
-      ],
-=======
       category: null,
->>>>>>> 463a21677031f679fb323bf2410525d549cd140d
       date: null,
       telephone: null,
       unit: null,
       location: null,
       description: null,
-<<<<<<< HEAD
-      requestor: null,
-      status: null,
-      approve: false
-    }
-  },
-  methods: {
-    filedJob () {
-      firebase.firestore().collection('job_orders').add({
-        category: this.category,
-        date: this.date,
-        telephone: this.telephone,
-        unit: this.unit,
-        location: this.location,
-        description: this.description,
-        requestor: this.requestor,
-        password: this.password,
-        status: this.status,
-        approve: this.approve
-      })
-        .then(docRef => {
-          console.log('Job Filed: ', docRef.id)
-          this.$router.push('/UserJobOrders')
-        })
-        .catch(error => {
-          console.error('Error filing job orders: ', error)
-=======
       status: null,
       requestor: null,
       foreman: 'N/A'
@@ -197,7 +160,6 @@ export default {
           description: this.description,
           requestor: this.requestor,
           foreman: this.foreman
->>>>>>> 463a21677031f679fb323bf2410525d549cd140d
         })
           .then(doc => {
             this.$router.push('/UserJobOrders')

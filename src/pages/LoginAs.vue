@@ -1,83 +1,4 @@
 <template>
-<<<<<<< HEAD
-    <q-page class="flex flex-center">
-        <q-card class="bg-primary text-center" shadow-3 style="padding:20px;">
-            <q-card-section>
-            <!-- <q-card-section class="bg-secondary"> -->
-            <div class="text-h4">Welcome to JOPSIS</div>
-            </q-card-section>
-            <q-separator/>
-            <q-card-section>
-           <div class="q-gutter-sm">
-                <q-btn-dropdown no caps color="secondary" label="UNIT" dropdown-icon="change_history">
-                    <q-list>
-                    <q-item clickable v-close-popup @click="$router.push('/UserLogin')">
-                        <q-item-section>
-                        <q-item-label> Unit Requestor</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-close-popup @click="$router.push('/HeadLogin')">
-                        <q-item-section>
-                        <q-item-label>Unit Head</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-btn-dropdown>
-                 <q-btn-dropdown no caps v-model="usertype" color="secondary" label="CDMO Staff" dropdown-icon="change_history">
-                    <q-list>
-                    <q-item clickable v-close-popup @click="$router.push('/AdministrativeLogin')">
-                        <q-item-section>
-                        <q-item-label> Administrative Staff</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-close-popup @click="$router.push('/InventoryLogin')">
-                        <q-item-section>
-                        <q-item-label>Inventory Staff</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-close-popup @click="$router.push('/ForemenLogin')">
-                        <q-item-section>
-                        <q-item-label>Foreman</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-close-popup @click="$router.push('/WorkerLogin')">
-                        <q-item-section>
-                        <q-item-label>Worker</q-item-label>
-                        </q-item-section>
-                    </q-item>
-                    </q-list>
-                    </q-btn-dropdown>
-                </div>
-            </q-card-section>
-        </q-card>
-        <!-- <q-card rounded class="bg-primary" style="padding:50px;">
-            <q-input v-model="email"
-            label="Email"></q-input>
-            <q-input v-model="password" label="Password" type="password"></q-input>
-            <br/>
-            <q-btn push rounded no-caps @click="login" class="q-mr-xs" label="LOGIN" color="secondary"/>
-            <q-btn push rounded no-caps v-go-back="'/'" class="q-mr-xs" label="CANCEL" color="secondary"/>
-            <br/>
-            <q-btn flat class="q-mr-sm" label="Forgot password?" color="primary" @click="dialog = true"/>
-        </q-card>
-            <q-dialog v-model="dialog">
-            <q-card container class="bg-white" style="padding:40px;">
-                <q-card-section>
-                <div class="text-h6">Enter Email Address</div>
-                </q-card-section>
-
-                <q-card-section>
-                <q-input dense v-model="email" label="Press Enter to continue" autofocus @keyup.enter="sentEmail = true" />
-                </q-card-section>
-                <br>
-                <q-card-actions align="right" class="text-primary">
-                <q-btn flat label="Cancel" v-close-popup />
-                </q-card-actions>
-=======
     <q-page class="flex flex-center" style="background:linear-gradient(to top, #3B9C9C, #B0E0E6">
         <div class="row" style="padding: 5px; border:ridge #9C3B3B 2px; max-width: 100%;">
           <div class="col bg-secondary" style="width: 300px; min-width: 100px">
@@ -156,7 +77,6 @@
                 <q-btn flat label="Forgot password?" @click="dialog = true"/>
               </q-card-actions>
             </div>
->>>>>>> 463a21677031f679fb323bf2410525d549cd140d
             </q-card>
           </div>
             <q-dialog v-model="dialog">
