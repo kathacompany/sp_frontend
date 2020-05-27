@@ -4,7 +4,7 @@
         <q-page class="flex flex-center text-center">
           <div class="q-ma-md q-pa-md">
             <h4 style="margin-top: 20px"> Job Order Requests </h4>
-              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search by Category">
+              <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
@@ -16,51 +16,36 @@
                 :data="pending"
                 :columns="column"
                 row-key="id"
-                :selected-rows-label="getSelectedString"
                 hide-bottom
-                selection="multiple"
-                :selected.sync="selected"
-              />
-              <q-btn no caps label="APPROVE" class="q-ma-md bg-secondary text-white" @click="dialog = true"/>
-              <q-dialog v-model="dialog">
-                <q-card class="bg-primary">
-                    <q-card-section>
-                      <cap>Please input details to proceed</cap>
-                    </q-card-section>
-                    <q-separator/>
-                    <q-card-section>
-                        <q-form class="q-gutter-md">
-                          <q-input
-                            square
-                            filled
-                            clearable
-                            v-model="unit_head"
-                            label="Name"
-                          />
-                          <q-input
-                            square
-                            filled
-                            clearable
-                            class="q-pa-xs"
-                            v-model="password"
-                            :disable="disable"
-                            label="Password"
-                            :type="isPwd ? 'password' : 'text'">
-                                <template v-slot:append>
-                                  <q-icon
-                                    :name="isPwd ? 'visibility_off' : 'visibility'"
-                                    class="cursor-pointer"
-                                    @click="isPwd = !isPwd"
-                                  />
-                                </template>
-                            </q-input>
-                        </q-form>
-                    </q-card-section>
-                    <q-card-actions align="center">
-                      <q-btn no caps label="SUBMIT" v-close-popup color="secondary"/>
-                    </q-card-actions>
-                </q-card>
-              </q-dialog>
+              >
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td key="id" :props="props">
+                    {{ props.row.id }}
+                  </q-td>
+                  <q-td key="category" :props="props">
+                    {{ props.row.category }}
+                  </q-td>
+                  <q-td key="location" :props="props">
+                    {{ props.row.location }}
+                  </q-td>
+                  <q-td key="description" :props="props">
+                    {{ props.row.description }}
+                  </q-td>
+                  <q-td key="date" :props="props">
+                    {{ props.row.date }}
+                  </q-td>
+                  <q-td key="telephone" :props="props">
+                    {{ props.row.telephone }}
+                  </q-td>
+                  <q-tr :props="props">
+                    <q-td key="approve" :props="props">
+                      <q-btn class="bg-primary" push label="Approve" @click="approve(props.row.id, approved, status)"/>
+                    </q-td>
+                  </q-tr>
+                </q-tr>
+                </template>
+              </q-table>
             </div>
           </div>
         </q-page>
@@ -86,68 +71,18 @@ import 'firebase/firestore'
 export default {
   data () {
     return {
-      unit_head: '',
-      password: '',
-      dialog: false,
-      medium: false,
       filter: '',
       pending: [],
-      category: null,
-      unit: null,
-      location: null,
-      description: null,
-      telephone: null,
-      requestor: null,
+      approved: true,
+      status: 'Pending',
       column: [
-        {
-          name: 'id',
-          align: 'left',
-          label: 'JOB ID',
-          field: 'id'
-        },
-        {
-          name: 'category',
-          align: 'left',
-          label: 'CATEGORY',
-          field: 'category',
-          sortable: true
-        },
-        {
-          name: 'location',
-          align: 'left',
-          label: 'LOCATION',
-          field: 'location'
-        },
-        {
-          name: 'description',
-          align: 'left',
-          label: 'DESCRIPTION',
-          field: 'description'
-        },
-        {
-          name: 'unit',
-          align: 'left',
-          label: 'REQUESTING UNIT',
-          field: 'unit'
-        },
-        {
-          name: 'date',
-          align: 'left',
-          label: 'DATE',
-          field: 'date'
-        },
-        {
-          name: 'telephone',
-          align: 'left',
-          label: 'TELEPHONE',
-          field: 'telephone'
-        },
-        {
-          name: 'requestor',
-          align: 'left',
-          label: 'REQUESTOR NAME',
-          field: 'requestor'
-        }
+        { name: 'id', align: 'left', label: 'JOB ID', field: 'id' },
+        { name: 'category', align: 'left', label: 'CATEGORY', field: 'category', sortable: true },
+        { name: 'location', align: 'left', label: 'LOCATION', field: 'location' },
+        { name: 'description', align: 'left', label: 'DESCRIPTION', field: 'description' },
+        { name: 'date', align: 'left', label: 'DATE', field: 'date' },
+        { name: 'telephone', align: 'left', label: 'TELEPHONE', field: 'telephone' },
+        { name: 'approve', align: 'left', field: 'approve' }
       ]
     }
   },
@@ -157,16 +92,40 @@ export default {
         const data = {
           id: doc.id,
           category: doc.data().category,
-          unit: doc.data().unit,
           location: doc.data().location,
           description: doc.data().description,
           date: doc.data().date,
-          telephone: doc.data().telephone,
-          requestor: doc.data().requestor
+          telephone: doc.data().telephone
         }
         this.pending.push(data)
       })
     })
+  },
+  methods: {
+    approve (id, approved, status) {
+      this.$q.dialog({
+        title: 'Are you sure?',
+        cancel: true,
+        persistent: true
+      }).onOk(data => {
+        this.id = id
+        this.approved = approved
+        this.status = status
+        firebase.firestore().collection('job_orders').doc(this.id).update({
+          approve: approved,
+          status: status
+        })
+        // console.log('>>>> OK', id, approved, status)
+      }).onCancel(() => {
+      })
+    }
+  },
+  computed: {
+    approvedRequests: function () {
+      return this.pending.filter(function (u) {
+        return u.approve
+      })
+    }
   }
 }
 </script>

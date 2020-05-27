@@ -84,25 +84,27 @@
                   <q-tr :props="props">
                     <q-td key="details" :props="props">
                       <q-btn class="bg-primary" push label="More Details" @click="details=true">
-                        <q-dialog v-model="details">
-                          <q-card class="q-pa-md">
-                            <q-card-section>
-                              <div class="text-h6">Job Order Details: </div>
-                            </q-card-section>
+                        <template v-if=" status === 'Processing'" >
+                          <q-dialog v-model="details">
+                            <q-card class="q-pa-md">
+                              <q-card-section>
+                                <div class="text-h6">Job Order Details: </div>
+                              </q-card-section>
 
-                            <q-card-section>
-                              Unit: {{ props.row.unit }} <q-separator/>
-                              Location: {{ props.row.location }} <q-separator/>
-                              Description: {{ props.row.description }} <q-separator />
-                              Date: {{ props.row.date }} <q-separator/>
-                              Telephone: {{ props.row.telephone }} <q-separator/>
-                              Requestor: {{ props.row.requestor }} <q-separator/>
-                            </q-card-section>
-                            <q-card-actions align="right">
-                              <q-btn flat label="OK" class= "bg-primary" v-close-popup />
-                            </q-card-actions>
-                          </q-card>
-                        </q-dialog>
+                              <q-card-section>
+                                Unit: {{ props.row.unit }} <q-separator/>
+                                Location: {{ props.row.location }} <q-separator/>
+                                Description: {{ props.row.description }} <q-separator />
+                                Date: {{ props.row.date }} <q-separator/>
+                                Telephone: {{ props.row.telephone }} <q-separator/>
+                                Requestor: {{ props.row.requestor }} <q-separator/>
+                              </q-card-section>
+                              <q-card-actions align="right">
+                                <q-btn flat label="OK" class= "bg-primary" v-close-popup />
+                              </q-card-actions>
+                            </q-card>
+                          </q-dialog>
+                        </template>
                       </q-btn>
                     </q-td>
                     </q-tr>
@@ -191,6 +193,7 @@ export default {
       details: false,
       filter: '',
       job_orders: [],
+      status: '',
       columnA: [
         { name: 'id', align: 'left', label: 'JOB ID', field: 'id' },
         { name: 'category', align: 'left', label: 'CATEGORY', field: 'category', sortable: true },

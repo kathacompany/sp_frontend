@@ -4,308 +4,171 @@
         <q-page class="flex flex-center text-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h2> Job Order Requests </h2>
+              <h2> Job Orders </h2>
               <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
-            </div>
-            <div style="width: 100%;" class="q-ma-md">
-            <q-table
-                title="Received Job Order Requests"
-                class="my-sticky-column-table"
-                :data="data"
-                :columns="columns"
-                hide-bottom
-                row-key="id"
-                :filter="filter"
-            >
-            <template v-slot:body="props">
-              <q-tr :props="props">
+              <div style="width: 100%; text-align:left;">
+                <h6>Pending Job Requests</h6>
+                <q-table
+                  class="my-sticky-header-table"
+                  :data="job_orders"
+                  :columns="columnA"
+                  row-key="name"
+                  :filter="filter"
+                  hide-bottom
+                >
+                <template v-slot:body="props">
+                  <q-tr :props="props">
                   <q-td key="id" :props="props">
                     {{ props.row.id }}
                   </q-td>
-                  <q-td key="name" :props="props">
-                    {{ props.row.name }}
-                  </q-td>
-                  <q-td key="unit" :props="props">
-                    {{ props.row.id }}
-                  </q-td>
-                  <q-td key="location" :props="props">
-                    {{ props.row.location }}
-                  </q-td>
-                  <q-td key="date" :props="props">
-                    {{ props.row.date }}
+                  <q-td key="category" :props="props">
+                    {{ props.row.category }}
                   </q-td>
                   <q-td key="status" :props="props">
                     {{ props.row.status }}
-                     <q-popup-edit v-model="props.row.status" title="Update status" buttons persistent>
-                      <q-btn-dropdown push no-caps v-model="probType" color="primary" label="Forward to">
-                      <q-list>
-                      <q-item clickable v-model="props.row.status" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.status"> Plumbing</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      <q-item clickable v-model="props.row.status" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.status"> Electricity</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      <q-item clickable v-model="props.row.status" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.status"> Electricity</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      <q-item clickable v-model="props.row.status" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.status"> Electricity</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      </q-list>
-                      </q-btn-dropdown>
-                      <q-btn-dropdown push no-caps v-model="probType" color="primary" label="Update Status to">
-                      <q-list>
-                      <q-item clickable v-model="props.row.status" v-close-popup>
-                          <q-item-section>
-                          <q-item-label v-model="props.row.status">Ongoing</q-item-label>
-                          </q-item-section>
-                      </q-item>
-                      </q-list>
-                      </q-btn-dropdown>
-                    </q-popup-edit>
                   </q-td>
-                </q-tr>
-              </template>
-            </q-table>
-            <q-table
-                title="Completed Job Orders"
-                class="my-sticky-column-table"
-                :data="completedData"
-                :columns="completedColumns"
-                hide-bottom
-                row-key="id"
-                :filter="filter"
-            />
+                    <q-td key="details" :props="props">
+                      <q-btn class="bg-primary" push label="More Details" @click="details=true">
+                        <q-dialog v-model="details">
+                          <q-card class="q-pa-md">
+                            <q-card-section>
+                              <div class="text-h6">Job Order Details: </div>
+                            </q-card-section>
+
+                            <q-card-section>
+                              Unit: {{ props.row.unit }} <q-separator/>
+                              Location: {{ props.row.location }} <q-separator/>
+                              Description: {{ props.row.description }} <q-separator />
+                              Date: {{ props.row.date }} <q-separator/>
+                              Telephone: {{ props.row.telephone }} <q-separator/>
+                              Requestor: {{ props.row.requestor }} <q-separator/>
+                            </q-card-section>
+                            <q-card-actions align="right">
+                              <q-btn flat label="OK" class= "bg-primary" v-close-popup />
+                            </q-card-actions>
+                          </q-card>
+                        </q-dialog>
+                      </q-btn>
+                    </q-td>
+                    <q-td key="forward" :props="props">
+                      <q-btn class="bg-primary" push label="Forward" @click="forward(props.row.id)">
+                        <!-- <q-dialog v-model="forward">
+                          <q-card class="q-pa-md">
+                            <q-card-section>
+                               <q-select
+                                  class="q-ma-sm"
+                                  style="width: 18vw; margin-top: -10px;"
+                                  v-model="foreman"
+                                  :options="options"
+                                  label="Forward to:"
+                                />
+                            </q-card-section>
+                            <q-card-actions align="right">
+                              <q-btn flat label="OK" class= "bg-primary" v-close-popup />
+                            </q-card-actions>
+                          </q-card>
+                        </q-dialog> -->
+                      </q-btn>
+                    </q-td>
+                  </q-tr>
+                </template>
+                </q-table>
+              </div>
             </div>
           </div>
         </q-page>
-        <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
 <style lang="sass">
+.my-sticky-header-table
+  .q-table__top,
+  thead tr:first-child th
+    background-color: #6f859b
 
-  td:first-child
-    background-color: #e8a87c
-
-  th:first-child,
-  td:first-child
+  thead tr th
     position: sticky
-    left: 0
     z-index: 1
+  thead tr:first-child th
+    top: 0
 </style>
 
 <script>
+// import * as firebase from 'firebase/app'
+import 'firebase/firestore'
+import { db } from 'boot/firebase'
+
 export default {
   data () {
     return {
+      details: false,
       filter: '',
-      columns: [
-        {
-          id: 'id',
-          name: 'id',
-          required: true,
-          label: 'Job Order Number',
-          align: 'left',
-          field: row => row.id,
-          format: val => `${val}`,
-          sortable: true
-        },
-        {
-          name: 'name',
-          align: 'center',
-          label: 'Name',
-          field: 'name',
-          sortable: true
-        },
-        {
-          name: 'unit',
-          align: 'center',
-          label: 'Unit',
-          field: 'unit',
-          sortable: true
-        },
-        {
-          name: 'location',
-          align: 'center',
-          label: 'Location',
-          field: 'location',
-          sortable: true
-        },
-        {
-          name: 'date',
-          align: 'center',
-          label: 'Date Filed',
-          field: 'date',
-          sortable: true
-        },
-        {
-          name: 'status',
-          align: 'center',
-          label: 'Status',
-          field: 'status',
-          sortable: true
-        }
+      job_orders: [],
+      status: '',
+      foreman: '',
+      options: [
+        'Plumbing', 'Eletricity', 'Grounds', 'Transportation'
       ],
-      data: [
-        {
-          id: 1,
-          name: 'Construction',
-          unit: 'CAS',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Pending'
-        },
-        {
-          id: 2,
-          name: 'Construction',
-          unit: 'Humanities',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Pending'
-        },
-        {
-          id: 3,
-          name: 'Electricity',
-          unit: 'CAS',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Ongoing'
-        },
-        {
-          id: 4,
-          name: 'Plumbing',
-          unit: 'DPSM',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Ongoing'
-        },
-        {
-          id: 5,
-          name: 'Construction',
-          unit: 'Balay Ilonggo',
-          location: 'Iloilo City',
-          date: '2018/12/01',
-          status: 'Pending'
-        },
-        {
-          id: 6,
-          name: 'Construction',
-          unit: 'CFOS',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Pending'
-        }
-      ],
-      completedColumns: [
-        {
-          id: 'Job Order Number',
-          required: true,
-          label: 'Job Order Number',
-          align: 'left',
-          field: row => row.id,
-          format: val => `${val}`,
-          sortable: true
-        },
-        {
-          name: 'name',
-          align: 'center',
-          label: 'Name',
-          field: 'name',
-          sortable: true
-        },
-        {
-          name: 'unit',
-          align: 'center',
-          label: 'Unit',
-          field: 'unit',
-          sortable: true
-        },
-        {
-          name: 'location',
-          align: 'center',
-          label: 'Location',
-          field: 'location',
-          sortable: true
-        },
-        {
-          name: 'date',
-          align: 'center',
-          label: 'Date Filed',
-          field: 'date',
-          sortable: true
-        },
-        {
-          name: 'status',
-          align: 'center',
-          label: 'Status',
-          field: 'status',
-          sortable: true
-        }
-      ],
-      completedData: [
-        {
-          id: 1,
-          name: 'Construction',
-          unit: 'CAS',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Completed'
-        },
-        {
-          id: 2,
-          name: 'Construction',
-          unit: 'Humanities',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Completed'
-        },
-        {
-          id: 3,
-          name: 'Electricity',
-          unit: 'CAS',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Completed'
-        },
-        {
-          id: 4,
-          name: 'Plumbing',
-          unit: 'DPSM',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Completed'
-        },
-        {
-          id: 5,
-          name: 'Construction',
-          unit: 'Balay Ilonggo',
-          location: 'Iloilo City',
-          date: '2018/12/01',
-          status: 'Completed'
-        },
-        {
-          id: 6,
-          name: 'Construction',
-          unit: 'CFOS',
-          location: 'Miagao',
-          date: '2018/12/01',
-          status: 'Completed'
-        }
+      columnA: [
+        { name: 'id', align: 'left', label: 'JOB ID', field: 'id' },
+        { name: 'category', align: 'left', label: 'CATEGORY', field: 'category', sortable: true },
+        { name: 'status', align: 'left', field: 'status', label: 'STATUS' },
+        { name: 'details', field: 'details', align: 'left' },
+        { name: 'forward', field: 'forward', align: 'left' }
       ]
+    }
+  },
+  created () {
+    this.getMaterial()
+  },
+  methods: {
+    forward (id) {
+      this.$q.dialog({
+        title: 'Forward to: ',
+        options: {
+          type: 'radio',
+          model: 'opt1',
+          items: [
+            { label: 'Plumbing', value: 'plumbing' },
+            { label: 'Grounds', value: 'grounds' },
+            { label: 'Electricity', value: 'electricity' },
+            { label: 'Transportation', value: 'transportation' }
+          ]
+        },
+        cancel: true,
+        persistent: true
+      }).onOk(data => {
+        // console.log('>>>> OK, received', data)
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      })
+    },
+    async getMaterial () {
+      try {
+        await db.collection('job_orders').get().then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            const matData = {
+              id: doc.id,
+              category: doc.data().category,
+              unit: doc.data().unit,
+              location: doc.data().location,
+              description: doc.data().description,
+              date: doc.data().date,
+              telephone: doc.data().telephone,
+              requestor: doc.data().requestor,
+              status: doc.data().status
+            }
+            this.job_orders.push(matData)
+          })
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }

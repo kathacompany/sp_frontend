@@ -131,7 +131,7 @@ export default {
       disable: false,
       password: '',
       isPwd: true,
-      category: 'null',
+      category: '',
       options: [
         'Plumbing', 'Eletricity', 'Grounds', 'Transportation'
       ],
@@ -141,7 +141,8 @@ export default {
       location: null,
       description: null,
       requestor: null,
-      status: 'Pending'
+      status: null,
+      approve: false
     }
   },
   methods: {
@@ -155,7 +156,8 @@ export default {
         description: this.description,
         requestor: this.requestor,
         password: this.password,
-        status: this.status
+        status: this.status,
+        approve: this.approve
       })
         .then(docRef => {
           console.log('Job Filed: ', docRef.id)

@@ -80,7 +80,8 @@ module.exports = function (ctx) {
         'QCarousel',
         'QCarouselControl',
         'QCarouselSlide',
-        'QDate'
+        'QDate',
+        'QEditor'
       ],
       directives: [
         'ClosePopup',

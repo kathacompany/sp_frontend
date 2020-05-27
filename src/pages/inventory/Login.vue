@@ -1,32 +1,34 @@
 <template>
-  <q-page class="window-height window-width row justify-center items-center" style="background:linear-gradient(to right, purple , pink">
-    <div class="column">
-      <div class="q-pa-sm">
-        <q-btn flat size="10px" icon="arrow_back" style="float: left" label="Go Back" v-go-back=" '/' "/>
-      </div>
-      <div class="row">
+  <q-page class="window-height window-width row justify-center items-center">
+    <div class="column" style="width: 25%">
         <q-card class="bg-primary shadow-3">
           <q-card-section class="bg-secondary">
-            <div class="text-h6">CDMO Login</div>
+            <div class="text-h6">Inventory Login</div>
           </q-card-section>
           <q-separator/>
           <q-card-section>
             <q-form class="q-gutter-md">
-              <q-input square filled clearable icon="email" v-model="email" type="email" color="secondary" label="Email">
+              <q-input square filled icon="email" v-model="email" type="email" color="secondary" label="Email">
                 <template v-slot:prepend>
                   <q-icon name="email"/>
                 </template>
+                <template v-slot:append>
+                  <q-icon v-if="email !== ''" name="close" @click="email = ''" class="cursor-pointer" />
+                </template>
               </q-input>
-              <q-input square filled clearable v-model="password" type="password" color="secondary" label="Password">
+              <q-input square filled v-model="password" type="password" color="secondary" label="Password">
                  <template v-slot:prepend>
                   <q-icon name="lock"/>
+                </template>
+                <template v-slot:append>
+                  <q-icon v-if="password !== ''" name="close" @click="password = ''" class="cursor-pointer" />
                 </template>
               </q-input>
             </q-form>
           </q-card-section>
           <q-card-actions class="q-px-md">
             <q-btn unelevated class="full-width" label="LOGIN"  color="secondary" @click="login"/>
-            <q-btn flat label="Forgot password?" @click="dialog = true"/>
+            <q-btn unelevated class="full-width" flat label="Forgot password?" @click="dialog = true"/>
           </q-card-actions>
         </q-card>
         <q-dialog v-model="dialog">
@@ -56,7 +58,6 @@
               </q-card>
             </q-dialog>
         </div>
-      </div>
     </div>
   </q-page>
 </template>

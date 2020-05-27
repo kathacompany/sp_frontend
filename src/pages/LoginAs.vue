@@ -1,11 +1,14 @@
 <template>
-    <q-page class="flex flex-center" style="background:linear-gradient(to right, purple , pink">
+    <q-page class="flex flex-center">
         <q-card class="bg-primary text-center" shadow-3 style="padding:20px;">
-            <h3 style="-webkit-text-stroke-width: thin">
-              Welcome to JOPSIS
-            </h3>
-            <div class="q-gutter-sm">
-                <q-btn-dropdown no caps v-model="usertype" color="secondary" label="UNIT" dropdown-icon="change_history">
+            <q-card-section>
+            <!-- <q-card-section class="bg-secondary"> -->
+            <div class="text-h4">Welcome to JOPSIS</div>
+            </q-card-section>
+            <q-separator/>
+            <q-card-section>
+           <div class="q-gutter-sm">
+                <q-btn-dropdown no caps color="secondary" label="UNIT" dropdown-icon="change_history">
                     <q-list>
                     <q-item clickable v-close-popup @click="$router.push('/UserLogin')">
                         <q-item-section>
@@ -13,7 +16,7 @@
                         </q-item-section>
                     </q-item>
 
-                    <q-item clickable v-close-popup @click="$router.push('/UserLogin')">
+                    <q-item clickable v-close-popup @click="$router.push('/HeadLogin')">
                         <q-item-section>
                         <q-item-label>Unit Head</q-item-label>
                         </q-item-section>
@@ -48,6 +51,7 @@
                     </q-list>
                     </q-btn-dropdown>
                 </div>
+            </q-card-section>
         </q-card>
         <!-- <q-card rounded class="bg-primary" style="padding:50px;">
             <q-input v-model="email"
@@ -108,45 +112,6 @@ export default {
       sentEmail: false
     }
   }
-  // },
-  // methods: {
-  //   login: function (e) {
-  //     // firebase.database.collection('account').doc(account.user_type).get().then(doc => {})
-  //     firebase
-  //       .auth()
-  //       .signInWithEmailAndPassword(this.email, this.password)
-  //       .then(
-  //         user => {
-  //           if (this.user_type === 'unit') {
-  //             this.$router.push('/UnitHomepage')
-  //             alert(`You are logged in as ${this.email}`)
-  //           }
-  //           if (this.user_type === 'staff') {
-  //             this.$router.push('/AdministrativeHomepage')
-  //             alert(`You are logged in as ${this.email}`)
-  //           }
-  //           if (this.user_type === 'foreman') {
-  //             this.$router.push('/ForemenHomepage')
-  //             alert(`You are logged in as ${this.email}`)
-  //           }
-  //           if (this.user_type === 'worker') {
-  //             this.$router.push('/WorkerHomepage')
-  //             alert(`You are logged in as ${this.email}`)
-  //           }
-  //           if (this.user_type === 'inventory') {
-  //             this.$router.push('/InventoryHomepage')
-  //             alert(`You are logged in as ${this.email}`)
-  //           }
-  //           this.$router.push('/InventoryHomepage')
-  //           alert(`You are logged in as ${this.email}`)
-  //         },
-  //         err => {
-  //           alert(err.message)
-  //         }
-  //       )
-  //     e.preventDefault()
-  //   }
-  // }
 }
 
 </script>

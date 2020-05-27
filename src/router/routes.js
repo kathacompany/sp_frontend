@@ -8,7 +8,8 @@ const routes = [
       { path: 'InventoryLogin', component: () => import('pages/inventory/Login.vue') },
       { path: 'ForemenLogin', component: () => import('pages/foremen/Login.vue') },
       { path: 'WorkerLogin', component: () => import('pages/worker/Login.vue') },
-      { path: 'UserLogin', component: () => import('pages/user/Login.vue') }
+      { path: 'UserLogin', component: () => import('pages/user/Login.vue') },
+      { path: 'HeadLogin', component: () => import('pages/head/Login.vue') }
     ],
     meta: { requiresGuest: true }
   },
