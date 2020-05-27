@@ -4,7 +4,7 @@
         <q-page class="flex flex-center text-center">
 
           <div class="container" style="width: 100%; height: 100%;">
-            <img src="statics/bg4.jpg" width="100%" height="60%" align="right"/>
+            <img src="statics/bg7.jpg" width="100%" height="60%" align="right"/>
             <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 70px;font-weight: 800; margin-left: -800px; margin-top: -160px;">
               JOPSIS
             </div>

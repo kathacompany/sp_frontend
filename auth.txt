@@ -1,0 +1,14 @@
+requestor@gmail.com
+
+head@gmail.com
+
+administrative@gmail.com
+
+foreman@gmail.com
+
+inventory@gmail.com
+
+worker@gmail.com
+
+
+12345678
