@@ -47,24 +47,39 @@
                   </q-td>
                   <q-td key="toEdit" :props="props">
                     {{ props.row.toEdit }}
-                    <q-btn class="bg-primary" push label="Update" @click="change=true">
+                    <q-btn class="bg-secondary" push label="Update" @click="change=true">
                         <q-popup-edit v-model="change" persistent>
                           <div class="q-pa-xs q-ma-xs" align="right">
-                          {{ name }}
-                            <q-input class="q-pa-xs" outlined dense v-model="updateName" label="Name">
+                            <q-input class="q-pa-xs" outlined dense v-model="name" label="Name">
                               <template v-slot:append>
-                                <q-icon name="close" @click="updateName = ''" class="cursor-pointer" />
+                                <q-icon name="close" @click="name = ''" class="cursor-pointer" />
                               </template>
                             </q-input>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateDescription" label="Description"/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateStockNo" label="Stock No."/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateUnit" label="Unit of Measurement"/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateValue" label="Unit Value"/>
-                            <q-input class="q-pa-xs" outlined dense type="number" v-model="updateQuantity" label="Update quantity"/>
-                            <q-select outlined dense class="q-pa-xs" v-model="updateCategory" :options="options" label="Category" />
+                            <q-input class="q-pa-xs" outlined dense v-model="description" label="Description">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="description = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="stockNo" label="Stock No.">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="stockNo = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="unit" label="Unit">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="unit = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="value" label="Value">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="value = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense type="number" v-model="quantity" label="Quantity"/>
+                            <q-select outlined dense class="q-pa-xs" v-model="category" :options="options" label="Category" />
                             <br/>
                             <q-btn flat label="Close" v-close-popup/>
-                            <q-btn flat label="Set" @click="toEdit(props.row.id, updateQuantity, updateName, updateDescription, updateStockNo, updateUnit, updateValue, updateCategory)"/>
+                            <q-btn flat label="Set" @click="toEdit(props.row.id, quantity, name, description, stockNo, unit, value, category)"/>
                           </div>
                         </q-popup-edit>
                     </q-btn>
@@ -80,7 +95,7 @@
             </q-table>
           </div>
           <br/>
-
+<!-- ELEC  -->
            <div style="width: 100%;">
             <q-table
               class="my-sticky-header-table"
@@ -117,24 +132,39 @@
                   </q-td>
                   <q-td key="toEdit" :props="props">
                     {{ props.row.toEdit }}
-                    <q-btn class="bg-primary" push label="Update" @click="change=true">
+                    <q-btn class="bg-secondary" push label="Update" @click="change=true">
                         <q-popup-edit v-model="change" persistent>
                           <div class="q-pa-xs q-ma-xs" align="right">
-                          {{ name }}
-                            <q-input class="q-pa-xs" outlined dense v-model="updateName" label="Name">
+                            <q-input class="q-pa-xs" outlined dense v-model="name" label="Name">
                               <template v-slot:append>
-                                <q-icon name="close" @click="updateName = ''" class="cursor-pointer" />
+                                <q-icon name="close" @click="name = ''" class="cursor-pointer" />
                               </template>
                             </q-input>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateDescription" label="Description"/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateStockNo" label="Stock No."/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateUnit" label="Unit of Measurement"/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateValue" label="Unit Value"/>
-                            <q-input class="q-pa-xs" outlined dense type="number" v-model="updateQuantity" label="Update quantity"/>
-                            <q-select outlined dense class="q-pa-xs" v-model="updateCategory" :options="options" label="Category" />
+                            <q-input class="q-pa-xs" outlined dense v-model="description" label="Description">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="description = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="stockNo" label="Stock No.">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="stockNo = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="unit" label="Unit">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="unit = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="value" label="Value">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="value = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense type="number" v-model="quantity" label="Quantity"/>
+                            <q-select outlined dense class="q-pa-xs" v-model="category" :options="options" label="Category" />
                             <br/>
                             <q-btn flat label="Close" v-close-popup/>
-                            <q-btn flat label="Set" @click="toEdit(props.row.id, updateQuantity, updateName, updateDescription, updateStockNo, updateUnit, updateValue, updateCategory)"/>
+                            <q-btn flat label="Set" @click="toEdit(props.row.id, quantity, name, description, stockNo, unit, value, category)"/>
                           </div>
                         </q-popup-edit>
                     </q-btn>
@@ -150,7 +180,7 @@
             </q-table>
           </div>
           <br/>
-
+<!-- GROUNDS -->
            <div style="width: 100%;">
             <q-table
               class="my-sticky-header-table"
@@ -187,24 +217,39 @@
                   </q-td>
                   <q-td key="toEdit" :props="props">
                     {{ props.row.toEdit }}
-                    <q-btn class="bg-primary" push label="Update" @click="change=true">
+                    <q-btn class="bg-secondary" push label="Update" @click="change=true">
                         <q-popup-edit v-model="change" persistent>
                           <div class="q-pa-xs q-ma-xs" align="right">
-                          {{ name }}
-                            <q-input class="q-pa-xs" outlined dense v-model="updateName" label="Name">
+                            <q-input class="q-pa-xs" outlined dense v-model="name" label="Name">
                               <template v-slot:append>
-                                <q-icon name="close" @click="updateName = ''" class="cursor-pointer" />
+                                <q-icon name="close" @click="name = ''" class="cursor-pointer" />
                               </template>
                             </q-input>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateDescription" label="Description"/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateStockNo" label="Stock No."/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateUnit" label="Unit of Measurement"/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateValue" label="Unit Value"/>
-                            <q-input class="q-pa-xs" outlined dense type="number" v-model="updateQuantity" label="Update quantity"/>
-                            <q-select outlined dense class="q-pa-xs" v-model="updateCategory" :options="options" label="Category" />
+                            <q-input class="q-pa-xs" outlined dense v-model="description" label="Description">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="description = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="stockNo" label="Stock No.">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="stockNo = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="unit" label="Unit">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="unit = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="value" label="Value">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="value = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense type="number" v-model="quantity" label="Quantity"/>
+                            <q-select outlined dense class="q-pa-xs" v-model="category" :options="options" label="Category" />
                             <br/>
                             <q-btn flat label="Close" v-close-popup/>
-                            <q-btn flat label="Set" @click="toEdit(props.row.id, updateQuantity, updateName, updateDescription, updateStockNo, updateUnit, updateValue, updateCategory)"/>
+                            <q-btn flat label="Set" @click="toEdit(props.row.id, quantity, name, description, stockNo, unit, value, category)"/>
                           </div>
                         </q-popup-edit>
                     </q-btn>
@@ -220,7 +265,7 @@
             </q-table>
           </div>
           <br/>
-
+<!-- TRANSPO -->
            <div style="width: 100%;">
             <q-table
               class="my-sticky-header-table"
@@ -257,24 +302,39 @@
                   </q-td>
                   <q-td key="toEdit" :props="props">
                     {{ props.row.toEdit }}
-                    <q-btn class="bg-primary" push label="Update" @click="change=true">
+                    <q-btn class="bg-secondary" push label="Update" @click="change=true">
                         <q-popup-edit v-model="change" persistent>
                           <div class="q-pa-xs q-ma-xs" align="right">
-                          {{ name }}
-                            <q-input class="q-pa-xs" outlined dense v-model="updateName" label="Name">
+                            <q-input class="q-pa-xs" outlined dense v-model="name" label="Name">
                               <template v-slot:append>
-                                <q-icon name="close" @click="updateName = ''" class="cursor-pointer" />
+                                <q-icon name="close" @click="name = ''" class="cursor-pointer" />
                               </template>
                             </q-input>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateDescription" label="Description"/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateStockNo" label="Stock No."/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateUnit" label="Unit of Measurement"/>
-                            <q-input class="q-pa-xs" outlined dense v-model="updateValue" label="Unit Value"/>
-                            <q-input class="q-pa-xs" outlined dense type="number" v-model="updateQuantity" label="Update quantity"/>
-                            <q-select outlined dense class="q-pa-xs" v-model="updateCategory" :options="options" label="Category" />
+                            <q-input class="q-pa-xs" outlined dense v-model="description" label="Description">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="description = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="stockNo" label="Stock No.">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="stockNo = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="unit" label="Unit">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="unit = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense v-model="value" label="Value">
+                              <template v-slot:append>
+                                <q-icon name="close" @click="value = ''" class="cursor-pointer" />
+                              </template>
+                            </q-input>
+                            <q-input class="q-pa-xs" outlined dense type="number" v-model="quantity" label="Quantity"/>
+                            <q-select outlined dense class="q-pa-xs" v-model="category" :options="options" label="Category" />
                             <br/>
                             <q-btn flat label="Close" v-close-popup/>
-                            <q-btn flat label="Set" @click="toEdit(props.row.id, updateQuantity, updateName, updateDescription, updateStockNo, updateUnit, updateValue, updateCategory)"/>
+                            <q-btn flat label="Set" @click="toEdit(props.row.id, quantity, name, description, stockNo, unit, value, category)"/>
                           </div>
                         </q-popup-edit>
                     </q-btn>
@@ -326,7 +386,7 @@
 .my-sticky-header-table
   .q-table__top,
   thead tr:first-child th
-    background-color: #e8a87c
+    background-color: #9C3B3B
 
   th:first-child,
   td:first-child
@@ -350,13 +410,12 @@ export default {
       newValue: '',
       newQuantity: '',
 
-      updateName: '',
-      updateDescription: '',
-      updateStockNo: '',
-      updateUnit: '',
-      updateValue: '',
-      updateQuantity: '',
-      updateCategory: '',
+      name: '',
+      description: '',
+      stockNo: '',
+      unit: '',
+      value: '',
+      quantity: '',
       plumbingData: [],
       electricityData: [],
       groundsData: [],
@@ -486,15 +545,50 @@ export default {
       this.updateCategory = updateCategory
       try {
         // const matDb = await db.collection('materials').doc(this.id).update({
-        await db.collection('materials').doc(this.id).update({
-          name: updateName,
-          quantity: updateQuantity,
-          description: updateDescription,
-          stockNo: updateStockNo,
-          unit: updateUnit,
-          value: updateValue,
-          category: updateCategory
-        })
+        if (updateName !== '') {
+          await db.collection('materials').doc(this.id).update({
+            name: updateName
+          })
+        }
+        if (updateQuantity !== '') {
+          await db.collection('materials').doc(this.id).update({
+            quantity: updateQuantity
+          })
+        }
+        if (updateDescription !== '') {
+          await db.collection('materials').doc(this.id).update({
+            description: updateDescription
+          })
+        }
+        if (updateStockNo !== '') {
+          await db.collection('materials').doc(this.id).update({
+            stockNo: updateStockNo
+          })
+        }
+        if (updateUnit !== '') {
+          await db.collection('materials').doc(this.id).update({
+            unit: updateUnit
+          })
+        }
+        if (updateValue !== '') {
+          await db.collection('materials').doc(this.id).update({
+            value: updateValue
+          })
+        }
+        if (updateCategory !== '') {
+          await db.collection('materials').doc(this.id).update({
+            category: updateCategory
+          })
+        }
+        // await db.collection('materials').doc(this.id).update({
+        //   name: updateName,
+        //   quantity: updateQuantity,
+        //   description: updateDescription,
+        //   stockNo: updateStockNo,
+        //   unit: updateUnit,
+        //   value: updateValue,
+        //   category: updateCategory
+        // })
       } catch (error) {
         console.log(error)
       } finally {
