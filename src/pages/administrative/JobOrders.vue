@@ -1,91 +1,219 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-page-container>
-        <q-page class="flex flex-center text-center">
-          <div class="q-ma-md q-pa-md">
-            <h4 style="margin-top: 20px"> Job Order Requests </h4>
-              <q-input clearable color="secondary" v-if="pending.length || ongoing.length" dense debounce="300" v-model="filter" placeholder="Search">
+        <q-page class="window-height window-width row justify-center">
+          <div class="q-gutter-sm flex text-center">
+            <div style="width: 100%; height: 50%;">
+              <h5>JOB ORDER REQUESTS</h5> {{ date }}<br><br>
+              <q-input v-if="pending.length || ongoing.length || complete.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Category">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
-            <div style="width: 100%; max-height: 50%; margin-bottom: 30px">
-              <q-banner v-if="!pending.length" class="bg-red-1 q-pa-md">
-                <template v-slot:avatar>
-                  <q-icon name="done_all" color="accent" />
-                </template>
-                All caught up. Nothing to approve!
-              </q-banner>
-              <q-table
-                title="JOB ORDERS"
-                class="my-sticky-column-table"
-                v-else
-                :data="pending"
-                :columns="column"
-                row-key="id"
-                :filter="filter"
-                :selected-rows-label="getSelectedString"
-                selection="multiple"
-                :selected.sync="selected"
-              />
-              <q-btn no caps label="ACCEPT" class="q-ma-sm bg-secondary text-white"  v-if="selected.length" @click="confirm=true"/>
-              <q-dialog v-model="confirm" persistent>
-                <q-card>
-                  <q-card-section class="row items-center">
-                    <q-avatar icon="done" color="secondary" text-color="primary" />
-                    <span class="q-ma-sm">Accept {{selected.length}} selected <span v-if="selected.length>1">requests</span><span v-else>request</span> to be sent to a foreman?</span>
-                  </q-card-section>
+              <br>
+              <div style="width: 100%;">
+                <q-banner v-if="!pending.length" class="bg-red-1 q-pa-md" style="min-width: 800px;">
+                  <template v-slot:avatar>
+                    <q-icon name="done_all" color="accent" />
+                  </template>
+                  All caught up. Nothing to approve!
+                </q-banner>
+                <q-table
+                  title="Job Orders"
+                  class="my-sticky-column-table"
+                  v-else
+                  dense
+                  :data="pending"
+                  :columns="column"
+                  row-key="jobId"
+                  :filter="filter"
+                  :separator="separator"
+                  :selected-rows-label="getSelectedString"
+                  selection="multiple"
+                  :selected.sync="selected"
+                  hide-bottom
+                >
+                  <template v-slot:header="props">
+                    <q-tr :props="props">
+                      <q-th key="selected">
+                        <q-checkbox dense color="secondary" v-model="props.selected"/>
+                      </q-th>
+                      <q-th auto-width/>
+                      <q-th
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                        class="text-italic text-accent"
+                      >
+                        {{ col.label }}
+                      </q-th>
+                    </q-tr>
+                  </template>
+                  <template v-slot:body="props">
+                    <q-tr :props="props">
+                      <q-td>
+                        <q-checkbox dense color="secondary" v-model="props.selected"/>
+                      </q-td>
+                      <q-td auto-width>
+                        <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
+                      </q-td>
+                      <q-td
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                      >
+                        {{ col.value }}
+                      </q-td>
+                    </q-tr>
+                    <q-tr v-show="props.expand" :props="props">
+                      <q-td colspan="100%">
+                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Requestor's Name</span><br>{{ props.row.requestor}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Unit Head's Name</span><br>{{ props.row.head}}</div>
+                      </q-td>
+                    </q-tr>
+                  </template>
+                </q-table>
+                <q-btn no-caps icon="thumb_up_alt" label="Accept" class="q-ma-sm bg-secondary text-white"  v-if="selected.length" @click="confirm=true"/>
+                <q-dialog v-model="confirm" persistent>
+                  <q-card>
+                    <q-card-section class="row items-center">
+                      <!-- <q-avatar icon="check_circle_outline" color="primary" text-color="secondary" /> -->
+                      <span class="q-ma-sm">Accept {{selected.length}} selected <span v-if="selected.length>1">requests</span><span v-else>request</span> to be sent to a Foreman?</span>
+                    </q-card-section>
 
-                  <q-card-actions align="right">
-                    <q-btn flat label="Yes" color="secondary" @click="onSubmit" v-close-popup/>
-                    <q-btn flat label="No" color="accent" v-close-popup />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
-            </div>
-            <div style="width: 100%; max-height: 50%; margin-bottom: 30px">
-              <q-banner v-if="!ongoing.length" class="bg-red-1 q-pa-md">
-                <template v-slot:avatar>
-                  <q-icon name="event_busy" color="accent" />
-                </template>
-                No ongoing request!
-              </q-banner>
-              <q-table
-                title="ONGOING"
-                class="my-sticky-column-table"
-                v-else
-                :data="ongoing"
-                :columns="column"
-                row-key="id"
-                :filter="filter"
-              />
-            </div>
-            <div style="width: 100%; max-height: 50%; margin-bottom: 30px">
-              <q-banner v-if="!complete.length" class="bg-red-1 q-pa-md">
-                <template v-slot:avatar>
-                  <q-icon name="event_busy" color="accent" />
-                </template>
-                No complete request!
-              </q-banner>
-              <q-table
-                title="COMPLETE"
-                class="my-sticky-column-table"
-                v-else
-                :data="complete"
-                :columns="column"
-                row-key="id"
-                :filter="filter"
-              />
+                    <q-card-actions align="right">
+                      <q-btn flat label="Yes" color="secondary" @click="onSubmit()" v-close-popup/>
+                      <q-btn flat label="No" color="accent" v-close-popup />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+              </div>
+              <br/>
+              <br/>
+
+              <div style="width: 100%;">
+                <q-banner v-if="!ongoing.length" class="bg-red-1 q-pa-md">
+                  <template v-slot:avatar>
+                    <q-icon name="event_busy" color="accent" />
+                  </template>
+                  No ongoing request!
+                </q-banner>
+                <q-table
+                  title="Ongoing"
+                  class="my-sticky-column-table"
+                  v-else
+                  dense
+                  :data="ongoing"
+                  :columns="column"
+                  row-key="jobId"
+                  :separator="separator"
+                  :filter="filter"
+                  hide-bottom
+                >
+                  <template v-slot:header="props">
+                    <q-tr :props="props">
+                      <q-th auto-width/>
+                      <q-th
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                        class="text-italic text-accent"
+                      >
+                        {{ col.label }}
+                      </q-th>
+                    </q-tr>
+                  </template>
+                  <template v-slot:body="props">
+                    <q-tr :props="props">
+                      <q-td auto-width>
+                        <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
+                      </q-td>
+                      <q-td
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                      >
+                        {{ col.value }}
+                      </q-td>
+                    </q-tr>
+                    <q-tr v-show="props.expand" :props="props">
+                      <q-td colspan="100%">
+                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Requestor's Name</span><br>{{ props.row.requestor}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Unit Head's Name</span><br>{{ props.row.head}}</div>
+                      </q-td>
+                    </q-tr>
+                  </template>
+                </q-table>
+              </div>
+              <br/>
+              <br/>
+
+              <div style="width: 100%;">
+                <q-banner v-if="!complete.length" class="bg-red-1 q-pa-md">
+                  <template v-slot:avatar>
+                    <q-icon name="event_busy" color="accent" />
+                  </template>
+                  No completed request!
+                </q-banner>
+                <q-table
+                  title="Completed"
+                  class="my-sticky-column-table"
+                  v-else
+                  dense
+                  :data="complete"
+                  :columns="column"
+                  row-key="jobId"
+                  :separator="separator"
+                  :filter="filter"
+                  hide-bottom
+                >
+                <template v-slot:header="props">
+                    <q-tr :props="props">
+                      <q-th auto-width/>
+                      <q-th
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                        class="text-italic text-accent"
+                      >
+                        {{ col.label }}
+                      </q-th>
+                    </q-tr>
+                  </template>
+                  <template v-slot:body="props">
+                    <q-tr :props="props">
+                      <q-td auto-width>
+                        <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
+                      </q-td>
+                      <q-td
+                        v-for="col in props.cols"
+                        :key="col.name"
+                        :props="props"
+                      >
+                        {{ col.value }}
+                      </q-td>
+                    </q-tr>
+                    <q-tr v-show="props.expand" :props="props">
+                      <q-td colspan="100%">
+                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Requestor's Name</span><br>{{ props.row.requestor}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Unit Head's Name</span><br>{{ props.row.head}}</div>
+                      </q-td>
+                    </q-tr>
+                  </template>
+                </q-table>
+              </div>
             </div>
           </div>
         </q-page>
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
 <style lang="sass">
-  td:first-child
-    background-color: #9C3B3B
 
   th:first-child,
   td:first-child
@@ -95,14 +223,15 @@
 </style>
 
 <script>
-
 import { db } from 'boot/firebase'
+import { date } from 'quasar'
 
 export default {
   data () {
     return {
+      separator: 'cell',
       confirm: false,
-      medium: false,
+      dense: false,
       filter: '',
       pending: [],
       ongoing: [],
@@ -110,7 +239,7 @@ export default {
       selected: [],
       // category: null,
       // unit: null,
-      // status: null,
+      status: 'sent to foreman',
       // date: null,
       // location: null,
       // description: null,
@@ -118,68 +247,14 @@ export default {
       requestor: null,
       head: null,
       column: [
-        {
-          name: 'id',
-          align: 'left',
-          label: 'JOB ID',
-          field: 'id',
-          sortable: true
-        },
-        {
-          name: 'date',
-          align: 'left',
-          label: 'DATE FILED',
-          field: 'date'
-        },
-        {
-          name: 'category',
-          align: 'left',
-          label: 'CATEGORY',
-          field: 'category',
-          sortable: true
-        },
-        {
-          name: 'description',
-          align: 'left',
-          label: 'DESCRIPTION',
-          field: 'description'
-        },
-        {
-          name: 'unit',
-          align: 'left',
-          label: 'REQUESTING UNIT',
-          field: 'unit'
-        },
-        {
-          name: 'location',
-          align: 'left',
-          label: 'LOCATION',
-          field: 'location'
-        },
-        {
-          name: 'telephone',
-          align: 'left',
-          label: 'TELEPHONE',
-          field: 'telephone'
-        },
-        {
-          name: 'requestor',
-          align: 'left',
-          label: "REQUESTOR'S NAME",
-          field: 'requestor'
-        },
-        {
-          name: 'foreman',
-          align: 'left',
-          label: "FOREMAN'S NAME",
-          field: 'foreman'
-        },
-        {
-          name: 'status',
-          align: 'left',
-          label: 'STATUS',
-          field: 'status'
-        }
+        { name: 'id', field: 'jobId', align: 'left', label: 'Job Id' },
+        { name: 'date', field: 'date', align: 'left', label: 'Date Filed' },
+        { name: 'category', field: 'category', align: 'left', label: 'Category', sortable: true },
+        { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit' },
+        { name: 'location', field: 'location', align: 'left', label: 'Location' },
+        { name: 'telephone', field: 'telephone', align: 'left', label: 'Telephone' },
+        { name: 'foreman', field: 'foreman', align: 'left', label: "Foreman's Name" },
+        { name: 'status', field: 'status', align: 'left', label: 'Status' }
       ]
     }
   },
@@ -192,6 +267,9 @@ export default {
       querySnapshot.forEach(doc => {
         const data = {
           id: doc.id,
+          jobId: doc.data().jobId,
+          userId: doc.data().userId,
+          headId: doc.data().headId,
           category: doc.data().category,
           unit: doc.data().unit,
           location: doc.data().location,
@@ -200,15 +278,19 @@ export default {
           telephone: doc.data().telephone,
           requestor: doc.data().requestor,
           foreman: doc.data().foreman,
-          status: 'for your approval'
+          status: doc.data().status
         }
         this.pending.push(data)
+        this.userId = data.userId
+        this.headId = data.headId
       })
     })
     onRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const data = {
-          id: doc.data().id,
+          jobId: doc.data().jobId,
+          userId: doc.data().userId,
+          headId: doc.data().headId,
           category: doc.data().category,
           unit: doc.data().unit,
           location: doc.data().location,
@@ -220,12 +302,16 @@ export default {
           status: doc.data().status
         }
         this.ongoing.push(data)
+        this.userId = data.userId
+        this.headId = data.headId
       })
     })
     comRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const data = {
-          id: doc.data().id,
+          jobId: doc.data().jobId,
+          userId: doc.data().userId,
+          headId: doc.data().headId,
           category: doc.data().category,
           unit: doc.data().unit,
           location: doc.data().location,
@@ -237,8 +323,16 @@ export default {
           status: doc.data().status
         }
         this.complete.push(data)
+        this.userId = data.userId
+        this.headId = data.headId
       })
     })
+  },
+  computed: {
+    date () {
+      let timeStamp = Date.now()
+      return date.formatDate(timeStamp, 'dddd D MMMM YYYY')
+    }
   },
   methods: {
     getSelectedString () {
@@ -251,7 +345,9 @@ export default {
 
       Object.keys(this.selected).forEach(doc => {
         onRef.add({
-          id: this.selected[doc].id,
+          jobId: this.selected[doc].jobId,
+          headId: this.selected[doc].headId,
+          userId: this.selected[doc].userId,
           category: this.selected[doc].category,
           unit: this.selected[doc].unit,
           location: this.selected[doc].location,
@@ -261,7 +357,7 @@ export default {
           requestor: this.requestor,
           head: this.head,
           foreman: this.selected[doc].foreman,
-          status: 'sent to foreman'
+          status: this.status
         })
           .then(
             penRef.doc(this.selected[doc].id).delete(),

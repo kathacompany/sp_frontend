@@ -15,8 +15,8 @@ const routes = [
       { path: 'AdministrativeAccount', component: () => import('pages/administrative/Account.vue') },
       { path: 'AdministrativeJobOrders', component: () => import('pages/administrative/JobOrders.vue') },
       { path: 'AdministrativeAnnouncements', component: () => import('pages/administrative/Announcements.vue') }
-    ]
-    // meta: { requiresAuth: true }
+    ],
+    meta: { requiresAuth: true }
   },
   {
     path: '/',
@@ -37,7 +37,8 @@ const routes = [
       { path: 'ForemanAccount', component: () => import('pages/Foreman/Account.vue') },
       { path: 'ForemanJobOrders', component: () => import('pages/Foreman/JobOrders.vue') },
       { path: 'ForemanScheduleJobs', component: () => import('pages/Foreman/ScheduleJobs.vue') },
-      { path: 'ForemanEmployeeList', component: () => import('pages/Foreman/EmployeeList.vue') }
+      { path: 'ForemanWorkerList', component: () => import('pages/Foreman/WorkerList.vue') },
+      { path: 'ForemanMaterialList', component: () => import('pages/Foreman/MaterialList.vue') }
     ],
     meta: { requiresAuth: true }
   },
