@@ -49,6 +49,21 @@
 
             <q-separator />
 
+<<<<<<< HEAD
+=======
+            <q-item clickable v-ripple @click="$router.push('/AdministrativeAnnouncements')">
+              <q-item-section avatar>
+                <q-icon name="assignment" color="white" />
+              </q-item-section>
+
+              <q-item-section>
+                Add Announcement
+              </q-item-section>
+            </q-item>
+
+            <q-separator />
+
+>>>>>>> 53928e808218dc1c996178eb7f9acf676642fca9
             <q-item clickable v-ripple @click="$router.push('/AdministrativeAccount')">
               <q-item-section avatar>
                 <q-icon name="person" color="white" />
@@ -88,9 +103,7 @@
 </template>
 
 <script>
-import * as firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/database'
+import { firebaseAuth } from 'boot/firebase'
 
 export default {
   data () {
@@ -101,17 +114,15 @@ export default {
   },
   methods: {
     logoutUser: function () {
-      firebase
-        .auth()
+      firebaseAuth
         .signOut()
         .then(
           user => {
             this.$router.push('/')
-          },
-          err => {
-            console.log(err.message)
-          }
-        )
+          })
+        .catch(err => {
+          console.log('error.message:', err)
+        })
     }
   }
 }

@@ -88,9 +88,7 @@
 </template>
 
 <script>
-import * as firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/database'
+import { firebaseAuth } from 'boot/firebase'
 
 export default {
   data () {
@@ -101,17 +99,15 @@ export default {
   },
   methods: {
     logoutUser: function () {
-      firebase
-        .auth()
+      firebaseAuth
         .signOut()
         .then(
           user => {
             this.$router.push('/')
-          },
-          err => {
-            console.log(err.message)
-          }
-        )
+          })
+        .catch(err => {
+          console.log('error.message:', err)
+        })
     }
   }
 }

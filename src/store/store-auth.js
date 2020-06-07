@@ -18,14 +18,14 @@ const actions = {
         console.log('response: ', response)
       })
       .catch(err => {
-        console.log('error.message:', err.message)
+        console.log('error message:', err.message)
       })
   },
   logoutUser () {
     console.log('logoutUser')
     firebaseAuth.signOut()
   },
-  handleAuthStateChange ({ commit }) {
+  async handleAuthStateChange ({ commit }) {
     firebaseAuth.onAuthStateChanged(user => {
       if (user) {
         commit('setLoggedIn', true)
@@ -37,7 +37,10 @@ const actions = {
         commit('setLoggedIn', false)
         LocalStorage.set('loggedIn', false)
         this.$router.replace('/').catch(err => {
-          console.log('error.message:', err)
+          // console.log('error message:', err)
+          if (err.name !== 'NavigationDuplicated') {
+            throw err
+          }
         })
       }
     })

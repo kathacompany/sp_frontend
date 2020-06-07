@@ -12,3 +12,15 @@ worker@gmail.com
 
 
 12345678
+
+    // if (this.user === null) {
+      //   this.$refs.firstname.validate()
+      //   this.$refs.lastname.validate()
+      //   this.$refs.email.validate()
+      //   this.$refs.mobile.validate()
+      //   this.$refs.unit.validate()
+      //   this.$refs.position.validate()
+      //   this.$refs.image.validate()
+      // }
+
+troubleshoot & repair of 2 electrical outlets (CL1) urgent
