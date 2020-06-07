@@ -11,12 +11,12 @@
                 </template>
               </q-input>
               <br>
-              <div class="q-pa-md">
+              <!-- <div class="q-pa-md">
                 <q-btn no-caps float="right" icon="queue" class="q-mr-sm" color="secondary" label="Add Material" @click="add_dialog=true"/>
-                <q-btn no-caps align="right" icon="description" @click="exportTable" class="q-mr-sm" label="Generate File" color="secondary"/>
-              </div>
+                <q-btn no-caps align="right" icon="description" @click="$router.push('/InventoryHomepage')" class="q-mr-sm" label="Generate File" color="secondary"/>
+              </div> -->
 
-                <q-dialog v-model="add_dialog">
+                <!-- <q-dialog v-model="add_dialog">
                   <q-card style="width: 350px">
                     <q-card-section class="row items-center q-pb-none">
                       <div class="text-h6">New Material</div>
@@ -60,7 +60,7 @@
                       <q-btn no-caps @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
                     </q-card-actions>
                   </q-card>
-                </q-dialog>
+                </q-dialog> -->
 
             <div style="width: 100%;">
             <q-banner v-if="!plumbingData.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
@@ -79,10 +79,16 @@
               v-else
               hide-bottom
               dense
+              :selected-rows-label="getSelectedString"
+              selection="multiple"
+              :selected.sync="selected"
               title="Plumbing Materials"
             >
               <template v-slot:header="props">
                 <q-tr :props="props">
+                  <q-th key="selected">
+                    <q-checkbox dense color="secondary" v-model="props.selected"/>
+                  </q-th>
                   <q-th
                     v-for="col in props.cols"
                     :key="col.name"
@@ -91,13 +97,16 @@
                   >
                     {{ col.label }}
                   </q-th>
-                  <q-th>
+                 <!--  <q-th>
                     <span class="text-italic text-accent">Actions</span>
-                  </q-th>
+                  </q-th> -->
                 </q-tr>
               </template>
               <template v-slot:body="props">
                 <q-tr :props="props">
+                  <q-td>
+                    <q-checkbox dense color="secondary" v-model="props.selected"/>
+                  </q-td>
                   <q-td
                     v-for="col in props.cols"
                     :key="col.name"
@@ -105,68 +114,12 @@
                   >
                     {{ col.value }}
                   </q-td>
-                   <q-td>
+                   <!-- <q-td>
                     <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
                     <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
                       <q-space/>
                     </q-btn>
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
-          </div>
-          <br/>
-          <br/>
-
-          <div style="width: 100%;">
-            <q-banner v-if="!electricityData.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
-              <template v-slot:avatar>
-                <q-icon name="sentiment_dissatisfied" color="accent" />
-              </template>
-              No records found!
-            </q-banner>
-            <q-table
-              class="my-sticky-header-table"
-              :data="electricityData"
-              :columns="columns"
-              row-key="name"
-              :filter="filter"
-              :separator="separator"
-              v-else
-              hide-bottom
-              dense
-              title="Electricity Materials"
-            >
-              <template v-slot:header="props">
-                <q-tr :props="props">
-                  <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                    class="text-italic text-accent"
-                  >
-                    {{ col.label }}
-                  </q-th>
-                  <q-th>
-                    <span class="text-italic text-accent">Actions</span>
-                  </q-th>
-                </q-tr>
-              </template>
-              <template v-slot:body="props">
-                <q-tr :props="props">
-                  <q-td
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td>
-                   <q-td>
-                    <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                    <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                      <q-space/>
-                    </q-btn>
-                  </q-td>
+                  </q-td> -->
                 </q-tr>
               </template>
             </q-table>
@@ -191,10 +144,16 @@
               v-else
               hide-bottom
               dense
-              title="Grounds Materials"
+              :selected-rows-label="getSelectedString"
+              selection="multiple"
+              :selected.sync="selected"
+              title="Plumbing Materials"
             >
               <template v-slot:header="props">
                 <q-tr :props="props">
+                  <q-th key="selected">
+                    <q-checkbox dense color="secondary" v-model="props.selected"/>
+                  </q-th>
                   <q-th
                     v-for="col in props.cols"
                     :key="col.name"
@@ -203,13 +162,16 @@
                   >
                     {{ col.label }}
                   </q-th>
-                  <q-th>
+                 <!--  <q-th>
                     <span class="text-italic text-accent">Actions</span>
-                  </q-th>
+                  </q-th> -->
                 </q-tr>
               </template>
               <template v-slot:body="props">
                 <q-tr :props="props">
+                  <q-td>
+                    <q-checkbox dense color="secondary" v-model="props.selected"/>
+                  </q-td>
                   <q-td
                     v-for="col in props.cols"
                     :key="col.name"
@@ -217,12 +179,12 @@
                   >
                     {{ col.value }}
                   </q-td>
-                   <q-td>
+                   <!-- <q-td>
                     <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
                     <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
                       <q-space/>
                     </q-btn>
-                  </q-td>
+                  </q-td> -->
                 </q-tr>
               </template>
             </q-table>
@@ -231,6 +193,71 @@
           <br/>
 
           <div style="width: 100%;">
+            <q-banner v-if="!electricityData.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
+              <template v-slot:avatar>
+                <q-icon name="sentiment_dissatisfied" color="accent" />
+              </template>
+              No records found!
+            </q-banner>
+            <q-table
+              class="my-sticky-header-table"
+              :data="electricityData"
+              :columns="columns"
+              row-key="name"
+              :filter="filter"
+              :separator="separator"
+              v-else
+              hide-bottom
+              dense
+              :selected-rows-label="getSelectedString"
+              selection="multiple"
+              :selected.sync="selected"
+              title="Plumbing Materials"
+            >
+              <template v-slot:header="props">
+                <q-tr :props="props">
+                  <q-th key="selected">
+                    <q-checkbox dense color="secondary" v-model="props.selected"/>
+                  </q-th>
+                  <q-th
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                    class="text-italic text-accent"
+                  >
+                    {{ col.label }}
+                  </q-th>
+                 <!--  <q-th>
+                    <span class="text-italic text-accent">Actions</span>
+                  </q-th> -->
+                </q-tr>
+              </template>
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td>
+                    <q-checkbox dense color="secondary" v-model="props.selected"/>
+                  </q-td>
+                  <q-td
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                  >
+                    {{ col.value }}
+                  </q-td>
+                   <!-- <q-td>
+                    <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
+                    <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
+                      <q-space/>
+                    </q-btn>
+                  </q-td> -->
+                </q-tr>
+              </template>
+            </q-table>
+          </div>
+          <br/>
+          <br/>
+
+    <div style="width: 100%;">
             <q-banner v-if="!transportationData.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
               <template v-slot:avatar>
                 <q-icon name="sentiment_dissatisfied" color="accent" />
@@ -247,10 +274,16 @@
               v-else
               hide-bottom
               dense
-              title="Transportation Materials"
+              :selected-rows-label="getSelectedString"
+              selection="multiple"
+              :selected.sync="selected"
+              title="Plumbing Materials"
             >
-            <template v-slot:header="props">
+              <template v-slot:header="props">
                 <q-tr :props="props">
+                  <q-th key="selected">
+                    <q-checkbox dense color="secondary" v-model="props.selected"/>
+                  </q-th>
                   <q-th
                     v-for="col in props.cols"
                     :key="col.name"
@@ -259,13 +292,16 @@
                   >
                     {{ col.label }}
                   </q-th>
-                  <q-th>
+                 <!--  <q-th>
                     <span class="text-italic text-accent">Actions</span>
-                  </q-th>
+                  </q-th> -->
                 </q-tr>
               </template>
               <template v-slot:body="props">
                 <q-tr :props="props">
+                  <q-td>
+                    <q-checkbox dense color="secondary" v-model="props.selected"/>
+                  </q-td>
                   <q-td
                     v-for="col in props.cols"
                     :key="col.name"
@@ -273,12 +309,12 @@
                   >
                     {{ col.value }}
                   </q-td>
-                   <q-td>
+                   <!-- <q-td>
                     <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
                     <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
                       <q-space/>
                     </q-btn>
-                  </q-td>
+                  </q-td> -->
                 </q-tr>
               </template>
             </q-table>
@@ -302,31 +338,12 @@
 
 <script>
 import { db } from 'boot/firebase'
-import { date, exportFile } from 'quasar'
+import { date } from 'quasar'
 
-function wrapCsvValue (val, formatFn) {
-  let formatted = formatFn !== void 0
-    ? formatFn(val)
-    : val
-
-  formatted = formatted === void 0 || formatted === null
-    ? ''
-    : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-  /**
-   * Excel accepts \n and \r in strings, but some other CSV parsers do not
-   * Uncomment the next two lines to escape new lines
-   */
-  // .split('\n').join('\\n')
-  // .split('\r').join('\\r')
-
-  return `"${formatted}"`
-}
 export default {
-
   data () {
     return {
+      selected: [],
       separator: 'cell',
       dense: false,
       editedIndex: -1,
@@ -409,30 +426,8 @@ export default {
     }
   },
   methods: {
-    exportTable () {
-    // naive encoding to csv format
-      const content = [ this.columns.map(col => wrapCsvValue(col.label)) ].concat(
-        this.data.map(row => this.columns.map(col => wrapCsvValue(
-          typeof col.field === 'function'
-            ? col.field(row)
-            : row[col.field === void 0 ? col.name : col.field],
-          col.format
-        )).join(','))
-      ).join('\r\n')
-
-      const status = exportFile(
-        'table-export.csv',
-        content,
-        'text/csv'
-      )
-
-      if (status !== true) {
-        this.$q.notify({
-          message: 'Browser denied file download...',
-          color: 'negative',
-          icon: 'warning'
-        })
-      }
+    getSelectedString () {
+      return this.selected.length === 0 ? '' : `${this.selected.length} request${this.selected.length > 1 ? 's' : ''} selected of ${this.pending.length}`
     },
     addMaterial () {
       db.collection('materials').add(this.defaultItem)

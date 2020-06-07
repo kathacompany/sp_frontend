@@ -1,64 +1,95 @@
 <template>
-  <q-layout view="hHh lpR fFf">
-    <q-page-container>
-        <q-page class="flex flex-center text-center">
-          <div class="q-ma-md q-pa-md bg-primary">
-            <div style="width: 100%; height: 50%;">
-              <q-icon name="person" style="font-size:200px;"/>
-            </div>
-            <div style="width: 100%; height: 50%; margin-bottom: 10px">
-             <q-table
-                class="my-sticky-column-table"
-                :data="account"
-                :columns="personal"
-                hide-bottom
-              />
-            </div>
-            <div style="width: 100%; height: 50%; margin-bottom: 10px">
-             <q-table
-                class="my-sticky-column-table"
-                :data="account"
-                :columns="secondary"
-                hide-bottom
-              />
-            </div>
-            <q-btn no-caps class="q-pa-xs q-ma-xs" ref="btn" color="secondary" @click="opened=true" label="ADD INFO"/>
+<q-layout view="hHh lpR fFf">
+  <q-page-container>
+    <q-page class="window-height window-width row justify-center">
+      <div class="q-gutter-sm flex text-center">
+        <div style="min-width: 350px; max-height: 100%; margin-top: 40px">
 
-          <q-dialog v-model="opened" maximized>
-            <q-layout class="no-shadow">
-              <q-page-container>
-                <q-page class="flex flex-center">
-                  <q-card container class="bg-primary q-pa-auto q-ma-auto" style="width:40%;">
-                    <q-card-section>
-                      <div class="q-pa-auto">
-                        <q-input class="q-ma-auto" required v-model="first_name" label="First Name"></q-input>
-                        <q-input class="q-ma-auto" required v-model="last_name" label="Last Name"></q-input>
-                        <q-input class="q-ma-auto" required v-model="middle_name" label="Middle Name"></q-input>
-                         <q-input class="q-ma-auto" required v-model="unit" label="Unit"></q-input>
-                        <q-input class="q-ma-auto" required v-model="position" label="Position"></q-input>
-                        <q-input class="q-ma-auto" required v-model="mobile_number" label="Mobile Number"></q-input>
-                        <q-input class="q-ma-auto" required v-model="email" label="Email"></q-input>
-                      <q-card-actions >
-                        <q-btn no-caps color="secondary" class="text-white" label="Save" @click="saveChanges" disable="false"/>
-                        <q-btn no-caps color="secondary" label="Cancel" class="text-white" v-close-popup/>
-                      </q-card-actions>
-                      </div>
-                    </q-card-section>
-                  </q-card>
-                </q-page>
-              </q-page-container>
-            </q-layout>
-          </q-dialog>
+          <q-card class="q-pa-sm" style="width: 700px">
+            <q-card-section align="center">
+              <div class="text-h5">ACCOUNT DETAILS</div>
+              <div class="col">
+                <div class="row justify-center">
+                  <div class="q-pa-sm text-subtitle1"><q-icon name="face" color="secondary"/> {{user.usertype}}</div>
+                  <div class="q-pa-sm text-subtitle1">{{date}}</div>
+                </div>
+              </div>
+            </q-card-section>
+            <q-separator color="secondary"/>
+            <br>
+
+            <q-card-section>
+              <div class="row justify-center">
+                <div class="col q-pa-sm">
+                  <q-avatar v-if="user.image" ref="image" size="150px">
+                    <img v-if="user.image" ref="image" :src="user.image" @error="replaceByDefault">
+                  </q-avatar>
+                  <q-avatar v-else size="150px" ref="imageDef" font-size="120px" color="grey-3" text-color="primary" icon="person" />
+                  <br>
+                  <br>
+                  <q-btn no-caps dense flat color="accent" @click="hidden = !hidden" icon="add_a_photo" :disable="disable"/>
+                  <q-input type="file" color="accent" outlined style="width: 20vw;" v-model="user.image" dense v-if="!hidden" @change="onGetImage" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Image is required']"/>
+                </div>
+                <div class="col" style="margin-top: 35px;">
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" ref="unit" v-model="user.unit" label="Unit" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Unit is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="local_library" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" ref="position" v-model="user.position" label="Position" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Position is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="work" />
+                    </template>
+                  </q-input>
+                </div>
+              </div>
+            </q-card-section>
+            <q-separator color="secondary"/>
+            <br>
+
+            <q-card-section>
+              <div class="col">
+                <div class="row justify-center">
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" ref="firstname" v-model="user.firstname" label="First Name" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'First Name is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="person_pin" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" ref="lastname" v-model="user.lastname" label="Last Name" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Last Name is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="person_pin" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" ref="mobile" v-model="user.mobile" label="Mobile" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Mobile is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="phone" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.email" label="Email" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Email is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="email" />
+                    </template>
+                  </q-input>
+                </div>
+              </div>
+            </q-card-section>
+            <q-separator color="secondary"/>
+
+            <q-card-actions align="center">
+              <q-btn no-caps v-model="disable" color="secondary" @click="disable = !disable" v-if="disable" icon="edit" label="Edit Profile"/>
+              <q-btn no-caps flat color="secondary" v-else-if="!disable" label="Save" @click="saveChanges"/>
+              <q-btn no-caps flat color="accent" @click="disable = true" v-if="!disable" label="Cancel"/>
+            </q-card-actions>
+
+            </q-card>
           </div>
-        </q-page>
-    </q-page-container>
+        </div>
+      </q-page>
+  </q-page-container>
   </q-layout>
 </template>
 
 <style lang="sass">
-
-  td:first-child
-    background-color: white
 
   th:first-child,
   td:first-child
@@ -68,104 +99,86 @@
 </style>
 
 <script>
-import * as firebase from 'firebase/app'
-import 'firebase/firestore'
+import { firebaseAuth, db } from 'boot/firebase'
+import { date } from 'quasar'
 
 export default {
+  props: ['usertype'],
   data () {
     return {
-      disabled: false,
-      opened: false,
-      account: [],
-      firtst_name: null,
-      last_name: null,
-      middle_name: null,
-      mobile_number: null,
-      unit: null,
-      email: null,
-      position: null,
-      personal: [
-        {
-          name: 'first_name',
-          align: 'left',
-          label: 'FIRST NAME',
-          field: 'first_name'
-        },
-        {
-          name: 'last_name',
-          align: 'left',
-          label: 'LAST NAME',
-          field: 'last_name'
-        },
-        {
-          name: 'middle_name',
-          align: 'left',
-          label: 'MIDDLE NAME',
-          field: 'middle_name'
-        },
-        {
-          name: 'mobile_number',
-          align: 'left',
-          label: 'MOBILE NUMBER',
-          field: 'mobile_number'
-        }
-      ],
-      secondary: [
-        {
-          name: 'unit',
-          align: 'left',
-          label: 'UNIT',
-          field: 'unit'
-        },
-        {
-          name: 'email',
-          align: 'left',
-          label: 'EMAIL',
-          field: 'email'
-        },
-        {
-          name: 'position',
-          align: 'left',
-          label: 'POSITION',
-          field: 'position'
-        }
-      ]
+      error: null,
+      hidden: true,
+      editedIndex: -1,
+      disable: true,
+      currentuser: firebaseAuth.currentUser.uid,
+      user: {
+        usertype: '',
+        image: '',
+        firstname: '',
+        lastname: '',
+        mobile: '',
+        unit: '',
+        email: '',
+        position: ''
+      }
     }
   },
   created () {
-    firebase.firestore().collection('account').get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        const data = {
-          first_name: doc.data().first_name,
-          last_name: doc.data().last_name,
-          middle_name: doc.data().middle_name,
-          mobile_number: doc.data().mobile_number,
-          unit: doc.data().unit,
-          email: doc.data().email,
-          position: doc.data().position
-        }
-        this.account.push(data)
+    db.collection('account').where('userId', '==', this.currentuser).get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const userData = {
+            id: doc.id,
+            userId: doc.data().userId,
+            usertype: doc.data().usertype,
+            firstname: doc.data().firstname,
+            lastname: doc.data().lastname,
+            mobile: doc.data().mobile,
+            email: doc.data().email,
+            image: doc.data().image,
+            position: doc.data().position,
+            unit: doc.data().unit
+          }
+          this.user = Object.assign({}, userData)
+          this.userId = userData.id
+        })
       })
-    })
+  },
+  computed: {
+    date () {
+      let timeStamp = Date.now()
+      return date.formatDate(timeStamp, 'dddd D MMMM YYYY')
+    }
   },
   methods: {
+    replaceByDefault (error) {
+      if (error) {
+        this.user.image = this.imageDef
+      }
+    },
+    onGetImage (event) {
+      const file = event.target.files[0]
+      this.user.image = URL.createObjectURL(file)
+      this.hidden = true
+    },
     saveChanges () {
-      firebase.firestore().collection('account').add({
-        first_name: this.first_name,
-        last_name: this.last_name,
-        middle_name: this.middle_name,
-        unit: this.unit,
-        position: this.position,
-        mobile_number: this.mobile_number,
-        email: this.email
-      })
-        .then(docRef => {
-          console.log('Account added: ', docRef.id)
-          location.reload()
+      this.disable = true
+      let useRef = db.collection('account').doc(this.userId)
+      if (this.user.firstname === null || this.user.lastname === null || this.user.mobile === null || this.unit === null || this.position === null || this.user.image === null) {
+        this.$refs.firstname.validate()
+        this.$refs.lastname.validate()
+        this.$refs.mobile.validate()
+        this.$refs.unit.validate()
+        this.$refs.position.validate()
+      } else {
+        useRef.update(this.user).catch(error => {
+          console.log(error)
         })
-        .catch(error => {
-          console.error('Error saving account: ', error)
+        this.$q.notify({
+          color: 'secondary',
+          message: 'Updated successfully'
         })
+      }
     }
   }
 }

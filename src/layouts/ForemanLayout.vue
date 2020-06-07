@@ -51,7 +51,7 @@
 
             <q-item clickable v-ripple @click="$router.push('/ForemanScheduleJobs')">
               <q-item-section avatar>
-                <q-icon name="event_note" color="white" />
+                <q-icon name="update" color="white" />
 
               </q-item-section>
 
@@ -62,13 +62,26 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/ForemanEmployeeList')">
+            <q-item clickable v-ripple @click="$router.push('/ForemanMaterialList')">
+              <q-item-section avatar>
+                <q-icon name="build" color="white" />
+
+              </q-item-section>
+
+              <q-item-section>
+                Material List
+              </q-item-section>
+            </q-item>
+
+            <q-separator />
+
+            <q-item clickable v-ripple @click="$router.push('/ForemanWorkerList')">
               <q-item-section avatar>
                 <q-icon name="people" color="white" />
               </q-item-section>
 
               <q-item-section>
-                Employee List
+                Worker List
               </q-item-section>
             </q-item>
 
@@ -113,9 +126,7 @@
 </template>
 
 <script>
-import * as firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/database'
+import { firebaseAuth } from 'boot/firebase'
 
 export default {
   data () {
@@ -126,17 +137,15 @@ export default {
   },
   methods: {
     logoutUser: function () {
-      firebase
-        .auth()
+      firebaseAuth
         .signOut()
         .then(
           user => {
             this.$router.push('/')
-          },
-          err => {
-            console.log(err.message)
-          }
-        )
+          })
+        .catch(err => {
+          console.log('error.message:', err)
+        })
     }
   }
 }

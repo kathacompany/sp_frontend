@@ -1,6 +1,6 @@
 <template>
     <q-page class="flex flex-center" style="background:linear-gradient(to top, #3B9C9C, #B0E0E6">
-        <div class="row" style="padding: 5px; border:ridge #9C3B3B 2px; max-width: 100%;">
+        <div class="row" style="padding: 5px; border:ridge #9C3B3B 1px; max-width: 100%;">
           <div class="col bg-secondary" style="width: 300px; min-width: 100px">
             <img src="statics/logo.png" style="margin-top: 50px; width: 150px;height: 150px"/>
               <h3 style="padding-top: 40px; margin: 0px">JOPSIS</h3>
@@ -15,7 +15,7 @@
               <q-card-section>
                 <q-form>
                   <q-select
-                  filled
+                  outlined
                   clearable
                   ref="usertype"
                   color="secondary"
@@ -32,8 +32,7 @@
                     </template>
                   </q-select>
                   <q-input
-                  square
-                  filled
+                  outlined
                   clearable
                   ref="email"
                   icon="email"
@@ -50,8 +49,7 @@
                     </template>
                   </q-input>
                   <q-input
-                  square
-                  filled
+                  outlined
                   clearable
                   ref="password"
                   v-model="password"
@@ -107,8 +105,8 @@
 </template>
 
 <script>
-
-import { firebaseAuth } from 'boot/firebase'
+import { Loading } from 'quasar'
+import { firebaseAuth, db } from 'boot/firebase'
 
 export default {
   data () {
@@ -123,125 +121,158 @@ export default {
       sentEmail: false
     }
   },
+  created () {
+    db.collection('account').get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        const userRef = {
+          id: doc.id,
+          userId: doc.data().userId
+        }
+        this.userId = userRef.userId
+        this.id = userRef.id
+      })
+    })
+  },
   methods: {
-    onLogin: function (e) {
-      if (this.usertype === null || this.email === null || this.password === null) {
-        this.$refs.usertype.validate()
-        this.$refs.email.validate()
-        this.$refs.password.validate()
-      } else if (this.usertype === 'Unit Requestor' && this.email === 'requestor@gmail.com' && this.password === '12345678') {
-        firebaseAuth
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then(
-            user => {
-              this.$router.push('/UserHomepage')
-              this.$q.dialog({
-                title: 'Welcome!',
-                color: 'secondary',
-                message: 'You are logged in as Unit Requestor',
-                ok: 'OK'
-              })
-            },
-            err => {
-              console.log(err.message)
-            }
-          )
-      } else if (this.usertype === 'Unit Head' && this.email === 'head@gmail.com' && this.password === '12345678') {
-        firebaseAuth
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then(
-            user => {
-              this.$router.replace('/HeadHomepage')
-              this.$q.dialog({
-                title: 'Welcome!',
-                color: 'secondary',
-                message: 'You are logged in as Unit Head',
-                ok: 'OK'
-              })
-            },
-            err => {
-              console.log(err.message)
-            }
-          )
-      } else if (this.usertype === 'Administrative Staff' && this.email === 'administrative@gmail.com' && this.password === '12345678') {
-        firebaseAuth
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then(
-            user => {
-              this.$router.push('/AdministrativeHomepage')
-              this.$q.dialog({
-                title: 'Welcome!',
-                color: 'secondary',
-                message: 'You are logged in as Administrative Staff',
-                ok: 'OK'
-              })
-            },
-            err => {
-              console.log(err.message)
-            }
-          )
-      } else if (this.usertype === 'Foreman' && this.email === 'foreman@gmail.com' && this.password === '12345678') {
-        firebaseAuth
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then(
-            user => {
-              this.$router.push('/ForemanHomepage')
-              this.$q.dialog({
-                title: 'Welcome!',
-                color: 'secondary',
-                message: 'You are logged in as Foreman',
-                ok: 'OK'
-              })
-            },
-            err => {
-              console.log(err.message)
-            }
-          )
-      } else if (this.usertype === 'Inventory Staff' && this.email === 'inventory@gmail.com' && this.password === '12345678') {
-        firebaseAuth
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then(
-            user => {
-              this.$router.push('/InventoryHomepage')
-              this.$q.dialog({
-                title: 'Welcome!',
-                color: 'secondary',
-                message: 'You are logged in as Inventory Staff',
-                ok: 'OK'
-              })
-            },
-            err => {
-              console.log(err.message)
-            }
-          )
-      } else if (this.usertype === 'Worker' && this.email === 'worker@gmail.com' && this.password === '12345678') {
-        firebaseAuth
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then(
-            user => {
-              this.$router.push('/WorkerHomepage')
-              this.$q.dialog({
-                title: 'Welcome!',
-                color: 'secondary',
-                message: 'You are logged in as Worker',
-                ok: 'OK'
-              })
-            },
-            err => {
-              console.log(err.message)
-            }
-          )
-      } else {
-        this.$q.dialog({
-          title: 'Alert!',
-          color: 'secondary',
-          message: 'Usertype or Email or Password is incorrect',
-          ok: 'OK'
+    addAuth () {
+      this.currentuser = firebaseAuth.currentUser.uid
+      // let setRef = db.collection('account').doc(this.id)
+      let setRef = db.collection('account').doc(this.currentuser)
+      setRef.set({
+        userId: this.currentuser,
+        email: this.email,
+        usertype: this.usertype
+      },
+      { merge: true }
+      )
+        .catch(error => {
+          console.error('Error message: ', error)
         })
+      // } else {
+      //   setRef.update({
+      //     userId: this.currentuser,
+      //     email: this.email,
+      //     usertype: this.usertype
+      //   })
+      //     .catch(error => {
+      //       console.log('user already existed, updated!', error)
+      //     })
+      // }
+    },
+    async onLogin () {
+      try {
+        if (this.usertype === null || this.email === null || this.password === null) {
+          this.$refs.usertype.validate()
+          this.$refs.email.validate()
+          this.$refs.password.validate()
+        } else if (this.usertype === 'Unit Requestor' && this.email === 'requestor@gmail.com' && this.password === '12345678') {
+          Loading.show()
+          await firebaseAuth
+            .signInWithEmailAndPassword(this.email, this.password)
+            .then(
+              user => {
+                this.$router.push('/UserHomepage')
+                Loading.hide()
+                this.$q.dialog({
+                  title: 'Welcome!',
+                  color: 'secondary',
+                  message: 'You are logged in as Unit Requestor',
+                  ok: 'OK'
+                })
+              })
+          this.addAuth()
+        } else if (this.usertype === 'Unit Head' && this.email === 'head@gmail.com' && this.password === '12345678') {
+          Loading.show()
+          await firebaseAuth
+            .signInWithEmailAndPassword(this.email, this.password)
+            .then(
+              user => {
+                this.$router.push('/HeadHomepage')
+                Loading.hide()
+                this.$q.dialog({
+                  title: 'Welcome!',
+                  color: 'secondary',
+                  message: 'You are logged in as Unit Head',
+                  ok: 'OK'
+                })
+              })
+          this.addAuth()
+        } else if (this.usertype === 'Administrative Staff' && this.email === 'administrative@gmail.com' && this.password === '12345678') {
+          Loading.show()
+          await firebaseAuth
+            .signInWithEmailAndPassword(this.email, this.password)
+            .then(
+              user => {
+                this.$router.push('/AdministrativeHomepage')
+                Loading.hide()
+                this.$q.dialog({
+                  title: 'Welcome!',
+                  color: 'secondary',
+                  message: 'You are logged in as Administrative Staff',
+                  ok: 'OK'
+                })
+              })
+          this.addAuth()
+        } else if (this.usertype === 'Foreman' && this.email === 'foreman@gmail.com' && this.password === '12345678') {
+          Loading.show()
+          await firebaseAuth
+            .signInWithEmailAndPassword(this.email, this.password)
+            .then(
+              user => {
+                this.$router.push('/ForemanHomepage')
+                Loading.hide()
+                this.$q.dialog({
+                  title: 'Welcome!',
+                  color: 'secondary',
+                  message: 'You are logged in as Foreman',
+                  ok: 'OK'
+                })
+              })
+          this.addAuth()
+        } else if (this.usertype === 'Inventory Staff' && this.email === 'inventory@gmail.com' && this.password === '12345678') {
+          Loading.show()
+          await firebaseAuth
+            .signInWithEmailAndPassword(this.email, this.password)
+            .then(
+              user => {
+                this.$router.push('/InventoryHomepage')
+                Loading.hide()
+                this.$q.dialog({
+                  title: 'Welcome!',
+                  color: 'secondary',
+                  message: 'You are logged in as Inventory Staff',
+                  ok: 'OK'
+                })
+              })
+          this.addAuth()
+        } else if (this.usertype === 'Worker' && this.email === 'worker@gmail.com' && this.password === '12345678') {
+          Loading.show()
+          await firebaseAuth
+            .signInWithEmailAndPassword(this.email, this.password)
+            .then(
+              user => {
+                this.$router.push('/WorkerHomepage')
+                Loading.hide()
+                this.$q.dialog({
+                  title: 'Welcome!',
+                  color: 'secondary',
+                  message: 'You are logged in as Worker',
+                  ok: 'OK'
+                })
+              })
+          this.addAuth()
+        } else {
+          this.$q.dialog({
+            title: 'Alert!',
+            color: 'secondary',
+            message: 'Usertype or Email or Password is incorrect!',
+            ok: 'Try Again'
+          })
+        }
+      } catch (error) {
+        console.log('error message', error)
       }
-      e.preventDefault()
     }
   }
 }
-
 </script>

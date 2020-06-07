@@ -25,7 +25,7 @@
       >
         <q-scroll-area class="fit q-pa-sm">
           <q-list padding class="q-mr-ma">
-            <q-item clickable v-ripple @click="$router.push('/WorkerHomepage')">
+            <q-item clickable v-ripple @click="$router.push('/AdministrativeHomepage')">
               <q-item-section avatar>
                 <q-icon name="home" color="white"/>
               </q-item-section>
@@ -37,19 +37,19 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/WorkerScheduleJobs')">
+            <q-item clickable v-ripple @click="$router.push('/AdministrativeJobOrders')">
               <q-item-section avatar>
-                <q-icon name="work" color="white" />
+                <q-icon name="inbox" color="white" />
               </q-item-section>
 
               <q-item-section>
-                Scheduled Jobs
+                Job Order Requests
               </q-item-section>
             </q-item>
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/WorkerAccount')">
+            <q-item clickable v-ripple @click="$router.push('/AdministrativeAccount')">
               <q-item-section avatar>
                 <q-icon name="person" color="white" />
               </q-item-section>
@@ -66,7 +66,7 @@
                 <q-icon name="eva-person-remove" color="white" />
               </q-item-section>
 
-               <q-item-section @click="logoutUser">
+              <q-item-section @click="logoutUser">
                 Log Out
               </q-item-section>
             </q-item>
@@ -74,21 +74,23 @@
         </q-scroll-area>
       </q-drawer>
 
-      <q-page-container class="page-container">
+      <q-page-container >
       <transition
               name="transitions"
               enter-active-class="animated fadeIn"
               leave-active-class="animated fadeOut"
               mode="out-in"
       >
-        <router-view/>
+        <router-view class="page-container"/>
       </transition>
       </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { firebaseAuth } from 'boot/firebase'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/database'
 
 export default {
   data () {
@@ -99,15 +101,17 @@ export default {
   },
   methods: {
     logoutUser: function () {
-      firebaseAuth
+      firebase
+        .auth()
         .signOut()
         .then(
           user => {
             this.$router.push('/')
-          })
-        .catch(err => {
-          console.log('error.message:', err)
-        })
+          },
+          err => {
+            console.log(err.message)
+          }
+        )
     }
   }
 }

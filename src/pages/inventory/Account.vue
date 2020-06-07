@@ -1,173 +1,186 @@
 <template>
-  <q-layout view="hHh lpR fFf">
-    <q-page-container>
-    <q-page class="flex flex-center text-center">
-      <div style="width: 100%; height: 50%;">
-        <q-icon name="person" style="font-size:200px;"/>
-      </div>
-      <div class="q-gutter-md">
-        <q-table
-          card-class="bg-primary"
-          :data="tableData"
-          :columns="tableColumns"
-          hide-bottom
-          style="width:500px;"
-        />
-        <q-table
-          card-class="bg-primary"
-          :data="profileData"
-          :columns="profileColumns"
-          hide-bottom
-          style="width:500px;"
-        />
-        <q-btn rounded no-caps push class="q-pa-sm q-ma-sm" color="secondary" @click="opened=true" label="Edit Information"/>
+<q-layout view="hHh lpR fFf">
+  <q-page-container>
+    <q-page class="window-height window-width row justify-center">
+      <div class="q-gutter-sm flex text-center">
+        <div style="min-width: 350px; max-height: 100%; margin-top: 40px">
 
-          <q-dialog v-model="opened" maximized class="bg-white">
-            <q-layout class="no-shadow">
-              <q-page-container>
-                <q-page class="flex flex-center">
-                  <q-card container class="bg-primary q-ma-sm q-pa-md" style="width:80%;">
-                    <q-card-section>
-                      <div class="q-pa-md full-width">
-                        <q-input class="q-ma-sm" required v-model="newFirstName" label="First Name"></q-input>
-                        <q-input class="q-ma-sm" required v-model="newLastName" label="Last Mame"></q-input>
-                        <q-input class="q-ma-sm" required v-model="newMiddleName" label="Middle Name"></q-input>
-                        <q-input class="q-ma-sm" required v-model="newSuffix" label="Suffix"></q-input>
-                        <q-input class="q-ma-sm" required v-model="newEmail" label="Email"></q-input>
-                      <q-card-actions >
-                        <q-btn rounded no-caps push color="secondary" class="text-white" @click="saveChanges" label="Save Changes"/>
-                        <q-btn rounded no-caps push color="secondary" label="Cancel" class="text-white" v-close-popup/>
-                      </q-card-actions>
-                      </div>
-                    </q-card-section>
-                  </q-card>
-                </q-page>
-              </q-page-container>
-            </q-layout>
-          </q-dialog>
+          <q-card class="q-pa-sm" style="width: 700px">
+            <q-card-section align="center">
+              <div class="text-h5">ACCOUNT DETAILS</div>
+              <div class="col">
+                <div class="row justify-center">
+                  <div class="q-pa-sm text-subtitle1"><q-icon name="face" color="secondary"/> {{user.usertype}}</div>
+                  <div class="q-pa-sm text-subtitle1">{{date}}</div>
+                </div>
+              </div>
+            </q-card-section>
+            <q-separator color="secondary"/>
+            <br>
+
+            <q-card-section>
+              <div class="row justify-center">
+                <div class="col q-pa-sm">
+                  <q-avatar v-if="user.image" ref="image" size="150px">
+                    <img v-if="user.image" :src="user.image" @error="replaceByDefault">
+                  </q-avatar>
+                  <q-avatar v-else size="150px" ref="imageDef" font-size="120px" color="grey-3" text-color="primary" icon="person" />
+                  <br>
+                  <br>
+                  <q-btn no-caps dense flat color="accent" @click="hidden = !hidden" icon="add_a_photo" :disable="disable"/>
+                  <q-input type="file" color="accent" outlined style="width: 20vw;" ref="image" v-model="user.image" dense v-if="!hidden" @change="onGetImage" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Image is required']"/>
+                </div>
+                <div class="col" style="margin-top: 35px;">
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.unit" label="Unit" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Unit is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="local_library" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.position" label="Position" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Position is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="work" />
+                    </template>
+                  </q-input>
+                </div>
+              </div>
+            </q-card-section>
+            <q-separator color="secondary"/>
+            <br>
+
+            <q-card-section>
+              <div class="col">
+                <div class="row justify-center">
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.firstname" label="First Name" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'First Name is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="person_pin" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.lastname" label="Last Name" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Last Name is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="person_pin" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.mobile" label="Mobile" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Mobile is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="phone" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.email" label="Email" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Email is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="email" />
+                    </template>
+                  </q-input>
+                </div>
+              </div>
+            </q-card-section>
+            <q-separator color="secondary"/>
+
+            <q-card-actions align="center">
+              <q-btn no-caps v-model="disable" color="secondary" @click="disable = !disable" v-if="disable" icon="edit" label="Edit Profile"/>
+              <q-btn no-caps flat color="secondary" v-else-if="!disable" label="Save" @click="saveChanges"/>
+              <q-btn no-caps flat color="accent" @click="disable = true" v-if="!disable" label="Cancel"/>
+            </q-card-actions>
+
+            </q-card>
+          </div>
         </div>
-    </q-page>
-    </q-page-container>
+      </q-page>
+  </q-page-container>
   </q-layout>
 </template>
 
 <style lang="sass">
-  .q-pa-md
-    -webkit-text-fill-color: white;
+
+  th:first-child,
+  td:first-child
+    position: sticky
+    left: 0
+    z-index: 1
 </style>
 
 <script>
-// import AuthService from 'src/services/auth'
+import { db } from 'boot/firebase'
+import * as firebase from 'firebase/app'
+import { date } from 'quasar'
 
 export default {
-  created () {
-    this.getUserDetails()
-  },
-  profile: '',
-  data: () => ({
-    opened: false,
-    newFirstName: '',
-    newLastName: '',
-    newMiddleName: '',
-    newSuffix: '',
-    newEmail: '',
-    profiledata: {
-      first_name: '',
-      last_name: '',
-      middle_name: '',
-      suffix_name: '',
-      profileData: [],
-      username: '',
-      email: '',
-      mobile_number: ''
-    },
-    tableColumns: [
-      {
-        name: 'username',
-        required: true,
-        label: 'Username',
-        align: 'left',
-        field: 'username'
-      },
-      {
-        name: 'email',
-        required: true,
-        label: 'Email Address',
-        align: 'left',
-        field: 'email'
-      },
-      {
-        name: 'mobile_number',
-        required: true,
-        label: 'Mobile Number',
-        align: 'left',
-        field: 'mobile_number'
+  props: ['usertype'],
+  data () {
+    return {
+      error: null,
+      hidden: true,
+      editedIndex: -1,
+      disable: true,
+      userId: null,
+      imageDef: null,
+      user: {
+        usertype: '',
+        image: '',
+        firstname: '',
+        lastname: '',
+        mobile: '',
+        unit: '',
+        email: '',
+        position: ''
       }
-    ],
-    profileColumns: [
-      {
-        name: 'first_name',
-        required: true,
-        label: 'First Name',
-        align: 'left',
-        field: 'first_name'
-      },
-      {
-        name: 'last_name',
-        required: true,
-        label: 'Last Name',
-        align: 'left',
-        field: 'last_name'
-      },
-      {
-        name: 'middle_name',
-        required: true,
-        label: 'Middle Name',
-        align: 'left',
-        field: 'middle_name'
-      },
-      {
-        name: 'suffix_name',
-        required: true,
-        label: 'Suffix Name',
-        align: 'left',
-        field: 'suffix_name'
-      }
-    ],
-    tableData: [],
-    profile: []
-  }),
-  methods: {
-    async getUserDetails () {
-      let profile = this.$q.localStorage.getItem('user').profile
-      let details = this.$q.localStorage.getItem('user')
-      this.profileData = [profile]
-      this.tableData = [details]
     }
-    // },
-    // async saveChanges () {
-    //   let user = {
-    //     email: this.newEmail
-    //   }
-    //   let profile = {
-    //     first_name: this.newFirstName,
-    //     last_name: this.newLastName,
-    //     middle_name: this.newMiddleName,
-    //     suffix_name: this.newSuffix
-    //   }
-    //   try {
-    //     await Promise.all([
-    //       AuthService.updateUser(user),
-    //       AuthService.updateProfile(profile)
-    //     ])
-    //     let { data: userData } = await AuthService.me()
-    //     this.$q.localStorage.set('user', userData)
-    //     this.getUserDetails()
-    //     this.opened = false
-    //   } catch (e) {
-    //     console.error(e)
-    //   }
-    // }
+  },
+  created () {
+    db.collection('account').where('userId', '==', firebase.auth().currentUser.uid).get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const userData = {
+            id: doc.id,
+            usertype: doc.data().usertype,
+            firstname: doc.data().firstname,
+            lastname: doc.data().lastname,
+            mobile: doc.data().mobile,
+            email: doc.data().email,
+            image: doc.data().image,
+            position: doc.data().position,
+            unit: doc.data().unit
+          }
+          this.user = Object.assign({}, userData)
+          this.docId = this.user.id
+        })
+      })
+  },
+  computed: {
+    date () {
+      let timeStamp = Date.now()
+      return date.formatDate(timeStamp, 'dddd D MMMM YYYY')
+    }
+  },
+  methods: {
+    replaceByDefault (error) {
+      if (error) {
+        this.user.image = this.imageDef
+      }
+    },
+    onGetImage (event) {
+      const file = event.target.files[0]
+      this.user.image = URL.createObjectURL(file)
+      this.hidden = true
+    },
+    saveChanges () {
+      this.disable = true
+      let currentUser = firebase.auth().currentUser.uid
+      if (this.user !== '') {
+        let useRef = db.collection('account').doc(this.docId)
+        useRef.update(this.user)
+        this.$q.notify({
+          color: 'secondary',
+          message: 'Updated successfully'
+        })
+      } else {
+        let setRef = db.collection('account').doc(currentUser)
+        setRef.set(this.user)
+        this.$q.notify({
+          color: 'secondary',
+          message: 'Updated successfully'
+        })
+      }
+    }
   }
 }
 </script>
