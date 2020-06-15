@@ -24,7 +24,6 @@
 
                     <q-card-section>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Worker Name"/>
-                      <q-input  class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.position" label="Position" />
                       <q-select outlined dense class="q-pa-xs" color="accent" v-model="defaultItem.area" :options="options" label="Area"/>
                     </q-card-section>
                     <q-card-actions class="justify-center q-pa-xs">
@@ -98,7 +97,6 @@
 
                                   <q-card-section>
                                     <q-input outlined dense clearable class="q-pa-xs" color="accent" v-model="editedItem.name" label="Name" />
-                                    <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.position" label="Position" />
                                     <q-select outlined dense class="q-pa-xs" color="accent" v-model="editedItem.area" :options="options" label="Area"/>
 
                                   </q-card-section>
@@ -148,13 +146,11 @@ export default {
       activeWorker: null,
       defaultItem: {
         name: '',
-        area: '',
-        position: ''
+        area: ''
       },
       editedItem: {
         name: '',
-        area: '',
-        position: ''
+        area: ''
       },
       employees: [],
       options: [
@@ -163,7 +159,6 @@ export default {
       column: [
         // { name: 'id', required: true, label: 'Worker Id', field: 'id', align: 'left', sortable: true },
         { name: 'name', required: true, label: 'Name', field: 'name', align: 'left', sortable: true },
-        { name: 'position', label: 'Position', field: 'position', align: 'left' },
         { name: 'area', label: 'Area', field: 'area', sortable: true, align: 'left' }
       ]
     }
@@ -185,7 +180,6 @@ export default {
             const matData = {
               id: res.id,
               name: res.data().name,
-              position: res.data().position,
               area: res.data().area
             }
             this.employees.push(matData)

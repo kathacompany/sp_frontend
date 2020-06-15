@@ -82,7 +82,8 @@ module.exports = function (ctx) {
         'QCarouselControl',
         'QCarouselSlide',
         'QDate',
-        'QEditor'
+        'QEditor',
+        'QCheckbox'
       ],
       directives: [
         'ClosePopup',
