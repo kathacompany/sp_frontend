@@ -43,7 +43,7 @@
               </q-item-section>
 
               <q-item-section>
-                Job Orders
+                Job Order Requests
               </q-item-section>
             </q-item>
 

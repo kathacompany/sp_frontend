@@ -37,13 +37,13 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/Inventory')">
+            <q-item clickable v-ripple @click="$router.push('/Inventories')">
               <q-item-section avatar>
                 <q-icon name="list_alt" color="white"/>
               </q-item-section>
 
               <q-item-section>
-                Inventory
+                Inventories
               </q-item-section>
             </q-item>
 

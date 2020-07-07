@@ -4,23 +4,23 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5>WORKER LISTS</h5> {{ date }}<br><br>
+              <h5 class="text-weight-light">WORKER LISTS</h5> {{ date }}<br><br>
               <q-input outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Name">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
               <br>
-              <q-btn no-caps icon="person_add" label="Add Worker" color="secondary" @click="add_dialog=true"/>
+              <q-btn no-caps icon="person_add"  class="text-weight-light" label="Add Worker" color="secondary" @click="add_dialog=true"/>
               <br>
               <br>
-                <q-dialog v-model="add_dialog">
+                <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
                   <q-card style="width: 350px">
-                    <q-card-section class="row items-center q-pb-none">
-                      <div class="text-h6">New Worker</div>
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Add Worker</div>
                       <q-space />
-                      <q-btn color="accent" icon="close" flat round dense v-close-popup />
-                    </q-card-section>
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
 
                     <q-card-section>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Worker Name"/>
@@ -33,16 +33,16 @@
                 </q-dialog>
 
                   <div style="width: 100%;">
-                    <q-banner v-if="!employees.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
+                    <q-banner v-if="!workers.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                       <template v-slot:avatar>
                         <q-icon name="sentiment_dissatisfied" color="accent" />
                       </template>
-                      No records found!
+                     <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
                     </q-banner>
                     <q-table
                       title="Workers"
                       class="my-sticky-header-table"
-                      :data="employees"
+                      :data="workers"
                       :separator="separator"
                       :columns="column"
                       v-else
@@ -87,13 +87,13 @@
                           <q-td>
                             <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
 
-                               <q-dialog v-model="edit_dialog">
+                               <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
                                 <q-card style="width: 350px">
-                                  <q-card-section class="row items-center q-pb-none">
-                                    <div class="text-h6">Update Worker</div>
+                                  <q-bar class="bg-secondary text-white" style="height: 60px">
+                                    <div class="text-h6 text-weight-light">Update Worker</div>
                                     <q-space />
-                                    <q-btn color="accent" icon="close" flat round dense v-close-popup />
-                                  </q-card-section>
+                                    <q-btn icon="close" flat round dense v-close-popup />
+                                  </q-bar>
 
                                   <q-card-section>
                                     <q-input outlined dense clearable class="q-pa-xs" color="accent" v-model="editedItem.name" label="Name" />
@@ -152,12 +152,12 @@ export default {
         name: '',
         area: ''
       },
-      employees: [],
+      workers: [],
       options: [
         'Plumbing', 'Electricity', 'Grounds', 'Transportation'
       ],
       column: [
-        // { name: 'id', required: true, label: 'Worker Id', field: 'id', align: 'left', sortable: true },
+        { name: 'id', required: true, label: 'Worker Id', field: 'id', align: 'left', sortable: true },
         { name: 'name', required: true, label: 'Name', field: 'name', align: 'left', sortable: true },
         { name: 'area', label: 'Area', field: 'area', sortable: true, align: 'left' }
       ]
@@ -182,7 +182,7 @@ export default {
               name: res.data().name,
               area: res.data().area
             }
-            this.employees.push(matData)
+            this.workers.push(matData)
           })
         })
       } catch (error) {
