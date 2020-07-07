@@ -8,98 +8,71 @@
           </div>
           <div class="col" style="width: 300px; min-width: 100px">
             <q-card class="bg-accent">
-              <q-card-section>
-                <div class="text-h6">Log In</div>
-              </q-card-section>
-              <q-separator/>
-              <q-card-section>
-                <q-form>
-                  <q-select
+              <q-form>
+                <q-select
                   outlined
-                  clearable
                   ref="usertype"
                   color="secondary"
-                  class="full-width"
+                  class="q-pa-md"
                   v-model="usertype"
-                  :options="['Unit Requestor', 'Unit Head', 'Administrative Staff', 'Foreman', 'Inventory Staff', 'Worker']"
-                  label="Usertype"
+                   label="Usertype"
                   lazy-rules
-                  :rules="[
-                     val => val !== null && val !== '' || 'Please select usertype!'
-                  ]">
-                    <template v-slot:prepend>
-                      <q-icon name="face"/>
-                    </template>
-                  </q-select>
-                  <q-input
-                  outlined
-                  clearable
-                  ref="email"
-                  icon="email"
-                  v-model="email"
-                  type="email"
-                  color="secondary"
-                  placeholder="Email"
-                  lazy-rules
-                  :rules="[
-                    val => val !== null && val !== '' || 'Email is required!'
-                  ]">
-                    <template v-slot:prepend>
-                      <q-icon name="email"/>
-                    </template>
-                  </q-input>
-                  <q-input
-                  outlined
-                  clearable
-                  ref="password"
-                  v-model="password"
-                  :type="isPwd ? 'password' : 'text'"
-                  color="secondary"
-                  placeholder="Password"
-                  lazy-rules
-                  :rules="[
-                    val => val !== null && val !== '' || 'Password atleast 8 characters is required!'
-                  ]">
-                    <template v-slot:prepend>
-                      <q-icon name="lock"/>
-                    </template>
-                    <template v-slot:append>
-                      <q-icon v-if="password" :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd"/>
-                    </template>
-                  </q-input>
-                </q-form>
-              </q-card-section>
+                  :rules="[val => val !== null && val !== '' && val !== undefined || 'Please select usertype!']"
+                  :options="[{label: 'Unit Requestor', value: 'Unit Requestor'},
+                            {label: 'Unit Head', value: 'Unit Head'},
+                            {label: 'Administrative Staff', value: 'Administrative Staff'},
+                            {label: 'Foreman', value: 'Foreman'},
+                            {label: 'Inventory Staff', value: 'Inventory Staff'},
+                            {label: 'Worker', value: 'Worker'},
+                            ]">
+                  <template v-slot:prepend>
+                    <q-icon name="face"/>
+                  </template>
+                </q-select>
+                <q-separator/>
+                <q-card-section>
+                  <div class="text-h6 text-weight-light">{{ usertype.value }}  Log In</div>
+                    <q-input
+                      outlined
+                      clearable
+                      ref="email"
+                      icon="email"
+                      v-model="email"
+                      type="email"
+                      color="secondary"
+                      placeholder="Email"
+                      lazy-rules
+                      :rules="[val => val !== null && val !== '' || 'Email is required!']">
+                      <template v-slot:prepend>
+                        <q-icon name="email"/>
+                      </template>
+                    </q-input>
+                    <q-input
+                      outlined
+                      clearable
+                      ref="password"
+                      v-model="password"
+                      :type="isPwd ? 'password' : 'text'"
+                      color="secondary"
+                      placeholder="Password"
+                      lazy-rules
+                      :rules="[val => val !== null && val !== '' || 'Password atleast 8 characters is required!']">
+                      <template v-slot:prepend>
+                        <q-icon name="lock"/>
+                      </template>
+                      <template v-slot:append>
+                        <q-icon v-if="password" :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd"/>
+                      </template>
+                    </q-input>
+                </q-card-section>
+               </q-form>
               <div style="margin-top: -15px">
               <q-card-actions align="center">
-                <q-btn class="full-width" label="LOGIN"  color="secondary" @click="onLogin"/>
-                <q-btn flat label="Forgot password?" @click="dialog = true"/>
+                <q-btn class="full-width text-weight-light" label="LOGIN"  color="secondary" @click="onLogin"/>
               </q-card-actions>
             </div>
             </q-card>
           </div>
-            <q-dialog v-model="dialog">
-              <q-card container class="text-accent">
-                  <q-card-section>
-                    <div class="text-h6">Enter Email Address</div>
-                  </q-card-section>
-                  <q-card-section>
-                    <q-input v-model="email" hint="Press Enter to continue" autofocus @keyup.enter="sentEmail = true" />
-                  </q-card-section>
-                  <q-card-actions align="right" class="text-secondary">
-                    <q-btn flat label="Cancel" v-close-popup />
-                  </q-card-actions>
-              </q-card>
-            </q-dialog>
-              <q-dialog v-model="sentEmail">
-                <q-card container class="flex flex-center">
-                  <q-card-section class="text-accent">
-                    A link was sent to your email!
-                      <q-card-actions align="right">
-                      <q-btn flat label="Close" color="secondary" v-close-popup/>
-                      </q-card-actions>
-                  </q-card-section>
-                </q-card>
-              </q-dialog>
         </div>
     </q-page>
 </template>
@@ -111,7 +84,7 @@ import { firebaseAuth, db } from 'boot/firebase'
 export default {
   data () {
     return {
-      usertype: null,
+      usertype: '',
       email: null,
       password: null,
       isPwd: true,
@@ -126,46 +99,38 @@ export default {
       querySnapshot.forEach(doc => {
         const userRef = {
           id: doc.id,
-          userId: doc.data().userId
+          userId: doc.data().userId,
+          user: doc.data().user
         }
         this.userId = userRef.userId
         this.id = userRef.id
+        this.user = userRef.user
       })
     })
   },
   methods: {
     addAuth () {
       this.currentuser = firebaseAuth.currentUser.uid
-      // let setRef = db.collection('account').doc(this.id)
       let setRef = db.collection('account').doc(this.currentuser)
+
       setRef.set({
         userId: this.currentuser,
         email: this.email,
-        usertype: this.usertype
+        usertype: this.usertype.value
       },
       { merge: true }
       )
         .catch(error => {
           console.error('Error message: ', error)
         })
-      // } else {
-      //   setRef.update({
-      //     userId: this.currentuser,
-      //     email: this.email,
-      //     usertype: this.usertype
-      //   })
-      //     .catch(error => {
-      //       console.log('user already existed, updated!', error)
-      //     })
-      // }
     },
     async onLogin () {
       try {
-        if (this.usertype === null || this.email === null || this.password === null) {
+        if (this.usertype.value === undefined || this.usertype.value === '' || this.email === null || this.password === null) {
           this.$refs.usertype.validate()
           this.$refs.email.validate()
           this.$refs.password.validate()
-        } else if (this.usertype === 'Unit Requestor' && this.email === 'requestor@gmail.com' && this.password === '12345678') {
+        } else if (this.usertype.value === 'Unit Requestor') {
           Loading.show()
           await firebaseAuth
             .signInWithEmailAndPassword(this.email, this.password)
@@ -181,7 +146,7 @@ export default {
                 })
               })
           this.addAuth()
-        } else if (this.usertype === 'Unit Head' && this.email === 'head@gmail.com' && this.password === '12345678') {
+        } else if (this.usertype.value === 'Unit Head') {
           Loading.show()
           await firebaseAuth
             .signInWithEmailAndPassword(this.email, this.password)
@@ -197,7 +162,7 @@ export default {
                 })
               })
           this.addAuth()
-        } else if (this.usertype === 'Administrative Staff' && this.email === 'administrative@gmail.com' && this.password === '12345678') {
+        } else if (this.usertype.value === 'Administrative Staff') {
           Loading.show()
           await firebaseAuth
             .signInWithEmailAndPassword(this.email, this.password)
@@ -213,7 +178,7 @@ export default {
                 })
               })
           this.addAuth()
-        } else if (this.usertype === 'Foreman' && this.email === 'foreman@gmail.com' && this.password === '12345678') {
+        } else if (this.usertype.value === 'Foreman') {
           Loading.show()
           await firebaseAuth
             .signInWithEmailAndPassword(this.email, this.password)
@@ -229,7 +194,7 @@ export default {
                 })
               })
           this.addAuth()
-        } else if (this.usertype === 'Inventory Staff' && this.email === 'inventory@gmail.com' && this.password === '12345678') {
+        } else if (this.usertype.value === 'Inventory Staff') {
           Loading.show()
           await firebaseAuth
             .signInWithEmailAndPassword(this.email, this.password)
@@ -245,7 +210,7 @@ export default {
                 })
               })
           this.addAuth()
-        } else if (this.usertype === 'Worker' && this.email === 'worker@gmail.com' && this.password === '12345678') {
+        } else if (this.usertype.value === 'Worker') {
           Loading.show()
           await firebaseAuth
             .signInWithEmailAndPassword(this.email, this.password)
@@ -262,6 +227,7 @@ export default {
               })
           this.addAuth()
         } else {
+          Loading.hide()
           this.$q.dialog({
             title: 'Alert!',
             color: 'secondary',
@@ -270,7 +236,9 @@ export default {
           })
         }
       } catch (error) {
-        console.log('error message', error)
+        alert(error)
+        Loading.hide()
+        console.log(error)
       }
     }
   }

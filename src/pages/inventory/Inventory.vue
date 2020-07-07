@@ -4,70 +4,67 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5>INVENTORY OF MATERIALS</h5>{{ date }}<br><br>
-              <q-input v-if="plumbingData.length || transportationData.length || groundsData.length || !electricityData.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Material Name">
+              <h5 class="text-weight-light">INVENTORY OF MATERIALS</h5>{{ date }}<br><br>
+              <q-input v-if="!plumbingData.length || !transportationData.length || !groundsData.length || !electricityData.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Material Name">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
               <br>
               <div class="q-pa-md">
-                <q-btn no-caps float="right" icon="queue" class="q-mr-sm" color="secondary" label="Add Material" @click="add_dialog=true"/>
-                <q-btn no-caps align="right" icon="description" @click="exportTable" class="q-mr-sm" label="Generate File" color="secondary"/>
+                <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
               </div>
 
-                <q-dialog v-model="add_dialog">
+                <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
                   <q-card style="width: 350px">
-                    <q-card-section class="row items-center q-pb-none">
-                      <div class="text-h6">New Material</div>
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Add Material</div>
                       <q-space />
-                      <q-btn color="accent" icon="close" flat round dense v-close-popup />
-                    </q-card-section>
-
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
                     <q-card-section>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Material Name"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" mask="###" fill-mask v-model="defaultItem.stockNo" label="Stock No."/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measurement"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.value" label="Unit Cost (PhP)"/>
+                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
                       <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
                     </q-card-section>
                     <q-card-actions class="justify-center q-pa-xs">
-                      <q-btn no-caps @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                      <q-btn no-caps class="text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
 
-                <q-dialog v-model="edit_dialog">
+                <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
                   <q-card style="width: 350px">
-                    <q-card-section class="row items-center q-pb-none">
-                      <div class="text-h6">Edit Material</div>
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Edit Material</div>
                       <q-space />
-                      <q-btn color="accent" icon="close" flat round dense v-close-popup />
-                    </q-card-section>
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
 
                     <q-card-section>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Material Name"/>
+                      <q-input class="q-pa-xs" readonly outlined dense color="accent" v-model="editedItem.stockNo" label="Stock No."/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" mask="###" fill-mask v-model="editedItem.stockNo" label="Stock No."/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measurement"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.value" label="Unit Cost (PhP)"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
                       <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
                     </q-card-section>
                     <q-card-actions class="justify-center q-pa-xs">
-                      <q-btn no-caps @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
+                      <q-btn no-caps class="text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
 
             <div style="width: 100%;">
-            <q-banner v-if="!plumbingData.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
+            <q-banner v-if="!plumbingData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
               <template v-slot:avatar>
                 <q-icon name="sentiment_dissatisfied" color="accent" />
               </template>
-              No records found!
+            <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
             </q-banner>
             <q-table
               class="my-sticky-header-table"
@@ -79,8 +76,20 @@
               v-else
               hide-bottom
               dense
+              ref="plumbing"
               title="Plumbing Materials"
             >
+              <template v-slot:top-right>
+                <q-btn
+                  color="secondary"
+                  icon-right="archive"
+                  label="csv"
+                  no-caps
+                  flat
+                  dense
+                  @click="exportP"
+                />
+              </template>
               <template v-slot:header="props">
                 <q-tr :props="props">
                   <q-th
@@ -119,11 +128,11 @@
           <br/>
 
           <div style="width: 100%;">
-            <q-banner v-if="!electricityData.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
+            <q-banner v-if="!electricityData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
               <template v-slot:avatar>
                 <q-icon name="sentiment_dissatisfied" color="accent" />
               </template>
-              No records found!
+            <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
             </q-banner>
             <q-table
               class="my-sticky-header-table"
@@ -135,8 +144,20 @@
               v-else
               hide-bottom
               dense
+              ref="electric"
               title="Electricity Materials"
             >
+              <template v-slot:top-right>
+                <q-btn
+                  color="secondary"
+                  icon-right="archive"
+                  label="csv"
+                  no-caps
+                  flat
+                  dense
+                  @click="exportE"
+                />
+              </template>
               <template v-slot:header="props">
                 <q-tr :props="props">
                   <q-th
@@ -175,11 +196,11 @@
           <br/>
 
           <div style="width: 100%;">
-            <q-banner v-if="!groundsData.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
+            <q-banner v-if="!groundsData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
               <template v-slot:avatar>
                 <q-icon name="sentiment_dissatisfied" color="accent" />
               </template>
-              No records found!
+            <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
             </q-banner>
             <q-table
               class="my-sticky-header-table"
@@ -191,8 +212,20 @@
               v-else
               hide-bottom
               dense
+              ref="grounds"
               title="Grounds Materials"
             >
+              <template v-slot:top-right>
+                <q-btn
+                  color="secondary"
+                  icon-right="archive"
+                  label="csv"
+                  no-caps
+                  flat
+                  dense
+                  @click="exportG"
+                />
+              </template>
               <template v-slot:header="props">
                 <q-tr :props="props">
                   <q-th
@@ -231,11 +264,11 @@
           <br/>
 
           <div style="width: 100%;">
-            <q-banner v-if="!transportationData.length" class="bg-red-1 q-pa-md" style="min-width: 800px">
+            <q-banner v-if="!transportationData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
               <template v-slot:avatar>
                 <q-icon name="sentiment_dissatisfied" color="accent" />
               </template>
-              No records found!
+            <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
             </q-banner>
             <q-table
               class="my-sticky-header-table"
@@ -247,37 +280,49 @@
               v-else
               hide-bottom
               dense
+              ref="transpo"
               title="Transportation Materials"
             >
-            <template v-slot:header="props">
-                <q-tr :props="props">
-                  <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                    class="text-italic text-accent"
-                  >
-                    {{ col.label }}
-                  </q-th>
-                  <q-th>
-                    <span class="text-italic text-accent">Actions</span>
-                  </q-th>
-                </q-tr>
+              <template v-slot:top-right>
+                <q-btn
+                  color="secondary"
+                  icon-right="archive"
+                  label="csv"
+                  no-caps
+                  flat
+                  dense
+                  @click="exportT"
+                />
               </template>
-              <template v-slot:body="props">
-                <q-tr :props="props">
-                  <q-td
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td>
-                   <q-td>
-                    <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                    <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                      <q-space/>
-                    </q-btn>
+              <template v-slot:header="props">
+                  <q-tr :props="props">
+                    <q-th
+                      v-for="col in props.cols"
+                      :key="col.name"
+                      :props="props"
+                      class="text-italic text-accent"
+                    >
+                      {{ col.label }}
+                    </q-th>
+                    <q-th>
+                      <span class="text-italic text-accent">Actions</span>
+                    </q-th>
+                  </q-tr>
+                </template>
+                <template v-slot:body="props">
+                  <q-tr :props="props">
+                    <q-td
+                      v-for="col in props.cols"
+                      :key="col.name"
+                      :props="props"
+                    >
+                      {{ col.value }}
+                    </q-td>
+                    <q-td>
+                      <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
+                      <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
+                        <q-space/>
+                      </q-btn>
                   </q-td>
                 </q-tr>
               </template>
@@ -301,7 +346,7 @@
 </style>
 
 <script>
-import { db } from 'boot/firebase'
+import { inc, db } from 'boot/firebase'
 import { date, exportFile } from 'quasar'
 
 function wrapCsvValue (val, formatFn) {
@@ -337,7 +382,7 @@ export default {
       editedItem: {
         name: '',
         description: '',
-        stockNo: '',
+        stockNo: inc.stockNo,
         unit: '',
         value: 0,
         quantity: 0,
@@ -346,7 +391,7 @@ export default {
       defaultItem: {
         name: '',
         description: '',
-        stockNo: '',
+        stockNo: 0,
         unit: '',
         value: 0,
         quantity: 0,
@@ -409,8 +454,83 @@ export default {
     }
   },
   methods: {
-    exportTable () {
-    // naive encoding to csv format
+    exportP () {
+      this.data = this.plumbingData
+      const content = [ this.columns.map(col => wrapCsvValue(col.label)) ].concat(
+        this.data.map(row => this.columns.map(col => wrapCsvValue(
+          typeof col.field === 'function'
+            ? col.field(row)
+            : row[col.field === void 0 ? col.name : col.field],
+          col.format
+        )).join(','))
+      ).join('\r\n')
+
+      const status = exportFile(
+        'table-export.csv',
+        content,
+        'text/csv'
+      )
+
+      if (status !== true) {
+        this.$q.notify({
+          message: 'Browser denied file download...',
+          color: 'negative',
+          icon: 'warning'
+        })
+      }
+    },
+    exportT () {
+      this.data = this.transportationData
+      const content = [ this.columns.map(col => wrapCsvValue(col.label)) ].concat(
+        this.data.map(row => this.columns.map(col => wrapCsvValue(
+          typeof col.field === 'function'
+            ? col.field(row)
+            : row[col.field === void 0 ? col.name : col.field],
+          col.format
+        )).join(','))
+      ).join('\r\n')
+
+      const status = exportFile(
+        'table-export.csv',
+        content,
+        'text/csv'
+      )
+
+      if (status !== true) {
+        this.$q.notify({
+          message: 'Browser denied file download...',
+          color: 'negative',
+          icon: 'warning'
+        })
+      }
+    },
+    exportG () {
+      this.data = this.groundsData
+      const content = [ this.columns.map(col => wrapCsvValue(col.label)) ].concat(
+        this.data.map(row => this.columns.map(col => wrapCsvValue(
+          typeof col.field === 'function'
+            ? col.field(row)
+            : row[col.field === void 0 ? col.name : col.field],
+          col.format
+        )).join(','))
+      ).join('\r\n')
+
+      const status = exportFile(
+        'table-export.csv',
+        content,
+        'text/csv'
+      )
+
+      if (status !== true) {
+        this.$q.notify({
+          message: 'Browser denied file download...',
+          color: 'negative',
+          icon: 'warning'
+        })
+      }
+    },
+    exportE () {
+      this.data = this.electricityData
       const content = [ this.columns.map(col => wrapCsvValue(col.label)) ].concat(
         this.data.map(row => this.columns.map(col => wrapCsvValue(
           typeof col.field === 'function'
@@ -435,7 +555,15 @@ export default {
       }
     },
     addMaterial () {
-      db.collection('materials').add(this.defaultItem)
+      db.collection('materials').add({
+        name: this.defaultItem.name,
+        description: this.defaultItem.description,
+        stockNo: inc,
+        unit: this.defaultItem.unit,
+        value: this.defaultItem.value,
+        quantity: this.defaultItem.quantity,
+        category: this.defaultItem.category
+      })
         .then(
           location.reload(),
           this.$q.notify({

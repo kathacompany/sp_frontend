@@ -30,15 +30,9 @@
               hide-bottom
               dense
               title="Requests"
-              :selected-rows-label="getSelectedString"
-              selection="multiple"
-              :selected.sync="selected"
             >
               <template v-slot:header="props">
                 <q-tr :props="props">
-                  <q-th key="selected">
-                    <q-checkbox dense color="secondary" v-model="props.selected"/>
-                  </q-th>
                   <q-th
                     v-for="col in props.cols"
                     :key="col.name"
@@ -51,9 +45,6 @@
               </template>
               <template v-slot:body="props">
                 <q-tr :props="props">
-                  <q-td>
-                    <q-checkbox dense color="secondary" v-model="props.selected"/>
-                  </q-td>
                   <q-td
                     v-for="col in props.cols"
                     :key="col.name"
@@ -64,24 +55,6 @@
                 </q-tr>
               </template>
             </q-table>
-
-            <q-btn no-caps icon="thumb_up_alt" label="Approve" class="q-ma-sm text-weight-light bg-secondary text-white"  v-if="selected.length" @click="confirm=true"/>
-
-            <q-dialog v-model="confirm" persistent>
-              <q-card>
-                <q-card-section class="row items-center">
-                  <div class="text-h6">Approve Confirm</div>
-                </q-card-section>
-                <q-card-section>
-                  <span class="q-ma-sm">{{selected.length}} selected <span v-if="selected.length>1">requests</span><span v-else>request</span> will be for release. Continue?</span>
-                </q-card-section>
-
-                <q-card-actions align="right">
-                  <q-btn flat label="No" color="accent" v-close-popup />
-                  <q-btn flat label="Yes" color="secondary" v-close-popup/>
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
           </div>
         </div>
       </div>
@@ -110,7 +83,6 @@ export default {
       selected: [],
       separator: 'cell',
       dense: false,
-      confirm: false,
       editedIndex: -1,
       filter: '',
       activeMaterial: null,
@@ -137,7 +109,6 @@ export default {
         { name: 'material', label: 'Material', field: 'material', align: 'left', sortable: true },
         { name: 'jobId', label: 'jobId', field: 'jobId', align: 'left', sortable: true },
         { name: 'quantity', label: 'Requested Quantity', field: 'quantity', align: 'left' },
-        { name: 'foreman', label: 'Requested By', field: 'foreman', align: 'left' },
         { name: 'status', label: 'Status', field: 'status', align: 'left' }
       ]
     }

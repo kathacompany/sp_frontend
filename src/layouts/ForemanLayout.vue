@@ -49,39 +49,39 @@
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/ForemanScheduleJobs')">
+            <q-item clickable v-ripple @click="$router.push('/ForemanScheduledJobs')">
               <q-item-section avatar>
-                <q-icon name="update" color="white" />
+                <q-icon name="work" color="white" />
 
               </q-item-section>
 
               <q-item-section>
-                Schedule A Job
+                Scheduled Jobs
               </q-item-section>
             </q-item>
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/ForemanMaterialList')">
+            <q-item clickable v-ripple @click="$router.push('/ForemanMaterialRequests')">
               <q-item-section avatar>
-                <q-icon name="build" color="white" />
+                <q-icon name="shopping_cart" color="white" />
 
               </q-item-section>
 
               <q-item-section>
-                Material List
+                Material Requests
               </q-item-section>
             </q-item>
 
             <q-separator />
 
-            <q-item clickable v-ripple @click="$router.push('/ForemanWorkerList')">
+            <q-item clickable v-ripple @click="$router.push('/ForemanWorkerLists')">
               <q-item-section avatar>
                 <q-icon name="people" color="white" />
               </q-item-section>
 
               <q-item-section>
-                Worker List
+                Worker Lists
               </q-item-section>
             </q-item>
 

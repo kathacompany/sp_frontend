@@ -20,6 +20,8 @@ let firebaseAuth = firebaseApp.auth()
 
 let firebaseDb = firebaseApp.database()
 let db = firebase.firestore()
+let inc = firebase.firestore.FieldValue.increment(1)
+let dec = firebase.firestore.FieldValue.increment(-1)
 
-export { firebaseAuth, firebaseDb, db }
+export { firebaseAuth, firebaseDb, db, inc, dec }
 // export { materialsRef }

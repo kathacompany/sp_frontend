@@ -7,7 +7,7 @@
 
           <q-card class="q-pa-sm" style="width: 700px">
             <q-card-section align="center">
-              <div class="text-h5">ACCOUNT DETAILS</div>
+              <div class="text-h5 text-weight-light">ACCOUNT DETAILS</div>
               <div class="col">
                 <div class="row justify-center">
                   <div class="q-pa-sm text-subtitle1"><q-icon name="face" color="secondary"/> {{user.usertype}}</div>
@@ -31,12 +31,17 @@
                   <q-input type="file" color="accent" outlined style="width: 20vw;" ref="image" v-model="user.image" dense v-if="!hidden" @change="onGetImage" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Image is required']"/>
                 </div>
                 <div class="col" style="margin-top: 35px;">
-                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.unit" label="Unit" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Unit is required']">
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense color="accent" v-model="user.category" label="Area" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Area is required']">
                     <template v-slot:prepend>
                       <q-icon name="local_library" />
                     </template>
                   </q-input>
-                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.position" label="Position" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Position is required']">
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense color="accent" v-model="user.unit" label="Unit" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Unit is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="local_library" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense color="accent" v-model="user.position" label="Position" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Position is required']">
                     <template v-slot:prepend>
                       <q-icon name="work" />
                     </template>
@@ -47,25 +52,20 @@
             <q-separator color="secondary"/>
             <br>
 
-            <q-card-section>
-              <div class="col">
-                <div class="row justify-center">
-                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.firstname" label="First Name" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'First Name is required']">
+            <q-card-section align="center">
+              <div class="row justify-center">
+                <div class="col">
+                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.fullname" label="Full Name" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Name is required']">
                     <template v-slot:prepend>
                       <q-icon name="person_pin" />
                     </template>
                   </q-input>
-                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.lastname" label="Last Name" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Last Name is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="person_pin" />
-                    </template>
-                  </q-input>
-                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.mobile" label="Mobile" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Mobile is required']">
+                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.mobile" label="Mobile" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Mobile is required']">
                     <template v-slot:prepend>
                       <q-icon name="phone" />
                     </template>
                   </q-input>
-                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.email" label="Email" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Email is required']">
+                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense color="accent" :value="user.email" label="Email" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Email is required']">
                     <template v-slot:prepend>
                       <q-icon name="email" />
                     </template>
@@ -99,9 +99,8 @@
 </style>
 
 <script>
-import { db } from 'boot/firebase'
-import * as firebase from 'firebase/app'
-import { date } from 'quasar'
+import { firebaseAuth, db } from 'boot/firebase'
+import { LocalStorage, date } from 'quasar'
 
 export default {
   props: ['usertype'],
@@ -116,32 +115,22 @@ export default {
       user: {
         usertype: '',
         image: '',
-        firstname: '',
-        lastname: '',
+        fullname: '',
         mobile: '',
         unit: '',
         email: '',
-        position: ''
+        position: '',
+        category: ''
       }
     }
   },
   created () {
-    db.collection('account').where('userId', '==', firebase.auth().currentUser.uid).get()
+    const user = JSON.parse(LocalStorage.getItem('user'))
+    db.collection('account').where('userId', '==', user.uid).get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          const userData = {
-            id: doc.id,
-            usertype: doc.data().usertype,
-            firstname: doc.data().firstname,
-            lastname: doc.data().lastname,
-            mobile: doc.data().mobile,
-            email: doc.data().email,
-            image: doc.data().image,
-            position: doc.data().position,
-            unit: doc.data().unit
-          }
-          this.user = Object.assign({}, userData)
-          this.docId = this.user.id
+          this.user = Object.assign({}, doc.data())
+          this.docId = doc.id
         })
       })
   },
@@ -164,7 +153,7 @@ export default {
     },
     saveChanges () {
       this.disable = true
-      let currentUser = firebase.auth().currentUser.uid
+      var currentUser = firebaseAuth.currentUser.uid
       if (this.user !== '') {
         let useRef = db.collection('account').doc(this.docId)
         useRef.update(this.user)

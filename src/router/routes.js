@@ -24,7 +24,7 @@ const routes = [
     children: [
       { path: 'InventoryHomepage', component: () => import('pages/inventory/Homepage.vue') },
       { path: 'InventoryAccount', component: () => import('pages/inventory/Account.vue') },
-      { path: 'Inventory', component: () => import('pages/inventory/Inventory.vue') },
+      { path: 'Inventories', component: () => import('pages/inventory/Inventory.vue') },
       { path: 'MaterialRequests', component: () => import('pages/inventory/MaterialRequests.vue') }
     ],
     meta: { requiresAuth: true }
@@ -36,9 +36,9 @@ const routes = [
       { path: 'ForemanHomepage', component: () => import('pages/foreman/Homepage.vue') },
       { path: 'ForemanAccount', component: () => import('pages/Foreman/Account.vue') },
       { path: 'ForemanJobOrders', component: () => import('pages/Foreman/JobOrders.vue') },
-      { path: 'ForemanScheduleJobs', component: () => import('pages/Foreman/ScheduleJobs.vue') },
-      { path: 'ForemanWorkerList', component: () => import('pages/Foreman/WorkerList.vue') },
-      { path: 'ForemanMaterialList', component: () => import('pages/Foreman/MaterialList.vue') }
+      { path: 'ForemanScheduledJobs', component: () => import('pages/Foreman/ScheduledJobs.vue') },
+      { path: 'ForemanWorkerLists', component: () => import('pages/Foreman/WorkerLists.vue') },
+      { path: 'ForemanMaterialRequests', component: () => import('pages/Foreman/MaterialRequests.vue') }
     ],
     meta: { requiresAuth: true }
   },
@@ -48,7 +48,7 @@ const routes = [
     children: [
       { path: 'WorkerHomepage', component: () => import('pages/worker/Homepage.vue') },
       { path: 'WorkerAccount', component: () => import('pages/worker/Account.vue') },
-      { path: 'WorkerScheduleJobs', component: () => import('pages/worker/ScheduleJobs.vue') }
+      { path: 'WorkerScheduledJobs', component: () => import('pages/worker/ScheduledJobs.vue') }
     ],
     meta: { requiresAuth: true }
   },

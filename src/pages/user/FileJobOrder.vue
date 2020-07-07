@@ -7,7 +7,7 @@
 
           <q-card style="width: 700px">
             <q-card-section align="center">
-              <div class="text-h5">JOB REQUEST FORM</div>
+              <div class="text-h5 text-weight-light">JOB REQUEST FORM</div>
               <div class="q-pa-sm text-subtitle1">{{today}}</div>
             </q-card-section>
             <q-separator color="secondary"/>
@@ -23,16 +23,13 @@
                     ref="date"
                     color="accent"
                     v-model="date"
-                    mask="date"
                     label="Date"
                     lazy-rules
-                    :rules="[
-                       val => val !== null && val !== '' || 'Date is required'
-                    ]">
+                    :rules="[val => val !== null && val !== '' || 'Date is required']">
                     <template v-slot:append>
                       <q-icon name="today" class="cursor-pointer">
                         <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                          <q-date v-model="date" @input="() => $refs.qDateProxy.hide()" />
+                          <q-date mask="YYYY-MM-DD" v-model="date" @input="() => $refs.qDateProxy.hide()" />
                         </q-popup-proxy>
                       </q-icon>
                     </template>
@@ -135,8 +132,8 @@
             <q-separator color="secondary"/>
 
             <q-card-actions align="center">
-              <q-btn no-caps icon-right="send" @click="onSubmit" label="Forward" color="secondary"/>
-              <q-btn no-caps flat @click="onReset" class="q-ml-md" label="Reset" color="accent"/>
+              <q-btn no-caps icon-right="send" class="text-weight-light" @click="onSubmit" label="Forward" color="secondary"/>
+              <q-btn no-caps flat @click="onReset" class="text-weight-light" label="Reset" color="accent"/>
             </q-card-actions>
 
             </q-card>
@@ -149,7 +146,7 @@
 
 <script>
 import { firebaseAuth, db } from 'boot/firebase'
-import { date } from 'quasar'
+import { LocalStorage, date } from 'quasar'
 
 export default {
   data () {
@@ -161,9 +158,9 @@ export default {
       unit: null,
       location: null,
       description: null,
-      status: 'for Unit Head approval',
       requestor: null,
-      foreman: 'N/A'
+      foreman: 'N/A',
+      status: 'for Unit Head approval'
     }
   },
   computed: {
@@ -171,6 +168,16 @@ export default {
       let timeStamp = Date.now()
       return date.formatDate(timeStamp, 'dddd D MMMM YYYY')
     }
+  },
+  created () {
+    const user = JSON.parse(LocalStorage.getItem('user'))
+    let useRef = db.collection('account').where('userId', '==', user.uid)
+
+    useRef.get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        this.requestor = doc.data().fullname
+      })
+    })
   },
   methods: {
     async onSubmit () {

@@ -2,12 +2,13 @@ import { LocalStorage } from 'quasar'
 import { firebaseAuth } from 'boot/firebase'
 
 const state = {
-  loggedIn: false
+  loggedIn: null
 }
 
 const mutations = {
   setLoggedIn (state, value) {
     this.loggedIn = value
+    this.value = state
   }
 }
 
@@ -25,17 +26,20 @@ const actions = {
     console.log('logoutUser')
     firebaseAuth.signOut()
   },
-  async handleAuthStateChange ({ commit }) {
+  handleAuthStateChange ({ commit }) {
     firebaseAuth.onAuthStateChanged(user => {
       if (user) {
         commit('setLoggedIn', true)
         LocalStorage.set('loggedIn', true)
-        this.$router.push().catch(err => {
+        // LocalStorage.set('user', firebaseAuth.currentUser)
+        LocalStorage.set('user', JSON.stringify(user))
+        this.$router.push('/').catch(err => {
           console.log('error.message:', err)
         })
       } else {
         commit('setLoggedIn', false)
         LocalStorage.set('loggedIn', false)
+        LocalStorage.remove('user')
         this.$router.replace('/').catch(err => {
           // console.log('error message:', err)
           if (err.name !== 'NavigationDuplicated') {
@@ -48,7 +52,9 @@ const actions = {
 }
 
 const getters = {
-
+  user (state) {
+    return state.user
+  }
 }
 
 export default {

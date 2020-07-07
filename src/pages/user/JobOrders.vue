@@ -4,7 +4,7 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5>JOB ORDER REQUESTS</h5> {{ date }}<br><br>
+              <h5 class="text-weight-light">JOB ORDER REQUESTS</h5> {{ date }}<br><br>
               <q-input v-if="jobs.length || pending.length || ongoing.length || complete.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Category">
                 <template v-slot:append>
                   <q-icon name="search" />
@@ -12,11 +12,11 @@
               </q-input>
               <br>
               <div style="width: 100%;">
-                <q-banner v-if="!jobs.length" class="bg-red-1 q-pa-md" style="min-width: 800px;">
+                <q-banner v-if="!jobs.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                   <template v-slot:avatar>
                     <q-icon name="event_busy" color="accent" />
                   </template>
-                  No filed request!
+                 <span class="text-h6 text-grey text-weight-thin">No Filed Request!</span>
                   <template v-slot:action>
                     <q-btn flat icon="post_add" color="secondary" label="FILE A REQUEST" @click="$router.push('/UserFileJobOrder')"/>
                   </template>
@@ -65,35 +65,35 @@
                       <q-td>
                         <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
 
-                           <q-dialog v-model="edit_dialog">
-                            <q-card style="width: 350px">
-                              <q-card-section class="row items-center q-pb-none">
-                                <div class="text-h6">Edit Job Request</div>
-                                <q-space />
-                                <q-btn color="accent" icon="close" flat round dense v-close-popup />
-                              </q-card-section>
+                        <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                          <q-card style="width: 350px">
+                            <q-bar class="bg-secondary text-white" style="height: 60px">
+                              <div class="text-h6 text-weight-light">Edit Job Request</div>
+                              <q-space />
+                              <q-btn icon="close" flat round dense v-close-popup />
+                            </q-bar>
+                            <q-card-section>
+                              <q-input outlined dense color="accent" v-model="editedItem.date" mask="date" placeholder="Date Filed">
+                              <template v-slot:append>
+                                <q-icon name="today" class="cursor-pointer"/>
+                                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                                  <q-date v-model="editedItem.date" @input="() => $refs.qDateProxy.hide()" />
+                                </q-popup-proxy>
+                              </template>
+                              </q-input>
+                              <q-select outlined dense class="q-pa-xs" color="accent" v-model="editedItem.category" :options="options" label="Category" />
+                              <q-input class="q-pa-xs" outlined dense clearable color="accent" type="textarea" autogrow v-model="editedItem.description" label="Description"/>
+                              <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Requesting Unit" />
+                              <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.location" label="Location" />
+                              <q-input class="q-pa-xs" outlined dense clearable color="accent" mask="(###) ### - ####" fill-mask v-model="editedItem.telephone" label="Telephone" />
 
-                              <q-card-section>
-                                <q-input outlined dense color="secondary" v-model="editedItem.date" mask="date" placeholder="Date Filed">
-                                <template v-slot:append>
-                                  <q-icon name="today" class="cursor-pointer"/>
-                                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                    <q-date v-model="editedItem.date" @input="() => $refs.qDateProxy.hide()" />
-                                  </q-popup-proxy>
-                                </template>
-                                </q-input>
-                                <q-select outlined dense class="q-pa-xs" color="accent" v-model="editedItem.category" :options="options" label="Category" />
-                                <q-input class="q-pa-xs" outlined dense clearable color="accent" type="textarea" autogrow v-model="editedItem.description" label="Description"/>
-                                <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Requesting Unit" />
-                                <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.location" label="Location" />
-                                <q-input class="q-pa-xs" outlined dense clearable color="accent" mask="(###) ### - ####" fill-mask v-model="editedItem.telephone" label="Telephone" />
+                            </q-card-section>
+                            <q-card-actions class="justify-center">
+                              <q-btn no-caps @click="updateJob" color="secondary"  class="text-weight-light"  label="Save Changes" v-close-popup/>
+                            </q-card-actions>
+                          </q-card>
+                        </q-dialog>
 
-                              </q-card-section>
-                              <q-card-actions class="justify-center q-pa-xs">
-                                <q-btn no-caps @click="updateJob" color="secondary" label="Save Changes" v-close-popup/>
-                              </q-card-actions>
-                            </q-card>
-                          </q-dialog>
                         <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.jobId)">
                           <q-space/>
                         </q-btn>
@@ -111,11 +111,11 @@
               <br/>
 
                <div style="width: 100%;">
-                <q-banner v-if="!pending.length" class="bg-red-1 q-pa-md">
+                <q-banner v-if="!pending.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                   <template v-slot:avatar>
                     <q-icon name="event_busy" color="accent" />
                   </template>
-                  No pending request!
+                 <span class="text-h6 text-grey text-weight-thin">No Pending Request!</span>
                 </q-banner>
                 <q-table
                   title="Pending"
@@ -167,11 +167,11 @@
               <br/>
 
               <div style="width: 100%;">
-                <q-banner v-if="!ongoing.length" class="bg-red-1 q-pa-md">
+                <q-banner v-if="!ongoing.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                   <template v-slot:avatar>
                     <q-icon name="event_busy" color="accent" />
                   </template>
-                  No ongoing request!
+                 <span class="text-h6 text-grey text-weight-thin">No Ongoing Request!</span>
                 </q-banner>
                 <q-table
                   title="Ongoing"
@@ -223,11 +223,11 @@
               <br/>
 
               <div style="width: 100%;">
-                <q-banner v-if="!complete.length" class="bg-red-1 q-pa-md">
+                <q-banner v-if="!complete.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                   <template v-slot:avatar>
                     <q-icon name="event_busy" color="accent" />
                   </template>
-                  No completed request!
+                <span class="text-h6 text-grey text-weight-thin">No Completed Request!</span>
                 </q-banner>
                 <q-table
                   title="Completed"
@@ -328,7 +328,7 @@ export default {
         { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit' },
         { name: 'location', field: 'location', align: 'left', label: 'Location' },
         { name: 'telephone', field: 'telephone', align: 'left', label: 'Telephone' },
-        { name: 'foreman', field: 'foreman', align: 'left', label: "Foreman's Name" },
+        { name: 'foreman', field: 'foreman', align: 'left', label: 'Foreman' },
         { name: 'status', field: 'status', align: 'left', label: 'Status' }
       ]
     }
@@ -337,17 +337,7 @@ export default {
     let jobRef = db.collection('job_orders').orderBy('date')
     let penRef = db.collection('pending_jobs').orderBy('date')
     let onRef = db.collection('ongoing_jobs').orderBy('date')
-    // let useRef = db.collection('account').where('usertype', '==', 'foreman')
 
-    // useRef.get().then(querySnapshot => {
-    //   querySnapshot.forEach(doc => {
-    //     const data = {
-    //       firstname: doc.data().firstname,
-    //       lastname: doc.data().lastname
-    //     }
-    //     this.name = data
-    //   })
-    // })
     jobRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const data = {

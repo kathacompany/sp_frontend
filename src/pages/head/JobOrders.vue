@@ -4,7 +4,7 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5>JOB ORDER REQUESTS</h5> {{ date }}<br><br>
+              <h5 class="text-weight-light">JOB ORDER REQUESTS</h5> {{ date }}<br><br>
               <q-input v-if="jobs.length || pending.length || ongoing.length || complete.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Category">
                 <template v-slot:append>
                   <q-icon name="search" />
@@ -12,11 +12,11 @@
               </q-input>
               <br>
               <div style="width: 100%;">
-                <q-banner v-if="!jobs.length" class="bg-red-1 q-pa-md" style="min-width: 800px;">
+                <q-banner v-if="!jobs.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                   <template v-slot:avatar>
                     <q-icon name="done_all" color="accent" />
                   </template>
-                  All caught up. Nothing to approve!
+                 <span class="text-h6 text-grey text-weight-thin">All caught up. Nothing to approve!</span>
                 </q-banner>
                 <q-table
                   title="Job Orders"
@@ -67,23 +67,43 @@
                     </q-tr>
                     <q-tr v-show="props.expand" :props="props">
                       <q-td colspan="100%">
-                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
-                        <div class="text-left"><span class="text-italic text-accent">Requestor's Name</span><br>{{ props.row.requestor}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Description</span><br/>{{ props.row.description}}</div><br/>
+                        <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div>
                       </q-td>
                     </q-tr>
                   </template>
                 </q-table>
-                <q-btn no-caps icon="thumb_up_alt" label="Approve" class="q-ma-sm bg-secondary text-white"  v-if="selected.length" @click="confirm=true"/>
+                <q-btn no-caps icon="thumb_up_alt" label="Approve" class="q-ma-sm text-weight-light bg-secondary text-white"  v-if="selected.length" @click="confirm=true"/>
+
+                <q-btn no-caps icon="thumb_down_alt" label="Cancel" class="q-ma-sm text-weight-light bg-secondary text-white"  v-if="selected.length" @click="del=true"/>
                 <q-dialog v-model="confirm" persistent>
                   <q-card>
                     <q-card-section class="row items-center">
-                      <!-- <q-avatar icon="check_circle_outline" color="primary" text-color="secondary" /> -->
-                      <span class="q-ma-sm">Approve {{selected.length}} selected <span v-if="selected.length>1">requests</span><span v-else>request</span>?</span>
+                      <div class="text-h6">Approve Confirm</div>
+                    </q-card-section>
+                    <q-card-section>
+                      <span class="q-ma-sm">Forward {{selected.length}} selected <span v-if="selected.length>1">requests</span><span v-else>request</span>?</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
-                      <q-btn flat label="Yes" color="secondary" @click="onSubmit" v-close-popup/>
                       <q-btn flat label="No" color="accent" v-close-popup />
+                      <q-btn flat label="Yes" color="secondary" @click="onSubmit" v-close-popup/>
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+
+                 <q-dialog v-model="del" persistent>
+                  <q-card>
+                    <q-card-section class="row items-center">
+                      <div class="text-h6">Delete Confirm</div>
+                    </q-card-section>
+                    <q-card-section>
+                      <span class="q-ma-sm">{{selected.length}} selected <span v-if="selected.length>1">requests</span><span v-else>request</span>will be send back. Continue?</span>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                      <q-btn flat label="No" color="accent" v-close-popup />
+                      <q-btn flat label="Yes" color="secondary" @click="onSubmit" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
@@ -92,11 +112,11 @@
               <br/>
 
               <div style="width: 100%;">
-                <q-banner v-if="!pending.length" class="bg-red-1 q-pa-md" style="min-width: 800px;">
+                <q-banner v-if="!pending.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                   <template v-slot:avatar>
                     <q-icon name="event_busy" color="accent" />
                   </template>
-                  No pending request!
+                 <span class="text-h6 text-grey text-weight-thin">No Pending Request!</span>
                 </q-banner>
                 <q-table
                   title="Pending"
@@ -138,8 +158,8 @@
                     </q-tr>
                     <q-tr v-show="props.expand" :props="props">
                       <q-td colspan="100%">
-                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
-                        <div class="text-left"><span class="text-italic text-accent">Requestor's Name</span><br>{{ props.row.requestor}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
+                        <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div>
                       </q-td>
                     </q-tr>
                   </template>
@@ -149,11 +169,11 @@
               <br/>
 
               <div style="width: 100%;">
-                <q-banner v-if="!ongoing.length" class="bg-red-1 q-pa-md">
+                <q-banner v-if="!ongoing.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                   <template v-slot:avatar>
                     <q-icon name="event_busy" color="accent" />
                   </template>
-                  No ongoing request!
+                 <span class="text-h6 text-grey text-weight-thin">No Ongoing Request!</span>
                 </q-banner>
                 <q-table
                   title="Ongoing"
@@ -195,8 +215,8 @@
                     </q-tr>
                     <q-tr v-show="props.expand" :props="props">
                       <q-td colspan="100%">
-                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
-                        <div class="text-left"><span class="text-italic text-accent">Requestor's Name</span><br>{{ props.row.requestor}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
+                        <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div>
                       </q-td>
                     </q-tr>
                   </template>
@@ -206,11 +226,11 @@
               <br/>
 
               <div style="width: 100%;">
-                <q-banner v-if="!complete.length" class="bg-red-1 q-pa-md">
+                <q-banner v-if="!complete.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                   <template v-slot:avatar>
                     <q-icon name="event_busy" color="accent" />
                   </template>
-                  No completed request!
+                 <span class="text-h6 text-grey text-weight-thin">No Completed Request!</span>
                 </q-banner>
                 <q-table
                   title="Completed"
@@ -253,7 +273,7 @@
                     <q-tr v-show="props.expand" :props="props">
                       <q-td colspan="100%">
                         <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
-                        <div class="text-left"><span class="text-italic text-accent">Requestor's Name</span><br>{{ props.row.requestor}}</div>
+                        <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div>
                       </q-td>
                     </q-tr>
                   </template>
@@ -277,7 +297,7 @@
 </style>
 
 <script>
-import { date } from 'quasar'
+import { LocalStorage, date } from 'quasar'
 import { firebaseAuth, db } from 'boot/firebase'
 
 export default {
@@ -285,6 +305,7 @@ export default {
     return {
       separator: 'cell',
       confirm: false,
+      del: false,
       dense: false,
       filter: '',
       jobs: [],
@@ -308,16 +329,23 @@ export default {
         { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit' },
         { name: 'location', field: 'location', align: 'left', label: 'Location' },
         { name: 'telephone', field: 'telephone', align: 'left', label: 'Telephone' },
-        { name: 'foreman', field: 'foreman', align: 'left', label: "Foreman's Name" },
+        { name: 'foreman', field: 'foreman', align: 'left', label: 'Foreman' },
         { name: 'status', field: 'status', align: 'left', label: 'Status' }
       ]
     }
   },
   created () {
+    const user = JSON.parse(LocalStorage.getItem('user'))
     let jobRef = db.collection('job_orders').orderBy('date')
     let penRef = db.collection('pending_jobs').orderBy('date')
     let onRef = db.collection('ongoing_jobs').orderBy('date')
+    let useRef = db.collection('account').where('userId', '==', user.uid)
 
+    useRef.get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        this.head = doc.data().fullname
+      })
+    })
     jobRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const data = {
@@ -402,7 +430,7 @@ export default {
           description: this.selected[doc].description,
           date: this.selected[doc].date,
           telephone: this.selected[doc].telephone,
-          requestor: this.requestor,
+          requestor: this.selected[doc].requestor,
           head: this.head,
           foreman: this.selected[doc].foreman,
           status: this.status
