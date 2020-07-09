@@ -65,6 +65,21 @@
                       <q-icon name="email" />
                     </template>
                   </q-input>
+                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.unit" label="Unit" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Unit is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="person_pin" />
+                    </template>
+                  </q-input>
+                   <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.location" label="Location" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Location is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="place" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.telephone" label="Telephone" mask="(###) ### - ####"   fill-mask :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Telephone is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="phone" />
+                    </template>
+                  </q-input>
                 </div>
               </div>
             </q-card-section>
@@ -114,7 +129,9 @@ export default {
         mobile: '',
         unit: '',
         email: '',
-        position: ''
+        position: '',
+        location: '',
+        telephone: ''
       }
     }
   },
@@ -130,7 +147,9 @@ export default {
           email: change.data().email,
           image: change.data().image,
           position: change.data().position,
-          unit: change.data().unit
+          unit: change.data().unit,
+          location: change.data().location,
+          telephone: change.data().telephone
         }
         this.user = Object.assign({}, userData)
         this.docId = this.user.id

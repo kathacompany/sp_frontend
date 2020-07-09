@@ -1,46 +1,12 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-page-container>
-<<<<<<< HEAD
-
-      <q-page class="flex flex-center text-center">
-        <div class="container" style="width: 100%; height: 100%;">
-          <img src="statics/bg7.jpg" width="100%" height="60%" align="right"/>
-          <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 70px;font-weight: 800; margin-left: -800px; margin-top: -160px;">
-            JOPSIS
-          </div>
-          <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 20px;font-weight: 100; margin-left: -650px; margin-top: -50px;">
-            Job Order Processing and Inventory System
-
-=======
         <q-page class="flex flex-center text-center">
           <div style="width: 100%; height: 50%;">
-            <q-carousel
-              animated
-              v-model="slide"
-              navigation
-              infinite
-              arrows
-              transition-prev="slide-right"
-              transition-next="slide-left"
-            >
-              <q-carousel-slide :name="1" class="bg-teal-4" style="border: 2px solid grey">
-                <div class="absolute-center text-primary">
-                  <span class="text-h3">Attention to all units</span><br>
-                  <span class="text-h5 text-weight-light">All job pending requests will be delayed for 2 days</span>
-                </div>
-                <div class="absolute-center text-h6 text-weight-light text-primary"></div>
-              </q-carousel-slide>
-              <q-carousel-slide :name="2" />
-              <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />
-              <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />
-              <q-carousel-slide :name="5" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
-            </q-carousel>
-            <!-- <img src="statics/btr1.jpg" /> -->
-          </div>
-          <div>
+            <h6 class="text-weight-light">{{ today }}</h6>
+            <br/>
+          <br/>
             <q-btn no-caps icon="campaign" @click="add_dialog=true" class="q-mr-sm q-pa-sm text-h6 text-weight-light" label="Create Announcement" color="secondary"/>
-
             <q-dialog persistent transition-show="rotate" transition-hide="rotate" v-model="add_dialog">
                 <q-card style="width: 400px">
                   <q-bar class="bg-secondary text-white" style="height: 60px">
@@ -49,26 +15,107 @@
                     <q-btn flat icon="close" round dense v-close-popup />
                   </q-bar>
                   <q-card-section>
-                   <q-input
+                 <q-input
                     outlined
-                    ref="description"
+                    dense
+                    :disable="true"
+                    color="accent"
+                    v-model="date"
+                    label="Date"
+                    lazy-rules
+                    :rules="[val => val !== null && val !== '' || 'Date is required']">
+                    <template v-slot:append>
+                      <q-icon name="today" class="cursor-pointer">
+                        <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                          <q-date mask="YYYY-MM-DD" v-model="date" @input="() => $refs.qDateProxy.hide()" />
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                  <q-input
+                    outlined
+                    dense
+                    clearable
+                    ref="title"
+                    color="accent"
+                    v-model="newTitle"
+                    label="Title"
+                    lazy-rules
+                    :rules="[ val => val !== null || 'Title is required']">
+                  </q-input>
+                  <q-input
+                    outlined
+                    ref="details"
                     clearable
                     color="accent"
-                    v-model="ann"
                     type="textarea"
-                    label="Announcement"
+                    v-model="newDetails"
+                    label="Details of Announcement"
                     lazy-rules
-                    :rules="[ val => val !== null && val !== '' || 'Input is required']"/>
+                    :rules="[ val => val !== null || 'Details is required']"/>
                   </q-card-section>
                   <q-card-actions align="center">
-                    <q-btn no-caps class="text-weight-light" label="Create" color="secondary" @click="onSave"/>
+                    <q-btn no-caps class="text-weight-light" label="Create" color="secondary" @click="onSubmit" v-close-popup/>
+                    <q-btn no-caps flat @click="onReset" class="text-weight-light" label="Reset" color="accent"/>
                   </q-card-actions>
                 </q-card>
               </q-dialog>
-            <h6 class="text-weight-light">{{ date }}</h6>
->>>>>>> 8627e025ebd2ffb424cbfcd2e63cb983ad363a8f
+              <br/>
           </div>
-        </div>
+          <div>
+            <q-banner v-if="!announcements.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+              <template v-slot:avatar>
+                <q-icon name="event_busy" color="accent" />
+              </template>
+              <span class="text-h6 text-grey text-weight-thin">No Announcements!</span>
+            </q-banner>
+            <q-table
+              title="Announcements"
+              class="my-sticky-column-table"
+              v-else
+              dense
+              :separator="separator"
+              :data="announcements"
+              :columns="column"
+              :filter="filter"
+              hide-bottom
+            >
+            <template v-slot:header="props">
+              <q-tr :props="props">
+                <q-th auto-width />
+                <q-th
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                >
+                  {{ col.label }}
+                </q-th>
+              </q-tr>
+            </template>
+
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td auto-width>
+                </q-td>
+
+                <q-td
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                >
+                  {{ col.value }}
+                </q-td>
+                <q-td>
+                  <q-btn class="q-ma-sm" no-caps dense color="accent" label="Private" @click="privatePost(props.row.id)" />
+                  <q-btn class="q-ma-sm" no-caps dense color="accent" label="Public" @click="publicPost(props.row.id)" />
+                  <q-btn class="q-ma-sm" no-caps dense color="accent" label="Delete" @click="deleteAnnouncement(props.row.id)" />
+
+                </q-td>
+              </q-tr>
+            </template>
+
+            </q-table>
+          </div>
         </q-page>
         <router-view/>
     </q-page-container>
@@ -84,19 +131,170 @@
 
 <script>
 import { date } from 'quasar'
+import { db } from 'boot/firebase'
 
 export default {
   data () {
+    let timeStamp = Date.now()
+    let rightNow = date.formatDate(timeStamp, 'YYYY-MM-DD')
     return {
-      ann: '',
       slide: 1,
-      add_dialog: false
+      add_dialog: false,
+      date: rightNow,
+      publicAnnouncement: false,
+      privateAnnouncement: false,
+      newTitle: '',
+      newDetails: '',
+      postPublic: 'Public',
+      announcements: [],
+      title: '',
+      details: '',
+      dateOfAnnouncement: '',
+      postPrivate: 'Private',
+      column: [
+        { name: 'dateOfAnnouncement', field: 'dateOfAnnouncement', align: 'left', label: 'Date Filed', sortable: true },
+        { name: 'title', field: 'title', align: 'left', label: 'Title' },
+        { name: 'details', field: 'details', align: 'left', label: 'Details' },
+        { name: 'post', field: 'post', align: 'left', label: 'Post' }
+      ]
     }
   },
   computed: {
-    date () {
+    today () {
       let timeStamp = Date.now()
       return date.formatDate(timeStamp, 'dddd D MMMM YYYY')
+    }
+  },
+  created () {
+    let announcementsRef = db.collection('announcements')
+
+    announcementsRef.get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        const data = {
+          id: doc.id,
+          post: doc.data().post,
+          title: doc.data().title,
+          details: doc.data().details,
+          dateOfAnnouncement: doc.data().dateOfAnnouncement
+        }
+        this.announcements.push(data)
+      })
+    })
+  },
+  methods: {
+    async onSubmit () {
+      let announcementsRef = db.collection('announcements')
+      announcementsRef.add({
+        dateOfAnnouncement: this.date,
+        post: this.postPrivate,
+        title: this.newTitle,
+        details: this.newDetails
+      })
+        .then(doc => {
+          location.reload()
+          this.$q.notify({
+            color: 'secondary',
+            message: 'Announced Successfully'
+          })
+        })
+        .catch(error => {
+          console.error('Error announcing announcement: ', error)
+        })
+      this.newTitle = ''
+      this.newDetails = ''
+    },
+    async onReset () {
+      this.newTitle = null
+      this.newDetails = null
+    },
+    deleteAnnouncement (id) {
+      this.$q.dialog({
+        title: 'Delete Confirm',
+        message: 'The announcement will be deleted. Are you sure you want to continue?',
+        cancel: {
+          label: 'No',
+          flat: true,
+          color: 'accent'
+        },
+        ok: {
+          label: 'Yes',
+          flat: true,
+          color: 'secondary'
+        },
+        persistentL: true
+      }).onOk(async () => {
+        try {
+          await db.collection('announcements').doc(id).delete()
+          location.reload()
+          this.$q.notify({
+            avatar: 'delete',
+            color: 'accent',
+            message: 'Announcement deleted successfully'
+          })
+        } catch (error) {
+          console.log('Error deleting announcement', error)
+        }
+      })
+    },
+    publicPost (id) {
+      this.$q.dialog({
+        title: 'Update  to public?',
+        message: 'The announcement will be public. Are you sure you want to continue?',
+        cancel: {
+          label: 'No',
+          flat: true,
+          color: 'accent'
+        },
+        ok: {
+          label: 'Yes',
+          flat: true,
+          color: 'secondary'
+        },
+        persistentL: true
+      }).onOk(async () => {
+        try {
+          await db.collection('announcements').doc(id).update({
+            post: this.postPublic
+          })
+          location.reload()
+          this.$q.notify({
+            color: 'accent',
+            message: 'Announcement updated successfully'
+          })
+        } catch (error) {
+          console.log('Error updating announcement', error)
+        }
+      })
+    },
+    privatePost (id) {
+      this.$q.dialog({
+        title: 'Update  to private?',
+        message: 'The announcement will be private. Are you sure you want to continue?',
+        cancel: {
+          label: 'No',
+          flat: true,
+          color: 'accent'
+        },
+        ok: {
+          label: 'Yes',
+          flat: true,
+          color: 'secondary'
+        },
+        persistentL: true
+      }).onOk(async () => {
+        try {
+          await db.collection('announcements').doc(id).update({
+            post: this.postPrivate
+          })
+          location.reload()
+          this.$q.notify({
+            color: 'accent',
+            message: 'Announcement updated successfully'
+          })
+        } catch (error) {
+          console.log('Error updating announcement', error)
+        }
+      })
     }
   }
 }
