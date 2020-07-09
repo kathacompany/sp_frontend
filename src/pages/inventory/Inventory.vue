@@ -11,9 +11,145 @@
                 </template>
               </q-input>
               <br>
-              <div class="q-pa-md">
-                <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
-              </div>
+             <q-card>
+                <q-tabs
+                  v-model="tab"
+                  dense
+                  class="text-grey"
+                  active-color="secondary"
+                  indicator-color="accent"
+                  align="justify"
+                  narrow-indicator
+                >
+                  <q-tab name="tab 1" label="Tab 1" />
+                  <q-tab name="tab 2" label="Tab 2" />
+                  <q-tab name="tab 3" label="Tab 3" />
+                  <q-tab name="tab 4" label="Tab 4" />
+                </q-tabs>
+
+                <q-separator />
+
+                <q-tab-panels v-model="tab" animated>
+                  <q-tab-panel name="tab 1">
+                    <div class="q-pa-md">
+                      <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
+                    </div>
+
+                      <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                        <q-card style="width: 350px">
+                          <q-bar class="bg-secondary text-white" style="height: 60px">
+                            <div class="text-h6 text-weight-light">Add Material</div>
+                            <q-space />
+                            <q-btn icon="close" flat round dense v-close-popup />
+                          </q-bar>
+                          <q-card-section>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Material Name"/>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description"/>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measurement"/>
+                             <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
+                            <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
+                          </q-card-section>
+                          <q-card-actions class="justify-center q-pa-xs">
+                            <q-btn no-caps class="text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                          </q-card-actions>
+                        </q-card>
+                      </q-dialog>
+
+                      <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                        <q-card style="width: 350px">
+                          <q-bar class="bg-secondary text-white" style="height: 60px">
+                            <div class="text-h6 text-weight-light">Edit Material</div>
+                            <q-space />
+                            <q-btn icon="close" flat round dense v-close-popup />
+                          </q-bar>
+
+                          <q-card-section>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Material Name"/>
+                            <q-input class="q-pa-xs" readonly outlined dense color="accent" v-model="editedItem.stockNo" label="Stock No."/>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description"/>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measurement"/>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
+                            <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
+                            <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
+                          </q-card-section>
+                          <q-card-actions class="justify-center q-pa-xs">
+                            <q-btn no-caps class="text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
+                          </q-card-actions>
+                        </q-card>
+                      </q-dialog>
+
+                  <div style="width: 100%;">
+                  <q-banner v-if="!plumbingData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                    <template v-slot:avatar>
+                      <q-icon name="sentiment_dissatisfied" color="accent" />
+                    </template>
+                  <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
+                  </q-banner>
+                  <q-table
+                    class="my-sticky-header-table"
+                    :data="plumbingData"
+                    :columns="columns"
+                    row-key="name"
+                    :filter="filter"
+                    :separator="separator"
+                    v-else
+                    hide-bottom
+                    dense
+                    ref="plumbing"
+                    title="Plumbing Materials"
+                  >
+                    <template v-slot:top-right>
+                      <q-btn
+                        color="secondary"
+                        icon-right="archive"
+                        label="csv"
+                        no-caps
+                        flat
+                        dense
+                        @click="exportP"
+                      />
+                    </template>
+                    <template v-slot:header="props">
+                      <q-tr :props="props">
+                        <q-th
+                          v-for="col in props.cols"
+                          :key="col.name"
+                          :props="props"
+                          class="text-italic text-accent"
+                        >
+                          {{ col.label }}
+                        </q-th>
+                        <q-th>
+                          <span class="text-italic text-accent">Actions</span>
+                        </q-th>
+                      </q-tr>
+                    </template>
+                    <template v-slot:body="props">
+                      <q-tr :props="props">
+                        <q-td
+                          v-for="col in props.cols"
+                          :key="col.name"
+                          :props="props"
+                        >
+                          {{ col.value }}
+                        </q-td>
+                         <q-td>
+                          <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
+                          <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
+                            <q-space/>
+                          </q-btn>
+                        </q-td>
+                      </q-tr>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
+
+              <q-tab-panel name="tab 2">
+                <div class="q-pa-md">
+                  <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
+                </div>
 
                 <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
                   <q-card style="width: 350px">
@@ -59,275 +195,306 @@
                   </q-card>
                 </q-dialog>
 
-            <div style="width: 100%;">
-            <q-banner v-if="!plumbingData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
-              <template v-slot:avatar>
-                <q-icon name="sentiment_dissatisfied" color="accent" />
-              </template>
-            <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
-            </q-banner>
-            <q-table
-              class="my-sticky-header-table"
-              :data="plumbingData"
-              :columns="columns"
-              row-key="name"
-              :filter="filter"
-              :separator="separator"
-              v-else
-              hide-bottom
-              dense
-              ref="plumbing"
-              title="Plumbing Materials"
-            >
-              <template v-slot:top-right>
-                <q-btn
-                  color="secondary"
-                  icon-right="archive"
-                  label="csv"
-                  no-caps
-                  flat
-                  dense
-                  @click="exportP"
-                />
-              </template>
-              <template v-slot:header="props">
-                <q-tr :props="props">
-                  <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                    class="text-italic text-accent"
+                <div style="width: 100%;">
+                  <q-banner v-if="!electricityData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                    <template v-slot:avatar>
+                      <q-icon name="sentiment_dissatisfied" color="accent" />
+                    </template>
+                  <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
+                  </q-banner>
+                  <q-table
+                    class="my-sticky-header-table"
+                    :data="electricityData"
+                    :columns="columns"
+                    row-key="name"
+                    :filter="filter"
+                    :separator="separator"
+                    v-else
+                    hide-bottom
+                    dense
+                    ref="electric"
+                    title="Electricity Materials"
                   >
-                    {{ col.label }}
-                  </q-th>
-                  <q-th>
-                    <span class="text-italic text-accent">Actions</span>
-                  </q-th>
-                </q-tr>
-              </template>
-              <template v-slot:body="props">
-                <q-tr :props="props">
-                  <q-td
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td>
-                   <q-td>
-                    <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                    <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                      <q-space/>
-                    </q-btn>
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
-          </div>
-          <br/>
-          <br/>
+                    <template v-slot:top-right>
+                      <q-btn
+                        color="secondary"
+                        icon-right="archive"
+                        label="csv"
+                        no-caps
+                        flat
+                        dense
+                        @click="exportE"
+                      />
+                    </template>
+                    <template v-slot:header="props">
+                      <q-tr :props="props">
+                        <q-th
+                          v-for="col in props.cols"
+                          :key="col.name"
+                          :props="props"
+                          class="text-italic text-accent"
+                        >
+                          {{ col.label }}
+                        </q-th>
+                        <q-th>
+                          <span class="text-italic text-accent">Actions</span>
+                        </q-th>
+                      </q-tr>
+                    </template>
+                    <template v-slot:body="props">
+                      <q-tr :props="props">
+                        <q-td
+                          v-for="col in props.cols"
+                          :key="col.name"
+                          :props="props"
+                        >
+                          {{ col.value }}
+                        </q-td>
+                         <q-td>
+                          <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
+                          <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
+                            <q-space/>
+                          </q-btn>
+                        </q-td>
+                      </q-tr>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
 
-          <div style="width: 100%;">
-            <q-banner v-if="!electricityData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
-              <template v-slot:avatar>
-                <q-icon name="sentiment_dissatisfied" color="accent" />
-              </template>
-            <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
-            </q-banner>
-            <q-table
-              class="my-sticky-header-table"
-              :data="electricityData"
-              :columns="columns"
-              row-key="name"
-              :filter="filter"
-              :separator="separator"
-              v-else
-              hide-bottom
-              dense
-              ref="electric"
-              title="Electricity Materials"
-            >
-              <template v-slot:top-right>
-                <q-btn
-                  color="secondary"
-                  icon-right="archive"
-                  label="csv"
-                  no-caps
-                  flat
-                  dense
-                  @click="exportE"
-                />
-              </template>
-              <template v-slot:header="props">
-                <q-tr :props="props">
-                  <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                    class="text-italic text-accent"
-                  >
-                    {{ col.label }}
-                  </q-th>
-                  <q-th>
-                    <span class="text-italic text-accent">Actions</span>
-                  </q-th>
-                </q-tr>
-              </template>
-              <template v-slot:body="props">
-                <q-tr :props="props">
-                  <q-td
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td>
-                   <q-td>
-                    <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                    <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                      <q-space/>
-                    </q-btn>
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
-          </div>
-          <br/>
-          <br/>
+              <q-tab-panel name="tab 3">
+                <div class="q-pa-md">
+                  <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
+                </div>
 
-          <div style="width: 100%;">
-            <q-banner v-if="!groundsData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
-              <template v-slot:avatar>
-                <q-icon name="sentiment_dissatisfied" color="accent" />
-              </template>
-            <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
-            </q-banner>
-            <q-table
-              class="my-sticky-header-table"
-              :data="groundsData"
-              :columns="columns"
-              row-key="name"
-              :filter="filter"
-              :separator="separator"
-              v-else
-              hide-bottom
-              dense
-              ref="grounds"
-              title="Grounds Materials"
-            >
-              <template v-slot:top-right>
-                <q-btn
-                  color="secondary"
-                  icon-right="archive"
-                  label="csv"
-                  no-caps
-                  flat
-                  dense
-                  @click="exportG"
-                />
-              </template>
-              <template v-slot:header="props">
-                <q-tr :props="props">
-                  <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                    class="text-italic text-accent"
-                  >
-                    {{ col.label }}
-                  </q-th>
-                  <q-th>
-                    <span class="text-italic text-accent">Actions</span>
-                  </q-th>
-                </q-tr>
-              </template>
-              <template v-slot:body="props">
-                <q-tr :props="props">
-                  <q-td
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td>
-                   <q-td>
-                    <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                    <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                      <q-space/>
-                    </q-btn>
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
-          </div>
-          <br/>
-          <br/>
+                <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                  <q-card style="width: 350px">
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Add Material</div>
+                      <q-space />
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
+                    <q-card-section>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Material Name"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measurement"/>
+                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
+                    </q-card-section>
+                    <q-card-actions class="justify-center q-pa-xs">
+                      <q-btn no-caps class="text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
 
-          <div style="width: 100%;">
-            <q-banner v-if="!transportationData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
-              <template v-slot:avatar>
-                <q-icon name="sentiment_dissatisfied" color="accent" />
-              </template>
-            <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
-            </q-banner>
-            <q-table
-              class="my-sticky-header-table"
-              :data="transportationData"
-              :columns="columns"
-              row-key="name"
-              :filter="filter"
-              :separator="separator"
-              v-else
-              hide-bottom
-              dense
-              ref="transpo"
-              title="Transportation Materials"
-            >
-              <template v-slot:top-right>
-                <q-btn
-                  color="secondary"
-                  icon-right="archive"
-                  label="csv"
-                  no-caps
-                  flat
-                  dense
-                  @click="exportT"
-                />
-              </template>
-              <template v-slot:header="props">
-                  <q-tr :props="props">
-                    <q-th
-                      v-for="col in props.cols"
-                      :key="col.name"
-                      :props="props"
-                      class="text-italic text-accent"
-                    >
-                      {{ col.label }}
-                    </q-th>
-                    <q-th>
-                      <span class="text-italic text-accent">Actions</span>
-                    </q-th>
-                  </q-tr>
-                </template>
-                <template v-slot:body="props">
-                  <q-tr :props="props">
-                    <q-td
-                      v-for="col in props.cols"
-                      :key="col.name"
-                      :props="props"
-                    >
-                      {{ col.value }}
-                    </q-td>
-                    <q-td>
-                      <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                      <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                        <q-space/>
-                      </q-btn>
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
-          </div>
+                <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                  <q-card style="width: 350px">
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Edit Material</div>
+                      <q-space />
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
+
+                    <q-card-section>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Material Name"/>
+                      <q-input class="q-pa-xs" readonly outlined dense color="accent" v-model="editedItem.stockNo" label="Stock No."/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measurement"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
+                    </q-card-section>
+                    <q-card-actions class="justify-center q-pa-xs">
+                      <q-btn no-caps class="text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+
+                <div style="width: 100%;">
+                  <q-banner v-if="!groundsData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                    <template v-slot:avatar>
+                      <q-icon name="sentiment_dissatisfied" color="accent" />
+                    </template>
+                  <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
+                  </q-banner>
+                  <q-table
+                    class="my-sticky-header-table"
+                    :data="groundsData"
+                    :columns="columns"
+                    row-key="name"
+                    :filter="filter"
+                    :separator="separator"
+                    v-else
+                    hide-bottom
+                    dense
+                    ref="grounds"
+                    title="Grounds Materials"
+                  >
+                    <template v-slot:top-right>
+                      <q-btn
+                        color="secondary"
+                        icon-right="archive"
+                        label="csv"
+                        no-caps
+                        flat
+                        dense
+                        @click="exportG"
+                      />
+                    </template>
+                    <template v-slot:header="props">
+                      <q-tr :props="props">
+                        <q-th
+                          v-for="col in props.cols"
+                          :key="col.name"
+                          :props="props"
+                          class="text-italic text-accent"
+                        >
+                          {{ col.label }}
+                        </q-th>
+                        <q-th>
+                          <span class="text-italic text-accent">Actions</span>
+                        </q-th>
+                      </q-tr>
+                    </template>
+                    <template v-slot:body="props">
+                      <q-tr :props="props">
+                        <q-td
+                          v-for="col in props.cols"
+                          :key="col.name"
+                          :props="props"
+                        >
+                          {{ col.value }}
+                        </q-td>
+                         <q-td>
+                          <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
+                          <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
+                            <q-space/>
+                          </q-btn>
+                        </q-td>
+                      </q-tr>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
+
+              <q-tab-panel name="tab 4">
+                <div class="q-pa-md">
+                  <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
+                </div>
+
+                <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                  <q-card style="width: 350px">
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Add Material</div>
+                      <q-space />
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
+                    <q-card-section>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Material Name"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measurement"/>
+                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
+                    </q-card-section>
+                    <q-card-actions class="justify-center q-pa-xs">
+                      <q-btn no-caps class="text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+
+                <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                  <q-card style="width: 350px">
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Edit Material</div>
+                      <q-space />
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
+
+                    <q-card-section>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Material Name"/>
+                      <q-input class="q-pa-xs" readonly outlined dense color="accent" v-model="editedItem.stockNo" label="Stock No."/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measurement"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
+                    </q-card-section>
+                    <q-card-actions class="justify-center q-pa-xs">
+                      <q-btn no-caps class="text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+
+                <div style="width: 100%;">
+                  <q-banner v-if="!transportationData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                    <template v-slot:avatar>
+                      <q-icon name="sentiment_dissatisfied" color="accent" />
+                    </template>
+                  <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
+                  </q-banner>
+                  <q-table
+                    class="my-sticky-header-table"
+                    :data="transportationData"
+                    :columns="columns"
+                    row-key="name"
+                    :filter="filter"
+                    :separator="separator"
+                    v-else
+                    hide-bottom
+                    dense
+                    ref="transpo"
+                    title="Transportation Materials"
+                  >
+                    <template v-slot:top-right>
+                      <q-btn
+                        color="secondary"
+                        icon-right="archive"
+                        label="csv"
+                        no-caps
+                        flat
+                        dense
+                        @click="exportT"
+                      />
+                    </template>
+                    <template v-slot:header="props">
+                        <q-tr :props="props">
+                          <q-th
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                            class="text-italic text-accent"
+                          >
+                            {{ col.label }}
+                          </q-th>
+                          <q-th>
+                            <span class="text-italic text-accent">Actions</span>
+                          </q-th>
+                        </q-tr>
+                      </template>
+                      <template v-slot:body="props">
+                        <q-tr :props="props">
+                          <q-td
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                          >
+                            {{ col.value }}
+                          </q-td>
+                          <q-td>
+                            <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
+                            <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
+                              <q-space/>
+                            </q-btn>
+                        </q-td>
+                      </q-tr>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
+          </q-card>
         </div>
       </div>
     </q-page>
@@ -346,7 +513,7 @@
 </style>
 
 <script>
-import { inc, db } from 'boot/firebase'
+import { db } from 'boot/firebase'
 import { date, exportFile } from 'quasar'
 
 function wrapCsvValue (val, formatFn) {
@@ -373,6 +540,7 @@ export default {
   data () {
     return {
       separator: 'cell',
+      tab: 'tab 1',
       dense: false,
       editedIndex: -1,
       edit_dialog: false,
@@ -382,7 +550,7 @@ export default {
       editedItem: {
         name: '',
         description: '',
-        stockNo: inc.stockNo,
+        stockNo: 0,
         unit: '',
         value: 0,
         quantity: 0,
@@ -407,7 +575,7 @@ export default {
       columns: [
         { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
         { name: 'description', label: 'Description', field: 'description', align: 'left' },
-        { name: 'stockNo', label: 'Stock No.', field: 'stockNo', align: 'left' },
+        // { name: 'stockNo', label: 'Stock No.', field: 'stockNo', align: 'left' },
         { name: 'unit', label: 'Unit of Measurement', field: 'unit', align: 'left' },
         { name: 'value', label: 'Unit Cost (PhP)', field: 'value', align: 'left' },
         { name: 'quantity', label: 'Quantity', field: 'quantity', align: 'left' },
@@ -558,7 +726,7 @@ export default {
       db.collection('materials').add({
         name: this.defaultItem.name,
         description: this.defaultItem.description,
-        stockNo: inc,
+        stockNo: this.defaultItem.stockNo.inc,
         unit: this.defaultItem.unit,
         value: this.defaultItem.value,
         quantity: this.defaultItem.quantity,

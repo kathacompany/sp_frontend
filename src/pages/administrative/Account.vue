@@ -60,7 +60,7 @@
                       <q-icon name="person_pin" />
                     </template>
                   </q-input> -->
-                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.mobile" label="Mobile" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Mobile is required']">
+                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.telephone" label="Telephone" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Mobile is required']">
                     <template v-slot:prepend>
                       <q-icon name="phone" />
                     </template>
@@ -132,7 +132,7 @@ export default {
             id: doc.id,
             usertype: doc.data().usertype,
             fullname: doc.data().fullname,
-            mobile: doc.data().mobile,
+            telephone: doc.data().telephone,
             email: doc.data().email,
             image: doc.data().image,
             position: doc.data().position,

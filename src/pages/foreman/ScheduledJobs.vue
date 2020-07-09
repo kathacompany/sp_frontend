@@ -64,12 +64,12 @@
                       </div>
                       <div class="row text-subtitle2 text-grey-7">
                         <div class="col-3" >Workers:</div>
-                        <div class="text-weight-light" v-if="editedItem.details">{{ editedItem.details }}</div>
+                        <div class="text-weight-light" v-if="editedItem.details">{{ editedItem.details.map(({worker}) => worker).join(', ') }}</div>
                         <div class="text-weight-light" v-else>N/a</div>
                       </div>
                       <div class="row text-subtitle2 text-grey-7">
                         <div class="col-3" >Materials:</div>
-                        <div class="text-weight-light" v-if="editedItem.materials">{{ editedItem.materials }}</div>
+                        <div class="text-weight-light" v-if="editedItem.materials">{{ editedItem.materials.map(({material}) => material).join(', ') }}</div>
                         <div class="text-weight-light" v-else>None</div>
                       </div>
                     </div>
@@ -189,6 +189,7 @@ export default {
         const data = {
           title: doc.data().title,
           details: doc.data().details,
+          materials: doc.data().materials,
           jobId: doc.data().jobId,
           date: getCurrentDay(date.day),
           bgcolor: doc.data().bgcolor,

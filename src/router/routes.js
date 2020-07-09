@@ -72,6 +72,16 @@ const routes = [
       { path: 'HeadJobOrders', component: () => import('pages/head/JobOrders.vue') }
     ],
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/',
+    component: () => import('layouts/SuperuserLayout.vue'),
+    children: [
+      { path: 'RootHomepage', component: () => import('pages/root/Homepage.vue') },
+      { path: 'RootAccounts', component: () => import('pages/root/Accounts.vue') },
+      { path: 'RootJobOrders', component: () => import('pages/root/JobOrders.vue') }
+    ],
+    meta: { requiresAuth: true }
   }
 ]
 

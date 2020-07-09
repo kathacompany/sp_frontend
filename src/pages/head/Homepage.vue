@@ -5,21 +5,14 @@
           <div style="width: 100%; height: 50%;">
            <h6 class="text-weight-light">{{ today }}</h6>
 
-            <q-carousel
-              animated
-              v-model="announcement"
-              arrows
-              navigation
-              infinite
-              >
-            <q-carousel-slide v-for="announcement in announcements" :key="announcement.title" :name="announcement.id" class="bg-teal-4">
-              <br/>
-              <br/>
-              <br/>
-              <h1 class="text-weight-light">{{ announcement.title }}</h1>
-              <h5 class="text-weight-light">{{ announcement.details }}</h5>
-            </q-carousel-slide>
-          </q-carousel>
+          <div class="container" style="width: 100%; height: 100%;">
+            <img src="statics/bg7.jpg" width="100%" height="60%" align="right"/>
+            <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 70px;font-weight: 800; margin-left: -800px; margin-top: -160px;">
+              JOPSIS
+            </div>
+            <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 20px;font-weight: 100; margin-left: -650px; margin-top: -50px;">
+              Job Order Processing Scheduling and Inventory System
+            </div>
 
           </div>
           <div>

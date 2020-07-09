@@ -9,7 +9,7 @@
             JOPSIS
           </div>
           <div class="absolute-full text-subtitle2 flex flex-center" style="font-size: 20px;font-weight: 100; margin-left: -650px; margin-top: -50px;">
-            Job Order Processing and Inventory System
+            Job Order Processing Scheduling and Inventory System
 
           </div>
         </div>

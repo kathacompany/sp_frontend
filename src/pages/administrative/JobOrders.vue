@@ -11,202 +11,224 @@
                 </template>
               </q-input>
               <br>
-              <div style="width: 100%;">
-                <q-banner v-if="!pending.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
-                  <template v-slot:avatar>
-                    <q-icon name="done_all" color="accent" />
-                  </template>
-                 <span class="text-h6 text-grey text-weight-thin">All caught up. Nothing to approve!</span>
-                </q-banner>
-                <q-table
-                  title="Job Orders"
-                  class="my-sticky-column-table"
-                  v-else
+              <q-card>
+                <q-tabs
+                  v-model="tab"
                   dense
-                  :data="pending"
-                  :columns="column"
-                  row-key="jobId"
-                  :filter="filter"
-                  :separator="separator"
-                  :selected-rows-label="getSelectedString"
-                  selection="multiple"
-                  :selected.sync="selected"
-                  hide-bottom
+                  class="text-grey"
+                  active-color="secondary"
+                  indicator-color="accent"
+                  align="justify"
+                  narrow-indicator
                 >
-                  <template v-slot:header="props">
-                    <q-tr :props="props">
-                      <q-th key="selected">
-                        <q-checkbox dense color="secondary" v-model="props.selected"/>
-                      </q-th>
-                      <q-th auto-width/>
-                      <q-th
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                        class="text-italic text-accent"
-                      >
-                        {{ col.label }}
-                      </q-th>
-                    </q-tr>
-                  </template>
-                  <template v-slot:body="props">
-                    <q-tr :props="props">
-                      <q-td>
-                        <q-checkbox dense color="secondary" v-model="props.selected"/>
-                      </q-td>
-                      <q-td auto-width>
-                        <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
-                      </q-td>
-                      <q-td
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                      >
-                        {{ col.value }}
-                      </q-td>
-                    </q-tr>
-                    <q-tr v-show="props.expand" :props="props">
-                      <q-td colspan="100%">
-                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
-                        <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div><br/>
-                        <div class="text-left"><span class="text-italic text-accent">Unit Head</span><br>{{ props.row.head}}</div>
-                      </q-td>
-                    </q-tr>
-                  </template>
-                </q-table>
-                <q-btn no-caps icon="thumb_up_alt" label="Accept" class="q-ma-sm bg-secondary text-weight-light text-white"  v-if="selected.length" @click="confirm=true"/>
-                <q-dialog v-model="confirm" persistent>
-                  <q-card>
-                    <q-card-section class="row items-center">
-                      <div class="text-h6">Accept Confirm</div>
-                    </q-card-section>
-                    <q-card-section>
-                      <span class="q-ma-sm">Forward {{selected.length}} selected <span v-if="selected.length>1">requests</span><span v-else>request</span> to a Foreman?</span>
-                    </q-card-section>
+                  <q-tab name="tab 1" label="Tab 1" />
+                  <q-tab name="tab 2" label="Tab 2" />
+                </q-tabs>
 
-                    <q-card-actions align="right">
-                      <q-btn flat label="No" color="accent" v-close-popup />
-                      <q-btn flat label="Yes" color="secondary" @click="onSubmit()" v-close-popup/>
-                    </q-card-actions>
-                  </q-card>
-                </q-dialog>
-              </div>
-              <br/>
-              <br/>
+                <q-separator />
 
-              <div style="width: 100%;">
-                <q-banner v-if="!ongoing.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
-                  <template v-slot:avatar>
-                    <q-icon name="event_busy" color="accent" />
-                  </template>
-                 <span class="text-h6 text-grey text-weight-thin">No Ongoing Request!</span>
-                </q-banner>
-                <q-table
-                  title="Ongoing"
-                  class="my-sticky-column-table"
-                  v-else
-                  dense
-                  :data="ongoing"
-                  :columns="column"
-                  row-key="jobId"
-                  :separator="separator"
-                  :filter="filter"
-                  hide-bottom
-                >
-                  <template v-slot:header="props">
-                    <q-tr :props="props">
-                      <q-th auto-width/>
-                      <q-th
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                        class="text-italic text-accent"
+                <q-tab-panels v-model="tab" animated>
+                  <q-tab-panel name="tab 1">
+                    <div style="width: 100%;">
+                      <q-banner v-if="!pending.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                        <template v-slot:avatar>
+                          <q-icon name="done_all" color="accent" />
+                        </template>
+                       <span class="text-h6 text-grey text-weight-thin">All caught up. Nothing to approve!</span>
+                      </q-banner>
+                      <q-table
+                        title="Job Orders"
+                        class="my-sticky-column-table"
+                        v-else
+                        dense
+                        :data="pending"
+                        :columns="column"
+                        row-key="jobId"
+                        :filter="filter"
+                        :separator="separator"
+                        :selected-rows-label="getSelectedString"
+                        selection="multiple"
+                        :selected.sync="selected"
+                        hide-bottom
                       >
-                        {{ col.label }}
-                      </q-th>
-                    </q-tr>
-                  </template>
-                  <template v-slot:body="props">
-                    <q-tr :props="props">
-                      <q-td auto-width>
-                        <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
-                      </q-td>
-                      <q-td
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                      >
-                        {{ col.value }}
-                      </q-td>
-                    </q-tr>
-                    <q-tr v-show="props.expand" :props="props">
-                      <q-td colspan="100%">
-                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
-                        <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div><br/>
-                        <div class="text-left"><span class="text-italic text-accent">Unit Head</span><br>{{ props.row.head}}</div>
-                      </q-td>
-                    </q-tr>
-                  </template>
-                </q-table>
-              </div>
-              <br/>
-              <br/>
+                        <template v-slot:header="props">
+                          <q-tr :props="props">
+                            <q-th key="selected">
+                              <q-checkbox dense color="secondary" v-model="props.selected"/>
+                            </q-th>
+                            <q-th auto-width/>
+                            <q-th
+                              v-for="col in props.cols"
+                              :key="col.name"
+                              :props="props"
+                              class="text-italic text-accent"
+                            >
+                              {{ col.label }}
+                            </q-th>
+                          </q-tr>
+                        </template>
+                        <template v-slot:body="props">
+                          <q-tr :props="props">
+                            <q-td>
+                              <q-checkbox dense color="secondary" v-model="props.selected"/>
+                            </q-td>
+                            <q-td auto-width>
+                              <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
+                            </q-td>
+                            <q-td
+                              v-for="col in props.cols"
+                              :key="col.name"
+                              :props="props"
+                            >
+                              {{ col.value }}
+                            </q-td>
+                          </q-tr>
+                          <q-tr v-show="props.expand" :props="props">
+                            <q-td colspan="100%">
+                              <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
+                              <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div><br/>
+                              <div class="text-left"><span class="text-italic text-accent">Unit Head</span><br>{{ props.row.head}}</div>
+                            </q-td>
+                          </q-tr>
+                        </template>
+                      </q-table>
+                      <q-btn no-caps icon="thumb_up_alt" label="Accept" class="q-ma-sm bg-secondary text-weight-light text-white"  v-if="selected.length" @click="confirm=true"/>
+                      <q-dialog v-model="confirm" persistent>
+                        <q-card>
+                          <q-card-section class="row items-center">
+                            <div class="text-h6">Accept Confirm</div>
+                          </q-card-section>
+                          <q-card-section>
+                            <span class="q-ma-sm">Forward {{selected.length}} selected <span v-if="selected.length>1">requests</span><span v-else>request</span> to a Foreman?</span>
+                          </q-card-section>
 
-              <div style="width: 100%;">
-                <q-banner v-if="!complete.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
-                  <template v-slot:avatar>
-                    <q-icon name="event_busy" color="accent" />
-                  </template>
-                  <span class="text-h6 text-grey text-weight-thin">No Completed Request!</span>
-                </q-banner>
-                <q-table
-                  title="Completed"
-                  class="my-sticky-column-table"
-                  v-else
-                  dense
-                  :data="complete"
-                  :columns="column"
-                  row-key="jobId"
-                  :separator="separator"
-                  :filter="filter"
-                  hide-bottom
-                >
-                <template v-slot:header="props">
-                    <q-tr :props="props">
-                      <q-th auto-width/>
-                      <q-th
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                        class="text-italic text-accent"
+                          <q-card-actions align="right">
+                            <q-btn flat label="No" color="accent" v-close-popup />
+                            <q-btn flat label="Yes" color="secondary" @click="onSubmit()" v-close-popup/>
+                          </q-card-actions>
+                        </q-card>
+                      </q-dialog>
+                    </div>
+                    <br/>
+                    <br/>
+
+                    <div style="width: 100%;">
+                    <q-banner v-if="!ongoing.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                      <template v-slot:avatar>
+                        <q-icon name="event_busy" color="accent" />
+                      </template>
+                     <span class="text-h6 text-grey text-weight-thin">No Ongoing Request!</span>
+                    </q-banner>
+                    <q-table
+                      title="Ongoing"
+                      class="my-sticky-column-table"
+                      v-else
+                      dense
+                      :data="ongoing"
+                      :columns="column"
+                      row-key="jobId"
+                      :separator="separator"
+                      :filter="filter"
+                      hide-bottom
+                    >
+                      <template v-slot:header="props">
+                        <q-tr :props="props">
+                          <q-th auto-width/>
+                          <q-th
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                            class="text-italic text-accent"
+                          >
+                            {{ col.label }}
+                          </q-th>
+                        </q-tr>
+                      </template>
+                      <template v-slot:body="props">
+                        <q-tr :props="props">
+                          <q-td auto-width>
+                            <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
+                          </q-td>
+                          <q-td
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                          >
+                            {{ col.value }}
+                          </q-td>
+                        </q-tr>
+                        <q-tr v-show="props.expand" :props="props">
+                          <q-td colspan="100%">
+                            <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
+                            <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div><br/>
+                            <div class="text-left"><span class="text-italic text-accent">Unit Head</span><br>{{ props.row.head}}</div>
+                          </q-td>
+                        </q-tr>
+                      </template>
+                    </q-table>
+                  </div>
+                  </q-tab-panel>
+
+                  <q-tab-panel name="tab 2">
+                    <div style="width: 100%;">
+                      <q-banner v-if="!complete.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                        <template v-slot:avatar>
+                          <q-icon name="event_busy" color="accent" />
+                        </template>
+                        <span class="text-h6 text-grey text-weight-thin">No Completed Request!</span>
+                      </q-banner>
+                      <q-table
+                        title="Completed"
+                        class="my-sticky-column-table"
+                        v-else
+                        dense
+                        :data="complete"
+                        :columns="column"
+                        row-key="jobId"
+                        :separator="separator"
+                        :filter="filter"
+                        hide-bottom
                       >
-                        {{ col.label }}
-                      </q-th>
-                    </q-tr>
-                  </template>
-                  <template v-slot:body="props">
-                    <q-tr :props="props">
-                      <q-td auto-width>
-                        <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
-                      </q-td>
-                      <q-td
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                      >
-                        {{ col.value }}
-                      </q-td>
-                    </q-tr>
-                    <q-tr v-show="props.expand" :props="props">
-                      <q-td colspan="100%">
-                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
-                        <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div><br/>
-                        <div class="text-left"><span class="text-italic text-accent">Unit Head</span><br>{{ props.row.head}}</div>
-                      </q-td>
-                    </q-tr>
-                  </template>
-                </q-table>
-              </div>
+                      <template v-slot:header="props">
+                          <q-tr :props="props">
+                            <q-th auto-width/>
+                            <q-th
+                              v-for="col in props.cols"
+                              :key="col.name"
+                              :props="props"
+                              class="text-italic text-accent"
+                            >
+                              {{ col.label }}
+                            </q-th>
+                          </q-tr>
+                        </template>
+                        <template v-slot:body="props">
+                          <q-tr :props="props">
+                            <q-td auto-width>
+                              <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
+                            </q-td>
+                            <q-td
+                              v-for="col in props.cols"
+                              :key="col.name"
+                              :props="props"
+                            >
+                              {{ col.value }}
+                            </q-td>
+                          </q-tr>
+                          <q-tr v-show="props.expand" :props="props">
+                            <q-td colspan="100%">
+                              <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
+                              <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div><br/>
+                              <div class="text-left"><span class="text-italic text-accent">Unit Head</span><br>{{ props.row.head}}</div>
+                            </q-td>
+                          </q-tr>
+                        </template>
+                      </q-table>
+                    </div>
+                    </q-tab-panel>
+
+                  </q-tab-panels>
+                </q-card>
             </div>
           </div>
         </q-page>
@@ -233,6 +255,7 @@ export default {
   data () {
     return {
       separator: 'cell',
+      tab: 'tab 1',
       confirm: false,
       dense: false,
       filter: '',

@@ -45,10 +45,12 @@
                   </q-input>
                   <q-input
                     outlined
+                    dense
                     ref="details"
                     clearable
                     color="accent"
                     type="textarea"
+                    autogrow
                     v-model="newDetails"
                     label="Details of Announcement"
                     lazy-rules
@@ -77,7 +79,6 @@
               :separator="separator"
               :data="announcements"
               :columns="column"
-              :filter="filter"
               hide-bottom
             >
             <template v-slot:header="props">
@@ -89,6 +90,9 @@
                   :props="props"
                 >
                   {{ col.label }}
+                </q-th>
+                 <q-th>
+                  <span>Actions</span>
                 </q-th>
               </q-tr>
             </template>
@@ -106,9 +110,9 @@
                   {{ col.value }}
                 </q-td>
                 <q-td>
-                  <q-btn class="q-ma-sm" no-caps dense color="accent" label="Private" @click="privatePost(props.row.id)" />
-                  <q-btn class="q-ma-sm" no-caps dense color="accent" label="Public" @click="publicPost(props.row.id)" />
-                  <q-btn class="q-ma-sm" no-caps dense color="accent" label="Delete" @click="deleteAnnouncement(props.row.id)" />
+                  <q-btn class="text-weight-light q-ma-sm" no-caps dense color="secondary" label="Private" @click="privatePost(props.row.id)" />
+                  <q-btn class="text-weight-light q-ma-sm" no-caps dense color="secondary" label="Public" @click="publicPost(props.row.id)" />
+                  <q-btn class="text-weight-light q-ma-sm" no-caps dense flat color="accent" icon="delete" @click="deleteAnnouncement(props.row.id)" />
 
                 </q-td>
               </q-tr>
@@ -140,6 +144,7 @@ export default {
     return {
       slide: 1,
       add_dialog: false,
+      separator: 'cell',
       date: rightNow,
       publicAnnouncement: false,
       privateAnnouncement: false,
