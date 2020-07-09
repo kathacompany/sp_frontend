@@ -12,62 +12,78 @@
               </q-input>
               <br>
 
-              <div style="width: 100%;">
-                <q-banner v-if="!schedule.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
-                  <template v-slot:avatar>
-                    <q-icon name="event_busy" color="accent" />
-                  </template>
-                <span class="text-h6 text-grey text-weight-thin">No Scheduled Request!</span>
-                </q-banner>
-                <q-table
-                  title="Scheduled Work"
-                  class="my-sticky-column-table"
-                  v-else
+              <q-card>
+                <q-tabs
+                  v-model="tab"
                   dense
-                  :separator="separator"
-                  :data="schedule"
-                  :columns="column"
-                  row-key="jobId"
-                  :filter="filter"
-                  hide-bottom
+                  class="text-grey"
+                  active-color="secondary"
+                  indicator-color="accent"
+                  align="justify"
+                  narrow-indicator
                 >
-                  <template v-slot:header="props">
-                    <q-tr :props="props">
-                      <q-th auto-width/>
-                      <q-th
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                        class="text-italic text-accent"
-                      >
-                        {{ col.label }}
-                      </q-th>
-                    </q-tr>
-                  </template>
-                  <template v-slot:body="props">
-                    <q-tr :props="props">
-                      <q-td auto-width>
-                        <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
-                      </q-td>
-                      <q-td
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                      >
-                        {{ col.value }}
-                      </q-td>
-                    </q-tr>
-                    <q-tr v-show="props.expand" :props="props">
-                      <q-td colspan="100%">
-                        <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
-                      </q-td>
-                    </q-tr>
-                  </template>
-                </q-table>
-              </div>
-              <br/>
-              <br/>
+                </q-tabs>
 
+                <q-separator />
+                <q-tab-panels v-model="tab" animated>
+
+                  <q-tab-panel name="tab 1">
+                    <div style="width: 100%;">
+                      <q-banner v-if="!schedule.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                        <template v-slot:avatar>
+                          <q-icon name="event_busy" color="accent" />
+                        </template>
+                      <span class="text-h6 text-grey text-weight-thin">No Scheduled Request!</span>
+                      </q-banner>
+                      <q-table
+                        title="Scheduled Work"
+                        class="my-sticky-column-table"
+                        v-else
+                        dense
+                        :separator="separator"
+                        :data="schedule"
+                        :columns="column"
+                        row-key="jobId"
+                        :filter="filter"
+                        hide-bottom
+                      >
+                        <template v-slot:header="props">
+                          <q-tr :props="props">
+                            <q-th auto-width/>
+                            <q-th
+                              v-for="col in props.cols"
+                              :key="col.name"
+                              :props="props"
+                              class="text-italic text-accent"
+                            >
+                              {{ col.label }}
+                            </q-th>
+                          </q-tr>
+                        </template>
+                        <template v-slot:body="props">
+                          <q-tr :props="props">
+                            <q-td auto-width>
+                              <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
+                            </q-td>
+                            <q-td
+                              v-for="col in props.cols"
+                              :key="col.name"
+                              :props="props"
+                            >
+                              {{ col.value }}
+                            </q-td>
+                          </q-tr>
+                          <q-tr v-show="props.expand" :props="props">
+                            <q-td colspan="100%">
+                              <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
+                            </q-td>
+                          </q-tr>
+                        </template>
+                      </q-table>
+                    </div>
+                  </q-tab-panel>
+                </q-tab-panels>
+              </q-card>
             </div>
           </div>
         </q-page>
@@ -95,6 +111,7 @@ export default {
       separator: 'cell',
       dense: false,
       edit_dialog: false,
+      tab: 'tab 1',
       filter: '',
       schedule: [],
       editedItem: {
@@ -133,54 +150,5 @@ export default {
       return date.formatDate(timeStamp, 'dddd D MMMM YYYY')
     }
   }
-  // methods: {
-  //   updateJob () {
-  //     let docref = db.collection('job_orders').doc(this.activeJob)
-  //     docref.update(this.editedItem)
-  //       .then(
-  //         location.reload(),
-  //         this.$q.notify({
-  //           color: 'secondary',
-  //           message: 'Updated successfully'
-  //         })
-  //       )
-  //       .catch(error => {
-  //         console.error('Error updating job: ', error)
-  //       })
-  //   },
-  //   toEdit (item, id) {
-  //     this.edit_dialog = true
-  //     this.editedItem = Object.assign({}, item)
-  //     this.activeJob = this.editedItem.id
-  //   },
-  //   toDelete (id) {
-  //     this.$q.dialog({
-  //       title: 'Cancel Confirm',
-  //       message: 'The job filed will be cancelled. Are you sure you want to continue?',
-  //       cancel: {
-  //         label: 'No',
-  //         flat: true,
-  //         color: 'accent'
-  //       },
-  //       ok: {
-  //         label: 'Yes',
-  //         flat: true,
-  //         color: 'secondary'
-  //       },
-  //       persistentL: true
-  //     }).onOk(async () => {
-  //       try {
-  //         await db.collection('job_orders').doc(id).delete()
-  //         this.$q.notify({
-  //           color: 'accent',
-  //           message: 'Job cancelled successfully'
-  //         })
-  //         window.location.reload()
-  //       } catch (error) {
-  //         console.log('Error cancelling job', error)
-  //       }
-  //     })
-  //   }
-  // }
 }
 </script>

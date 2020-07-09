@@ -24,6 +24,7 @@
                             {label: 'Foreman', value: 'Foreman'},
                             {label: 'Inventory Staff', value: 'Inventory Staff'},
                             {label: 'Worker', value: 'Worker'},
+                            {label: 'Root', value: 'Root'},
                             ]">
                   <template v-slot:prepend>
                     <q-icon name="face"/>
@@ -78,7 +79,7 @@
 </template>
 
 <script>
-import { Loading } from 'quasar'
+import { LocalStorage, Loading } from 'quasar'
 import { firebaseAuth, db } from 'boot/firebase'
 
 export default {
@@ -110,16 +111,18 @@ export default {
   },
   methods: {
     addAuth () {
-      this.currentuser = firebaseAuth.currentUser.uid
-      let setRef = db.collection('account').doc(this.currentuser)
+      const user = JSON.parse(LocalStorage.getItem('user'))
+      let setRef = db.collection('account').where('userId', '==', user.uid)
 
-      setRef.set({
-        userId: this.currentuser,
-        email: this.email,
-        usertype: this.usertype.value
-      },
-      { merge: true }
-      )
+      setRef.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          doc.ref.update({
+            userId: user.uid,
+            email: this.email,
+            usertype: this.usertype.value
+          })
+        })
+      })
         .catch(error => {
           console.error('Error message: ', error)
         })
@@ -222,6 +225,22 @@ export default {
                   title: 'Welcome!',
                   color: 'secondary',
                   message: 'You are logged in as Worker',
+                  ok: 'OK'
+                })
+              })
+          this.addAuth()
+        } else if (this.usertype.value === 'Root') {
+          Loading.show()
+          await firebaseAuth
+            .signInWithEmailAndPassword(this.email, this.password)
+            .then(
+              user => {
+                this.$router.push('/RootHomepage')
+                Loading.hide()
+                this.$q.dialog({
+                  title: 'Welcome!',
+                  color: 'secondary',
+                  message: 'You are logged in as Superuser',
                   ok: 'OK'
                 })
               })

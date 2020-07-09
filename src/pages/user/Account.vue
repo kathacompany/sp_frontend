@@ -55,14 +55,24 @@
                       <q-icon name="person_pin" />
                     </template>
                   </q-input>
-                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.mobile" label="Mobile" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Mobile is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="phone" />
-                    </template>
-                  </q-input>
                   <q-input style="width: 25vw" class="q-pa-sm" outlined dense color="accent" :value="user.email" label="Email" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Email is required']">
                     <template v-slot:prepend>
                       <q-icon name="email" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.unit" label="Unit" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Unit is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="person_pin" />
+                    </template>
+                  </q-input>
+                   <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.location" label="Location" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Location is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="place" />
+                    </template>
+                  </q-input>
+                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.telephone" label="Telephone" mask="(###) ### - ####"   fill-mask :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Telephone is required']">
+                    <template v-slot:prepend>
+                      <q-icon name="phone" />
                     </template>
                   </q-input>
                 </div>
@@ -70,11 +80,11 @@
             </q-card-section>
             <q-separator color="secondary"/>
 
-            <q-card-actions align="center">
+<!--             <q-card-actions align="center">
               <q-btn no-caps v-model="disable" color="secondary" class="text-weight-light" @click="disable = !disable" v-if="disable" icon="edit" label="Edit Profile"/>
               <q-btn no-caps flat color="secondary" v-else-if="!disable" label="Save" @click="saveChanges"/>
               <q-btn no-caps flat color="accent" @click="disable = true" v-if="!disable" label="Cancel"/>
-            </q-card-actions>
+            </q-card-actions> -->
 
             </q-card>
           </div>
@@ -114,7 +124,9 @@ export default {
         mobile: '',
         unit: '',
         email: '',
-        position: ''
+        position: '',
+        location: '',
+        telephone: ''
       }
     }
   },
@@ -126,11 +138,12 @@ export default {
           id: change.id,
           usertype: change.data().usertype,
           fullname: change.data().fullname,
-          mobile: change.data().mobile,
           email: change.data().email,
           image: change.data().image,
           position: change.data().position,
-          unit: change.data().unit
+          unit: change.data().unit,
+          location: change.data().location,
+          telephone: change.data().telephone
         }
         this.user = Object.assign({}, userData)
         this.docId = this.user.id

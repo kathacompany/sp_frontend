@@ -20,7 +20,7 @@
                   <q-input
                     outlined
                     dense
-                    ref="date"
+                    :disable="true"
                     color="accent"
                     v-model="date"
                     label="Date"
@@ -79,7 +79,7 @@
                     outlined
                     dense
                     ref="unit"
-                    clearable
+                    :disable="true"
                     color="accent"
                     class="q-ma-xs"
                     style="min-width: auto; width: 15vw;"
@@ -95,7 +95,7 @@
                     outlined
                     dense
                     ref="location"
-                    clearable
+                    :disable="true"
                     color="accent"
                     class="q-ma-xs"
                     style="min-width: auto; width: 12vw;"
@@ -111,7 +111,7 @@
                   <q-input
                     outlined
                     dense
-                    clearable
+                    :disable="true"
                     ref="telephone"
                     v-model="telephone"
                     label="Telephone"
@@ -150,17 +150,19 @@ import { LocalStorage, date } from 'quasar'
 
 export default {
   data () {
+    let timeStamp = Date.now()
+    let rightNow = date.formatDate(timeStamp, 'YYYY-MM-DD')
     return {
       dense: false,
       category: null,
-      date: null,
       telephone: null,
       unit: null,
       location: null,
       description: null,
       requestor: null,
       foreman: 'N/A',
-      status: 'for Unit Head approval'
+      status: 'for Unit Head approval',
+      date: rightNow
     }
   },
   computed: {
@@ -176,6 +178,9 @@ export default {
     useRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         this.requestor = doc.data().fullname
+        this.unit = doc.data().unit
+        this.location = doc.data().location
+        this.telephone = doc.data().telephone
       })
     })
   },
