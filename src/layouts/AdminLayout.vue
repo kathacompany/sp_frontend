@@ -20,75 +20,51 @@
     >
       <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
         <q-list padding class="q-mr-ma">
-          <q-item clickable v-ripple @click="$router.push('/ForemanHomepage')">
+          <q-item clickable v-ripple @click="$router.push('/AdminHomepage')">
             <q-item-section avatar>
               <q-icon name="home"/>
             </q-item-section>
 
             <q-item-section>
-             Homepage
+              Homepage
             </q-item-section>
           </q-item>
 
           <q-separator />
 
-          <q-item clickable v-ripple @click="$router.push('/ForemanJobOrders')">
+           <q-item clickable v-ripple @click="$router.push('/AdminAccounts')">
+            <q-item-section avatar>
+              <q-icon name="people" />
+
+            </q-item-section>
+
+            <q-item-section>
+              Accounts
+            </q-item-section>
+          </q-item>
+
+          <q-separator />
+
+          <q-item clickable v-ripple @click="$router.push('/AdminJobOrders')">
             <q-item-section avatar>
               <q-icon name="inbox"/>
             </q-item-section>
 
             <q-item-section>
-              Job Order Requests
+              Job Orders
             </q-item-section>
           </q-item>
 
           <q-separator />
 
-         <q-item clickable v-ripple @click="$router.push('/ForemanScheduledJobs')">
-          <q-item-section avatar>
-            <q-icon name="work" />
-
-          </q-item-section>
-
-            <q-item-section>
-              Scheduled Jobs
-            </q-item-section>
-          </q-item>
-
-          <q-separator />
-
-          <q-item clickable v-ripple @click="$router.push('/ForemanMaterialRequests')">
+          <q-item clickable v-ripple @click="$router.push('/AdminSessions')">
             <q-item-section avatar>
-              <q-icon name="shopping_cart" />
+              <q-icon name="sync_alt" />
 
             </q-item-section>
 
             <q-item-section>
-              Material Requests
-            </q-item-section>
-          </q-item>
-
-          <q-separator />
-
-          <q-item clickable v-ripple @click="$router.push('/ForemanWorkerLists')">
-            <q-item-section avatar>
-              <q-icon name="people" />
-            </q-item-section>
-
-            <q-item-section>
-              Worker Lists
-            </q-item-section>
-          </q-item>
-
-          <q-separator />
-
-          <q-item clickable v-ripple @click="$router.push('/ForemanAccount')">
-            <q-item-section avatar>
-              <q-icon name="person" />
-            </q-item-section>
-
-            <q-item-section>
-              Account Details
+              Session Logs
             </q-item-section>
           </q-item>
 
@@ -109,12 +85,57 @@
       <q-img class="absolute-top" src="statics/bg0.jfif" style="height: 150px">
         <div class="absolute-bottom bg-transparent text-black">
           <q-avatar size="60px" class="q-mb-sm">
-            <img src="statics/logo.png">
+            <img src="statics/admin.png">
           </q-avatar>
-          <div class="text-weight-bold">{{user.displayName}}</div>
+          <div class="text-weight-bold">ADMIN</div>
           <div><q-icon color="accent" name="email"/>{{user.email}}</div>
+          <div><q-btn flat no-caps dense class="text-subtitle2 text-weight-medium" color="accent" label="Change Password" @click="change=true"/></div>
         </div>
       </q-img>
+
+      <q-dialog v-model="change" persistent transition-show="rotate" transition-hide="rotate">
+        <q-card style="width: 350px">
+          <q-bar class="bg-secondary text-white" style="height: 60px">
+            <div class="text-h6 text-weight-light">Change Password</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-bar>
+          <q-card-section>
+            <q-input outlined dense ref="currentPassword" clearable color="secondary" class="q-pa-sm" v-model="currentPassword" label="Current Password" :type="isPwd ? 'password' : 'text'" lazy-rules :rules="[val => val !== null && val !== '' || 'Current password is required']">
+            <template v-slot:prepend>
+              <q-icon color="accent" name="lock"/>
+            </template>
+            <template v-slot:append>
+              <q-icon
+              v-if="currentPassword"
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+              />
+            </template>
+          </q-input>
+          <q-input outlined dense ref="newPassword" clearable bottom-slots color="secondary" class="q-pa-sm" v-model="newPassword" label="New Password" :type="isPwd ? 'password' : 'text'" lazy-rules :rules="[val => val !== null && val !== '' || 'New Password is required']">
+            <template v-slot:prepend>
+              <q-icon color="accent" name="lock"/>
+            </template>
+            <template v-slot:hint>
+             <span class="text-accent">Password atleast 8 characters</span>
+            </template>
+            <template v-slot:append>
+              <q-icon
+              v-if="newPassword"
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+              />
+            </template>
+          </q-input>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn unelevated class="full-width q-pa-xs" color="secondary" label="Save" @click="onUpdate"/>
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-drawer>
 
     <q-page-container class="page-container">
@@ -132,11 +153,15 @@
 
 <script>
 import { firebaseAuth } from 'boot/firebase'
-import { LocalStorage } from 'quasar'
+import { Loading, LocalStorage } from 'quasar'
 
 export default {
   data () {
     return {
+      isPwd: true,
+      newPassword: '',
+      currentPassword: '',
+      change: false,
       drawer: false,
       miniState: true
     }
@@ -151,6 +176,34 @@ export default {
         .catch(error => {
           this.$q.notify(error)
         })
+    },
+    reAuth (currentEmail, currentPassword) {
+      return firebaseAuth.signInWithEmailAndPassword(currentEmail, currentPassword)
+    },
+    async onUpdate () {
+      const currentUser = firebaseAuth.currentUser
+
+      if (this.newPassword === '' || this.currentPassword === '' || this.newPassword === null || this.currentPassword === null) {
+        this.$refs.newPassword.validate()
+        this.$refs.currentPassword.validate()
+      } else {
+        this.change = false
+        Loading.show()
+        await this.reAuth(currentUser.email, this.currentPassword).then(() => {
+          currentUser.updatePassword(this.newPassword)
+            .then(() => {
+              firebaseAuth.signOut()
+              Loading.hide()
+              this.$q.notify({
+                icon: 'sentiment_satisfied_alt',
+                color: 'accent',
+                message: 'Password successfully changed. You can now re-login with your new password'
+              })
+            }).catch((error) => {
+              this.$q.notify(error)
+            })
+        })
+      }
     }
   }
 }

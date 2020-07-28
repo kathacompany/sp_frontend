@@ -10,3 +10,8 @@
 
 .q-calendar-weekly__head-weekday:hover
   background-color: rgba(0,0,255,.1)
+
+.rowNumber::before
+  counter-increment: cssRowCounter
+  content: counter(cssRowCounter)
+

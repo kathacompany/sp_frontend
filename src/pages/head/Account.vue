@@ -3,123 +3,159 @@
   <q-page-container>
     <q-page class="window-height window-width row justify-center">
       <div class="q-gutter-sm flex text-center">
-        <div style="min-width: 350px; max-height: 100%; margin-top: 40px">
+        <div style="min-width: 350px; max-height: 100%; margin-top: 30px">
 
-          <q-card class="q-pa-sm" style="width: 700px">
+          <q-card class="q-pa-xs" style="width: 700px; height: 650px">
             <q-card-section align="center">
-              <div class="text-h5 text-weight-light">ACCOUNT DETAILS</div>
-              <div class="col">
-                <div class="row justify-center">
-                  <div class="q-pa-sm text-subtitle1"><q-icon name="face" color="secondary"/> {{user.usertype}}</div>
-                  <div class="q-pa-sm text-subtitle1">{{date}}</div>
-                </div>
+              <div class="text-weight-medium">{{ date }}</div>
+              <div class="q-pa-sm text-subtitle text-weight-light">
+                <q-icon name="face" color="secondary"/> {{user.usertype}}
               </div>
             </q-card-section>
-            <q-separator color="secondary"/>
-            <br>
 
-            <q-card-section>
-              <div class="row justify-center">
-                <div class="col q-pa-sm">
-                  <q-avatar v-if="user.image" ref="image" size="150px">
-                    <img v-if="user.image" :src="user.image" @error="replaceByDefault">
-                  </q-avatar>
-                  <q-avatar v-else size="150px" ref="imageDef" font-size="120px" color="grey-3" text-color="primary" icon="person" />
+              <q-tabs
+                v-model="tab"
+                dense
+                class="text-grey"
+                align="justify"
+                active-color="secondary"
+                indicator-color="accent"
+                narrow-indicator
+              >
+                <q-tab name="tab 1" label="My Profile" icon="account_box"/>
+                <q-tab name="tab 2" label="Account Settings" icon="settings_applications"/>
+              </q-tabs>
+              <q-separator/>
+
+              <q-tab-panels
+                v-model="tab"
+                animated
+                transition-prev="fade"
+                transition-next="fade"
+              >
+                <q-tab-panel name="tab 1">
+                  <q-card-section >
+                    <div align="center">
+                      <q-input style="width: 35vw" class="q-pa-xs" v-model="user.unit" label="Unit" readonly>
+                        <template v-slot:before>
+                          <q-icon color="accent" name="local_library" />
+                        </template>
+                      </q-input>
+                      <q-input style="width: 35vw" class="q-pa-xs" v-model="user.position" label="Position" readonly>
+                        <template v-slot:before>
+                          <q-icon color="accent" name="work" />
+                        </template>
+                      </q-input>
+                      <br>
+                      <br>
+                      <q-input style="width: 35vw" class="q-pa-xs" v-model="user.fullname" label="Full Name" readonly>
+                        <template v-slot:before>
+                          <q-icon color="accent" name="person_pin" />
+                        </template>
+                      </q-input>
+                      <q-input style="width: 35vw" class="q-pa-xs" v-model="user.location" label="Location" readonly>
+                        <template v-slot:before>
+                          <q-icon color="accent" name="place" />
+                        </template>
+                      </q-input>
+                      <q-input style="width: 35vw" class="q-pa-xs" v-model="user.telephone" label="Telephone" mask="(###) ### - ####"   fill-mask readonly>
+                        <template v-slot:before>
+                          <q-icon color="accent" name="phone" />
+                        </template>
+                      </q-input>
+                    </div>
+                  </q-card-section>
+                </q-tab-panel>
+
+                <q-tab-panel name="tab 2">
+                  <q-card-section align="center" v-for="data in currentUser" :key="data.key">
+                    <q-input style="width: 35vw" class="q-pa-xs" v-model="user.userId" label="JOPSIS ID" readonly>
+                      <template v-slot:before>
+                        <span class="text-accent text-weight-bold">J</span>
+                      </template>
+                    </q-input>
+
+                    <q-input bottom-slots style="width: 35vw" class="q-pa-xs" v-model="user.email" label="Email" readonly>
+                      <template v-slot:before>
+                        <q-icon color="accent" name="email"/>
+                      </template>
+
+                      <template v-slot:hint>
+                       <span class="text-secondary text-weight-medium" v-if="data.emailVerified">*VERIFIED</span>
+                       <span class="text-accent text-weight-medium" v-else>*UNVERIFIED</span>
+                      </template>
+
+                      <template v-slot:after v-if="!data.emailVerified">
+                        <q-btn rounded unelevated class="q-pa-xs" color="secondary" icon-right="send" @click="emailVerify" label="Verify Email"/>
+                      </template>
+                    </q-input>
+                  </q-card-section>
                   <br>
-                  <br>
-                  <q-btn no-caps dense flat color="accent" @click="hidden = !hidden" icon="add_a_photo" :disable="disable"/>
-                  <q-input type="file" color="accent" outlined style="width: 20vw;" ref="image" v-model="user.image" dense v-if="!hidden" @change="onGetImage" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Image is required']"/>
-                </div>
-                <div class="col" style="margin-top: 35px;">
-                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense color="accent" v-model="user.unit" label="Unit" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Unit is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="local_library" />
-                    </template>
-                  </q-input>
-                  <q-input style="width: 20vw" class="q-pa-sm" outlined dense color="accent" v-model="user.position" label="Position" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Position is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="work" />
-                    </template>
-                  </q-input>
-                </div>
-              </div>
-            </q-card-section>
-            <q-separator color="secondary"/>
-            <br>
+                  <q-card-section align="center">
+                    <q-btn flat class="text-h6 text-weight-medium q-pa-xs" color="secondary" label="Change Password" @click="disable=false"/>
+                    <q-btn flat class="text-h6 text-weight-medium q-pa-xs" color="accent" label="Cancel" v-if="!disable" @click="onCancel"/>
+                    <q-separator/>
+                    <div style="width: 320px"  class="q-pa-sm q-pt-md">
+                      <q-input v-if="!disable" outlined dense ref="currentPassword" clearable color="secondary" class="q-pa-sm" v-model="currentPassword" label="Current Password" :type="isPwd ? 'password' : 'text'" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Current password is required']">
+                        <template v-slot:prepend>
+                          <q-icon color="accent" name="lock"/>
+                        </template>
+                        <template v-slot:append>
+                          <q-icon
+                          v-if="currentPassword"
+                          :name="isPwd ? 'visibility_off' : 'visibility'"
+                          class="cursor-pointer"
+                          @click="isPwd = !isPwd"
+                          />
+                        </template>
+                      </q-input>
+                      <q-input v-if="!disable" outlined dense ref="newPassword" clearable bottom-slots color="secondary" class="q-pa-sm" v-model="newPassword" label="New Password" :type="isPwd ? 'password' : 'text'" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'New Password is required']">
+                        <template v-slot:prepend>
+                          <q-icon color="accent" name="lock"/>
+                        </template>
+                        <template v-slot:hint>
+                         <span class="text-accent">Password atleast 8 characters</span>
+                        </template>
+                        <template v-slot:append>
+                          <q-icon
+                          v-if="newPassword"
+                          :name="isPwd ? 'visibility_off' : 'visibility'"
+                          class="cursor-pointer"
+                          @click="isPwd = !isPwd"
+                          />
+                        </template>
+                      </q-input>
+                      <div class="q-pa-sm q-pt-md">
+                        <q-btn unelevated class="full-width q-pa-xs" color="secondary" label="Save" v-if="!disable" @click="onUpdate"/>
+                      </div>
+                    </div>
+                  </q-card-section>
 
-            <q-card-section align="center">
-              <div class="row justify-center">
-                <div class="col">
-                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.fullname" label="Full Name" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Name is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="person_pin" />
-                    </template>
-                  </q-input>
-                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense color="accent" :value="user.email" label="Email" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Email is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="email" />
-                    </template>
-                  </q-input>
-                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.unit" label="Unit" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Unit is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="person_pin" />
-                    </template>
-                  </q-input>
-                   <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.location" label="Location" :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Location is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="place" />
-                    </template>
-                  </q-input>
-                  <q-input style="width: 25vw" class="q-pa-sm" outlined dense clearable color="accent" v-model="user.telephone" label="Telephone" mask="(###) ### - ####"   fill-mask :disable="disable" lazy-rules :rules="[val => val !== null && val !== '' || 'Telephone is required']">
-                    <template v-slot:prepend>
-                      <q-icon name="phone" />
-                    </template>
-                  </q-input>
-                </div>
-              </div>
-            </q-card-section>
-            <q-separator color="secondary"/>
-
-<!--             <q-card-actions align="center">
-              <q-btn no-caps v-model="disable" color="secondary" class="text-weight-light" @click="disable = !disable" v-if="disable" icon="edit" label="Edit Profile"/>
-              <q-btn no-caps flat color="secondary" v-else-if="!disable" label="Save" @click="saveChanges"/>
-              <q-btn no-caps flat color="accent" @click="disable = true" v-if="!disable" label="Cancel"/>
-            </q-card-actions> -->
-
+                </q-tab-panel>
+              </q-tab-panels>
             </q-card>
           </div>
         </div>
       </q-page>
-  </q-page-container>
+    </q-page-container>
   </q-layout>
 </template>
-
-<style lang="sass">
-
-  th:first-child,
-  td:first-child
-    position: sticky
-    left: 0
-    z-index: 1
-</style>
 
 <script>
 import { firebaseAuth, db } from 'boot/firebase'
 import { LocalStorage, date } from 'quasar'
 
 export default {
-  props: ['usertype'],
   data () {
     return {
-      error: null,
-      hidden: true,
-      editedIndex: -1,
+      tab: 'tab 1',
+      isPwd: true,
       disable: true,
-      userId: null,
-      imageDef: null,
+      newPassword: '',
+      currentPassword: '',
+      currentUser: [],
       user: {
         usertype: '',
-        image: '',
         fullname: '',
         mobile: '',
         unit: '',
@@ -131,23 +167,22 @@ export default {
     }
   },
   created () {
-    const user = JSON.parse(LocalStorage.getItem('user'))
-    db.collection('account').where('userId', '==', user.uid).onSnapshot(querySnapshot => {
-      querySnapshot.forEach(change => {
+    const currentUser = JSON.parse(LocalStorage.getItem('user'))
+    db.collection('account').where('userId', '==', currentUser.uid).onSnapshot(querySnapshot => {
+      querySnapshot.forEach(doc => {
         const userData = {
-          id: change.id,
-          usertype: change.data().usertype,
-          fullname: change.data().fullname,
-          mobile: change.data().mobile,
-          email: change.data().email,
-          image: change.data().image,
-          position: change.data().position,
-          unit: change.data().unit,
-          location: change.data().location,
-          telephone: change.data().telephone
+          userId: doc.id,
+          usertype: doc.data().usertype,
+          fullname: doc.data().fullname,
+          email: doc.data().email,
+          area: doc.data().area,
+          position: doc.data().position,
+          unit: doc.data().unit,
+          location: doc.data().location,
+          telephone: doc.data().telephone
         }
         this.user = Object.assign({}, userData)
-        this.docId = this.user.id
+        this.currentUser.push(currentUser)
       })
     })
   },
@@ -158,34 +193,49 @@ export default {
     }
   },
   methods: {
-    replaceByDefault (error) {
-      if (error) {
-        this.user.image = this.imageDef
-      }
-    },
-    onGetImage (event) {
-      const file = event.target.files[0]
-      this.user.image = URL.createObjectURL(file)
-      this.hidden = true
-    },
-    saveChanges () {
-      this.disable = true
-      var currentUser = firebaseAuth.currentUser.uid
-      if (this.user !== '') {
-        let useRef = db.collection('account').doc(this.docId)
-        useRef.update(this.user)
-        this.$q.notify({
-          color: 'secondary',
-          message: 'Updated successfully'
+    async emailVerify () {
+      const currentUser = firebaseAuth.currentUser
+
+      await currentUser.sendEmailVerification()
+        .then(() => {
+          this.$q.notify({
+            icon: 'sentiment_satisfied_alt',
+            color: 'secondary',
+            message: 'A link was sent to ' + currentUser.email
+          })
+        }).catch((error) => {
+          this.$q.notify(error)
         })
+    },
+    reAuth (currentEmail, currentPassword) {
+      return firebaseAuth.signInWithEmailAndPassword(currentEmail, currentPassword)
+    },
+    async onUpdate () {
+      const currentUser = firebaseAuth.currentUser
+
+      if (this.newPassword === '' || this.currentPassword === '' || this.newPassword === null || this.currentPassword === null) {
+        this.$refs.newPassword.validate()
+        this.$refs.currentPassword.validate()
       } else {
-        let setRef = db.collection('account').doc(currentUser)
-        setRef.set(this.user)
-        this.$q.notify({
-          color: 'secondary',
-          message: 'Updated successfully'
+        await this.reAuth(currentUser.email, this.currentPassword).then(() => {
+          currentUser.updatePassword(this.newPassword)
+            .then(() => {
+              firebaseAuth.signOut()
+              this.$q.notify({
+                icon: 'sentiment_satisfied_alt',
+                color: 'accent',
+                message: 'Passwor successfully changed. You can now re-login with your new password'
+              })
+            }).catch((error) => {
+              this.$q.notify(error)
+            })
         })
       }
+    },
+    onCancel () {
+      this.disable = true
+      this.$refs.newPassword.resetValidation()
+      this.$refs.currentPassword.resetValidation()
     }
   }
 }

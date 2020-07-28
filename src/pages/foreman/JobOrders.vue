@@ -4,8 +4,8 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5 class="text-weight-light">JOB ORDER REQUESTS</h5> {{ date }}<br><br>
-              <q-input v-if="ongoing.length || complete.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Requesting Unit">
+              <h5 class="text-weight-light">JOB ORDER REQUESTS</h5><span class="text-weight-medium">{{ date }}</span><br><br>
+              <q-input v-if="ongoing.length || complete.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
@@ -21,23 +21,28 @@
                   align="justify"
                   narrow-indicator
                 >
-                  <q-tab name="tab 1" label="Tab 1" />
-                  <q-tab name="tab 2" label="Tab 2" />
+                  <q-tab name="tab 1" label="Active" icon="assignment">
+                  </q-tab>
+                  <q-tab name="tab 2" label="Completed" icon="assignment_turned_in">
+                  </q-tab>
                 </q-tabs>
 
                 <q-separator />
 
                 <q-tab-panels v-model="tab" animated>
                   <q-tab-panel name="tab 1">
+
                     <div style="width: 100%;">
                      <q-banner v-if="!ongoing.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                       <template v-slot:avatar>
                         <q-icon name="event_busy" color="accent" />
                       </template>
-                     <span class="text-h6 text-grey text-weight-thin">No Job Request!</span>
+                     <span class="text-h6 text-grey text-weight-thin">No Job Requests!</span>
                     </q-banner>
+
                     <q-table
-                      title="Job Orders"
+                      title="Job Order Requests"
+                      :table-style="'counter-reset: cssRowCounter '"
                       class="my-sticky-column-table"
                       v-else
                       dense
@@ -46,10 +51,11 @@
                       row-key="jobId"
                       :filter="filter"
                       :separator="separator"
-                      hide-bottom
-                    >
+                      >
+
                       <template v-slot:header="props">
                         <q-tr :props="props">
+                          <q-th class="text-italic text-accent" auto-width>#</q-th>
                           <q-th auto-width/>
                           <q-th
                             v-for="col in props.cols"
@@ -66,10 +72,12 @@
                       </template>
                       <template v-slot:body="props">
                         <q-tr :props="props">
+                          <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                           <q-td auto-width>
                             <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                           </q-td>
                           <q-td
+                            :class="badgeClasses(props.row, 'editedItem.bgcolor')"
                             v-for="col in props.cols"
                             :key="col.name"
                             :props="props"
@@ -89,7 +97,7 @@
                                     <span class="text-sub1 text-weight-light">{{ editedItem.description }}</span>
                                   </q-card-section>
                                   <q-card-section v-show="showSimulatedReturnData">
-                                    <div>
+                                    <div class="q-pa-xs">
                                       <span class="text-caption text-grey">Selection is REQUIRED</span>
                                       <q-btn-toggle
                                         v-model="schedWork.title"
@@ -110,6 +118,7 @@
                                       clearable
                                       outlined
                                       dense
+                                      class="q-pa-xs"
                                       ref="sel"
                                       color="accent"
                                       placeholder="Select Date"
@@ -129,6 +138,7 @@
                                     <q-select
                                       v-if="schedWork.title==='Implementation'"
                                       dense
+                                      class="q-pa-xs"
                                       clearable
                                       outlined
                                       color="accent"
@@ -164,7 +174,7 @@
                                     <q-spinner-gears size="50px" color="grey-5" />
                                   </q-inner-loading>
                                   <q-card-actions align="center">
-                                    <q-btn no-caps class="text-weight-light" label="Save Changes" color="secondary" @click="onSave"/>
+                                    <q-btn no-caps unelevated class="full-width text-weight-light" label="Save Changes" color="secondary" @click="onSave"/>
                                   </q-card-actions>
                                 </q-card>
                               </q-dialog>
@@ -179,6 +189,7 @@
                                   </q-bar>
                                   <q-card-section>
                                      <q-select
+                                      v-show="showSimulatedReturnData"
                                       dense
                                       clearable
                                       outlined
@@ -210,16 +221,19 @@
                                         </q-item>
                                       </template>
                                     </q-select>
-                                    <div v-if="selection">
+                                    <div v-if="selection" v-show="showSimulatedReturnData">
                                       <div v-for="material in selection " :key="material.matId">
-                                        <span class="text-subtitle1 text-weight-light">description: {{ material.description }}</span><br>
-                                        <span class="text-subtitle1 text-weight-light">quantity: {{ material.quantity }}</span>
+                                        <span class="text-subtitle1 text-weight-light">Description: {{ material.description }}</span><br>
+                                        <span class="text-subtitle1 text-weight-light">Quantity: {{ material.quantity }}</span>
                                         <q-input outlined dense color="accent" v-model="material.request" clearable label="Enter Quantity Needed" type="number"/><br>
                                       </div>
                                     </div>
                                   </q-card-section>
+                                  <q-inner-loading :showing="visible">
+                                    <q-spinner-gears size="50px" color="grey-5" />
+                                  </q-inner-loading>
                                   <q-card-actions align="center">
-                                    <q-btn no-caps class="text-weight-light" label="Send Request" color="secondary" @click="onRequest"/>
+                                    <q-btn no-caps unelevated class="full-width text-weight-light" label="Send Request" color="secondary" @click="onRequest"/>
                                   </q-card-actions>
                                 </q-card>
                               </q-dialog>
@@ -227,13 +241,14 @@
                             <q-btn flat dense icon="verified" color="secondary" @click="toEditC(props.row)"/>
 
                              <q-dialog persistent transition-show="rotate" transition-hide="rotate" v-model="comp_dialog">
-                                <q-card style="width: 500px;">
+                                <q-card style="width: 450px;">
                                   <q-bar class="bg-secondary text-white" style="height: 60px">
                                     <div class="text-weight-light">Job Report for Job --- {{ editedItem.jobId }}</div>
                                       <q-space />
                                     <q-btn flat icon="close" round dense v-close-popup />
                                   </q-bar>
                                  <q-card-section>
+                                  <div class="text-caption text-accent text-weight-medium">Note: JOB REPORT is for WORKED JOBS ONLY or else it will not be submitted</div><br>
                                   <div class="text-center text-weight-light">{{ date }}</div><br>
                                   <div class="text-weight-light">Requested By:  {{ editedItem.requestor }}</div>
                                   <div class="text-weight-light">Approved By:  {{ editedItem.head }}</div>
@@ -242,6 +257,7 @@
                                     <q-input
                                       outlined
                                       dense
+                                      class="q-pa-xs"
                                       ref="description"
                                       clearable
                                       color="accent"
@@ -253,26 +269,30 @@
                                     <q-input
                                       outlined
                                       dense
+                                      class="q-pa-xs"
                                       ref="description"
                                       clearable
                                       color="accent"
                                       v-model="rec"
                                       label="Recommendations"
+                                      autogrow
                                       lazy-rules
                                       :rules="[ val => val !== null && val !== '' || 'Input is required']"/>
                                     <q-input
                                       outlined
                                       ref="description"
                                       dense
+                                      class="q-pa-xs"
                                       clearable
                                       color="accent"
                                       v-model="action"
                                       label="Action Taken"
+                                      autogrow
                                       lazy-rules
                                       :rules="[ val => val !== null && val !== '' || 'Input is required']"/>
                                   </q-card-section>
                                   <q-card-actions align="center">
-                                    <q-btn no-caps class="text-weight-light" label="Submit" color="secondary" @click="onAttest"/>
+                                    <q-btn no-caps unelevated class="full-width text-weight-light" label="Submit to the Requestor" color="secondary" @click="onAttest"/>
                                   </q-card-actions>
                                 </q-card>
                               </q-dialog>
@@ -297,10 +317,11 @@
                         <template v-slot:avatar>
                           <q-icon name="event_busy" color="accent" />
                         </template>
-                       <span class="text-h6 text-grey text-weight-thin">No Certified Request!</span>
+                       <span class="text-h6 text-grey text-weight-thin">No Certified Requests!</span>
                       </q-banner>
                       <q-table
-                        title="Confirmed"
+                        title="Confirmed Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
                         class="my-sticky-column-table"
                         v-else
                         dense
@@ -309,10 +330,10 @@
                         :columns="atCol"
                         row-key="job"
                         :filter="filter"
-                        hide-bottom
                       >
                         <template v-slot:header="props">
                           <q-tr :props="props">
+                            <q-th class="text-italic text-accent" auto-width>#</q-th>
                             <q-th auto-width/>
                             <q-th
                               v-for="col in props.cols"
@@ -329,6 +350,7 @@
                         </template>
                         <template v-slot:body="props">
                           <q-tr :props="props">
+                            <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                             <q-td auto-width>
                               <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                             </q-td>
@@ -350,7 +372,7 @@
                                   <q-card-section>
                                   <div>
                                     <span class="text-h6  text-weight-medium q-ma-sm">This job is ready for Completion</span><br>
-                                    <div class="text-grey q-ma-sm">By clicking the "Submit button" you acknowledge that this job is done and certified by the Unit requestor</div><br>
+                                    <div class="text-grey q-ma-sm">By clicking the "Submit button" you acknowledge that this job is done and certified by the Requestor</div><br>
                                     <span class="q-ma-sm">Completion Date: <span class="text-weight-medium">{{ date }}</span></span>
                                   </div>
                                   </q-card-section>
@@ -364,6 +386,7 @@
                           </q-tr>
                           <q-tr v-show="props.expand" :props="props">
                             <q-td colspan="100%">
+                              <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
                               <div class="text-left"><span class="text-italic text-accent">Findings</span><br>{{ props.row.findings}}</div><br>
                               <div class="text-left"><span class="text-italic text-accent">Recommendations</span><br>{{ props.row.rec}}</div><br>
                               <div class="text-left"><span class="text-italic text-accent">Action</span><br>{{ props.row.action}}</div>
@@ -380,10 +403,11 @@
                         <template v-slot:avatar>
                           <q-icon name="event_busy" color="accent" />
                         </template>
-                       <span class="text-h6 text-grey text-weight-thin">No Completed Request!</span>
+                       <span class="text-h6 text-grey text-weight-thin">No Completed Requests!</span>
                       </q-banner>
                       <q-table
-                        title="Completed"
+                        title="Completed Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
                         class="my-sticky-column-table"
                         v-else
                         dense
@@ -392,10 +416,10 @@
                         :columns="column"
                         row-key="jobId"
                         :filter="filter"
-                        hide-bottom
                       >
                         <template v-slot:header="props">
                           <q-tr :props="props">
+                            <q-th class="text-italic text-accent" auto-width>#</q-th>
                             <q-th auto-width/>
                             <q-th
                               v-for="col in props.cols"
@@ -409,6 +433,7 @@
                         </template>
                         <template v-slot:body="props">
                           <q-tr :props="props">
+                            <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                             <q-td auto-width>
                               <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                             </q-td>
@@ -423,6 +448,9 @@
                           <q-tr v-show="props.expand" :props="props">
                             <q-td colspan="100%">
                               <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description }}</div><br>
+                              <div class="text-left"><span class="text-italic text-accent">Findings</span><br>{{ props.row.findings}}</div><br>
+                              <div class="text-left"><span class="text-italic text-accent">Recommendations</span><br>{{ props.row.rec}}</div><br>
+                              <div class="text-left"><span class="text-italic text-accent">Action</span><br>{{ props.row.action}}</div><br>
                               <div class="text-left"><span class="text-italic text-accent">Unit Requestor</span><br>{{ props.row.requestor}}</div><br>
                               <div class="text-left"><span class="text-italic text-accent">Unit Head</span><br>{{ props.row.head}}</div>
                             </q-td>
@@ -440,15 +468,6 @@
     </q-page-container>
   </q-layout>
 </template>
-
-<style lang="sass">
-
-  th:first-child,
-  td:first-child
-    position: sticky
-    left: 0
-    z-index: 1
-</style>
 
 <script>
 import { LocalStorage, date } from 'quasar'
@@ -474,7 +493,6 @@ export default {
       ongoing: [],
       complete: [],
       attested: [],
-      inventories: [],
       editedItem: {
         date: '',
         category: '',
@@ -483,7 +501,8 @@ export default {
         description: '',
         telephone: '',
         status: '',
-        foreman: ''
+        foreman: '',
+        bgcolor: ''
       },
       events: [],
       workers: stringOptions,
@@ -499,117 +518,96 @@ export default {
       rec: '',
       action: '',
       column: [
-        { name: 'id', field: 'jobId', align: 'left', label: 'Job Id' },
-        { name: 'date', field: 'date', align: 'left', label: 'Date Filed' },
         { name: 'category', field: 'category', align: 'left', label: 'Category', sortable: true },
-        { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit' },
-        { name: 'location', field: 'location', align: 'left', label: 'Location' },
+        { name: 'date', field: 'date', align: 'left', label: 'Date Filed', sortable: true },
+        { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit', sortable: true },
+        { name: 'location', field: 'location', align: 'left', label: 'Location', sortable: true },
         { name: 'telephone', field: 'telephone', align: 'left', label: 'Telephone' },
-        { name: 'status', field: 'status', align: 'left', label: 'Status' }
+        { name: 'status', field: 'status', align: 'left', label: 'Status', sortable: true }
       ],
       atCol: [
-        { name: 'id', field: 'job', align: 'left', label: 'Job Id' },
-        { name: 'date', field: 'confirmed', align: 'left', label: 'Date Confirmed' },
-        { name: 'status', field: 'certified', align: 'left', label: 'Status' }
+        { name: 'date', field: 'confirmed', align: 'left', label: 'Date Confirmed', sortable: true },
+        { name: 'status', field: 'certified', align: 'left', label: 'Status', sortable: true }
       ]
     }
   },
   computed: {
-    remainingQuantity () {
-      var tQuantity = 0
-      // var selQuantity = 0
-      for (let i in this.inventories) {
-        tQuantity += this.inventories[i].quantity
-      }
-      return tQuantity
-    },
     date () {
       let timeStamp = Date.now()
       return date.formatDate(timeStamp, 'dddd D MMMM YYYY')
     }
   },
   created () {
-    db.collection('materials').get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        const matData = {
-          id: doc.id,
-          name: doc.data().name,
-          description: doc.data().description,
-          stockNo: doc.data().stockNo,
-          unit: doc.data().unit,
-          value: doc.data().value,
-          quantity: doc.data().quantity,
-          category: doc.data().category
-        }
-        this.inventories.push(matData)
-      })
-    })
     const user = JSON.parse(LocalStorage.getItem('user'))
+
     const useRef = db.collection('account').where('userId', '==', user.uid)
     useRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         this.foreman = doc.data().fullname
-        this.area = doc.data().category
+        this.area = doc.data().area
       })
-    })
-    const atRef = db.collection('complete_jobs').orderBy('confirmed')
-    atRef.get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        const data = {
-          id: doc.id,
-          job: doc.data().job,
-          info: doc.data().info,
-          rec: doc.data().rec,
-          action: doc.data().action,
-          findings: doc.data().findings,
-          confirmed: doc.data().confirmed,
-          conducted: doc.data().conducted,
-          certified: doc.data().certified
-        }
-        this.attested.push(data)
+      const onRef = db.collection('ongoing_jobs').where('category', '==', this.area)
+      onRef.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const data = {
+            id: doc.id,
+            jobId: doc.data().jobId,
+            userId: doc.data().userId,
+            headId: doc.data().headId,
+            category: doc.data().category,
+            unit: doc.data().unit,
+            location: doc.data().location,
+            description: doc.data().description,
+            date: doc.data().date,
+            telephone: doc.data().telephone,
+            requestor: doc.data().requestor,
+            head: doc.data().head,
+            foreman: doc.data().foreman,
+            status: doc.data().status,
+            bgcolor: doc.data().bgcolor
+          }
+          this.ongoing.push(data)
+        })
       })
-    })
-    const onRef = db.collection('ongoing_jobs').orderBy('date')
-    onRef.get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        const data = {
-          id: doc.id,
-          jobId: doc.data().jobId,
-          userId: doc.data().userId,
-          headId: doc.data().headId,
-          category: doc.data().category,
-          unit: doc.data().unit,
-          location: doc.data().location,
-          description: doc.data().description,
-          date: doc.data().date,
-          telephone: doc.data().telephone,
-          requestor: doc.data().requestor,
-          head: doc.data().head,
-          status: doc.data().status
-        }
-        this.ongoing.push(data)
-        this.userId = data.userId
-        this.jobId = data.jobId
+      const atRef = db.collection('complete_jobs').where('info.category', '==', this.area)
+      atRef.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const data = {
+            id: doc.id,
+            job: doc.data().job,
+            info: doc.data().info,
+            rec: doc.data().rec,
+            action: doc.data().action,
+            findings: doc.data().findings,
+            confirmed: doc.data().confirmed,
+            conducted: doc.data().conducted,
+            certified: doc.data().certified
+          }
+          this.attested.push(data)
+        })
       })
-    })
-    const comRef = db.collection('complete_jobs').orderBy('date')
-    comRef.get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        const data = {
-          jobId: doc.data().jobId,
-          userId: doc.data().userId,
-          category: doc.data().category,
-          unit: doc.data().unit,
-          location: doc.data().location,
-          description: doc.data().description,
-          date: doc.data().date,
-          telephone: doc.data().telephone,
-          requestor: doc.data().requestor,
-          head: doc.data().head,
-          status: doc.data().status
-        }
-        this.complete.push(data)
-        this.userId = data.userId
+      const comRef = db.collection('complete_jobs').where('category', '==', this.area)
+      comRef.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const data = {
+            id: doc.id,
+            jobId: doc.data().jobId,
+            userId: doc.data().userId,
+            category: doc.data().category,
+            unit: doc.data().unit,
+            location: doc.data().location,
+            description: doc.data().description,
+            date: doc.data().date,
+            telephone: doc.data().telephone,
+            requestor: doc.data().requestor,
+            head: doc.data().head,
+            status: doc.data().status,
+            findings: doc.data().findings,
+            rec: doc.data().rec,
+            action: doc.data().action
+          }
+          this.complete.push(data)
+        })
       })
     })
   },
@@ -636,42 +634,25 @@ export default {
         this.$refs.selMat.setOptionIndex(0)
       })
     },
-    toEdit (item, id) {
+    toEdit (item, job) {
       this.submit = true
       this.editedItem = Object.assign({}, item)
       this.activeJob = this.editedItem.job
     },
-    async onComplete () {
+    onComplete () {
       const user = JSON.parse(LocalStorage.getItem('user'))
       const comRef = db.collection('complete_jobs')
       const comSet = db.collection('complete_jobs').where('jobId', '==', this.activeJob)
       const atRef = db.collection('complete_jobs').where('job', '==', this.activeJob)
 
-      try {
-        await comRef.get().then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            LocalStorage.set('info', JSON.stringify(doc.data().info))
-          })
+      comRef.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          LocalStorage.set('info', JSON.stringify(doc.data().info))
         })
-      } catch (error) {
-        console.log('error message', error)
-      }
-      const info = JSON.parse(LocalStorage.getItem('info'))
-      this.status = 'Job Completed ' + this.date
-      comRef.add({
-        jobId: info.jobId,
-        userId: info.userId,
-        headId: info.headId,
-        foreId: user.uid,
-        category: info.category,
-        unit: info.unit,
-        location: info.location,
-        description: info.description,
-        date: info.date,
-        telephone: info.telephone,
-        requestor: info.requestor,
-        head: info.head
       })
+      this.status = 'Job Completed ' + this.date
+      const infoData = JSON.parse(LocalStorage.getItem('info'))
+      comRef.add(infoData)
         .then(
           comSet.get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -679,6 +660,7 @@ export default {
                 findings: this.editedItem.findings,
                 rec: this.editedItem.rec,
                 action: this.editedItem.action,
+                foreId: user.uid,
                 foreman: this.editedItem.conducted,
                 status: this.status
               })
@@ -699,17 +681,18 @@ export default {
           console.error('Error submitting: ', error)
         })
     },
-    toEditC (item, id) {
+    toEditC (item, jobId) {
       this.comp_dialog = true
       this.editedItem = Object.assign({}, item)
       this.activeJob = this.editedItem.jobId
-      this.category = this.editedItem.category
       this.requestor = this.editedItem.requestor
       this.headId = this.editedItem.headId
+      this.userId = this.editedItem.userId
     },
     onAttest () {
       const onRef = db.collection('ongoing_jobs').where('jobId', '==', this.activeJob)
       const schedRef = db.collection('scheduled_jobs').where('jobId', '==', this.activeJob)
+      const matRef = db.collection('material_requests').where('jobId', '==', this.activeJob)
       const atRef = db.collection('attested_jobs')
       const user = JSON.parse(LocalStorage.getItem('user'))
 
@@ -738,6 +721,13 @@ export default {
               doc.ref.delete()
             })
           }),
+          matRef.get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              doc.ref.update({
+                status: 'Done'
+              })
+            })
+          }),
           this.$q.notify({
             color: 'secondary',
             message: 'Job Report Sent'
@@ -748,13 +738,14 @@ export default {
           console.error('Error sending job report: ', error)
         })
     },
-    toEditM (item, id) {
+    toEditM (item, jobId) {
+      this.showSchedWorkDataLoading()
       this.mat_dialog = true
       this.editedItem = Object.assign({}, item)
       this.activeJob = this.editedItem.jobId
-      this.category = this.editedItem.category
-      // this.material = {}
-      const materials = db.collection('materials').where('category', '==', this.category)
+      this.activeCat = this.editedItem.category
+
+      const materials = db.collection('materials').where('category', '==', this.activeCat)
       materials.get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
           const data = {
@@ -766,22 +757,22 @@ export default {
           this.materials.push(data)
         })
       })
+      const matReq = db.collection('material_requests').where('category', '==', this.activeCat)
+      matReq.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const jobId = doc.data().jobId
+          this.material = doc.data().material
+          if (this.activeJob === jobId) {
+            this.selection = this.material
+          }
+        })
+      })
     },
     onRequest () {
       const user = JSON.parse(LocalStorage.getItem('user'))
       const matReq = db.collection('material_requests').doc(this.activeJob)
       const schedRef = db.collection('scheduled_jobs').where('jobId', '==', this.activeJob)
 
-      // const selected_index =  this.selection.map((e)=>e.id).indexOf(this.select_id);
-      // if (selected_index > -1) {
-      // this.selects[selected_index].quantity += parseInt(this.input_quantity);
-      // }else{
-      //   this.selects.push({...this.carts});
-      // }
-      // const inIndex = this.inventories.map((e) => e.id).indexOf(this.selection.id)
-      // if (inIndex > -1) {
-      //   this.inventories[inIndex].quantity -= parseInt(this.request)
-      // }
       matReq.set({
         material: this.selection,
         foreId: user.uid,
@@ -809,30 +800,31 @@ export default {
           console.error('Error sending request: ', error)
         })
     },
-    toEditSW (item, id) {
+    toEditSW (item, jobId) {
       this.showSchedWorkDataLoading()
       this.sched_dialog = true
       this.editedItem = Object.assign({}, item)
-      this.activeJob = this.editedItem.id
+      this.activeJob = this.editedItem.jobId
       this.activeCat = this.editedItem.category
 
       const workers = db.collection('worker_list').where('area', '==', this.activeCat)
       workers.get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
           const data = {
-            id: doc.id,
+            workerId: doc.data().workerId,
             worker: doc.data().name,
             position: doc.data().position
           }
           this.workers.push(data)
         })
       })
-      const schedRef = db.collection('scheduled_jobs').orderBy('date')
+      const user = JSON.parse(LocalStorage.getItem('user'))
+      const schedRef = db.collection('scheduled_jobs').where('foreId', '==', user.uid)
+
       schedRef.get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          const activeSched = this.editedItem.jobId
           const jobId = doc.data().jobId
-          if (activeSched === jobId) {
+          if (this.activeJob === jobId) {
             this.schedWork = Object.assign({}, doc.data())
           }
           this.events.push(date.formatDate(doc.data().date, 'YYYY/MM/DD'))
@@ -841,24 +833,31 @@ export default {
       this.schedWork = []
     },
     onSave () {
-      const onRef = db.collection('ongoing_jobs').doc(this.activeJob)
+      const onRef = db.collection('ongoing_jobs').where('jobId', '==', this.activeJob)
       const schedRef = db.collection('scheduled_jobs').doc(this.activeJob)
       const user = JSON.parse(LocalStorage.getItem('user'))
 
       if (this.schedWork.date !== undefined) {
         if (this.schedWork.date !== '' && this.schedWork.title === 'Inspection') {
           this.status = 'for inspection on ' + this.schedWork.date
-          onRef.update({
-            status: this.status
+          this.schedWork.details = []
+          onRef.get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+              doc.ref.update({
+                status: this.status,
+                bgcolor: 'purple-14'
+              })
+            })
           })
             .then(
               schedRef.set({
                 jobId: this.editedItem.jobId,
                 foreId: user.uid,
-                foreman: this.foreman,
+                foreman: this.editedItem.foreman,
                 date: this.schedWork.date,
                 title: this.schedWork.title,
-                bgcolor: 'purple',
+                details: this.schedWork.details,
+                bgcolor: 'purple-14',
                 icon: 'fact_check',
                 location: this.editedItem.location,
                 unit: this.editedItem.unit,
@@ -877,18 +876,23 @@ export default {
             })
         } else if (this.schedWork.date !== '' && this.schedWork.title === 'Implementation') {
           this.status = 'for implementation on ' + this.schedWork.date
-          onRef.update({
-            status: this.status
+          onRef.get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+              doc.ref.update({
+                status: this.status,
+                bgcolor: 'green-14'
+              })
+            })
           })
             .then(
               schedRef.set({
                 jobId: this.editedItem.jobId,
                 foreId: user.uid,
-                foreman: this.foreman,
+                foreman: this.editedItem.foreman,
                 date: this.schedWork.date,
                 title: this.schedWork.title,
                 details: this.schedWork.details,
-                bgcolor: 'orange',
+                bgcolor: 'green-14',
                 icon: 'gavel',
                 location: this.editedItem.location,
                 unit: this.editedItem.unit,
@@ -909,6 +913,19 @@ export default {
       } else {
         this.$refs.sel.validate()
       }
+    },
+    badgeClasses (event, type) {
+      const cssColor = this.isCssColor(event.bgcolor)
+      const isHeader = type === 'header'
+      return {
+        [`bg-${event.bgcolor}`]: !cssColor,
+        'full-width': !isHeader && (!event.side || event.side === 'full'),
+        'left-side': !isHeader && event.side === 'left',
+        'right-side': !isHeader && event.side === 'right'
+      }
+    },
+    isCssColor (color) {
+      return !!color && !!color.match(/^(#|(rgb|hsl)a?\()/)
     }
   }
 }

@@ -9,12 +9,12 @@ const routes = [
   },
   {
     path: '/',
-    component: () => import('layouts/AdministrativeLayout.vue'),
+    component: () => import('layouts/CdmoLayout.vue'),
     children: [
-      { path: 'AdministrativeHomepage', component: () => import('pages/administrative/Homepage.vue') },
-      { path: 'AdministrativeAccount', component: () => import('pages/administrative/Account.vue') },
-      { path: 'AdministrativeJobOrders', component: () => import('pages/administrative/JobOrders.vue') },
-      { path: 'AdministrativeAnnouncements', component: () => import('pages/administrative/Announcements.vue') }
+      { path: 'CdmoHomepage', component: () => import('pages/cdmo/Homepage.vue') },
+      { path: 'CdmoAccount', component: () => import('pages/cdmo/Account.vue') },
+      { path: 'CdmoJobOrders', component: () => import('pages/cdmo/JobOrders.vue') },
+      { path: 'CdmoAnnouncements', component: () => import('pages/cdmo/Announcements.vue') }
     ],
     meta: { requiresAuth: true }
   },
@@ -75,11 +75,12 @@ const routes = [
   },
   {
     path: '/',
-    component: () => import('layouts/SuperuserLayout.vue'),
+    component: () => import('layouts/AdminLayout.vue'),
     children: [
-      { path: 'RootHomepage', component: () => import('pages/root/Homepage.vue') },
-      { path: 'RootAccounts', component: () => import('pages/root/Accounts.vue') },
-      { path: 'RootJobOrders', component: () => import('pages/root/JobOrders.vue') }
+      { path: 'AdminHomepage', component: () => import('pages/admin/Homepage.vue') },
+      { path: 'AdminAccounts', component: () => import('pages/admin/Accounts.vue') },
+      { path: 'AdminJobOrders', component: () => import('pages/admin/JobOrders.vue') },
+      { path: 'AdminSessions', component: () => import('pages/admin/Sessions.vue') }
     ],
     meta: { requiresAuth: true }
   }

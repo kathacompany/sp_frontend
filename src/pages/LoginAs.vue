@@ -15,24 +15,25 @@
                   color="secondary"
                   class="q-pa-md"
                   v-model="usertype"
-                   label="Usertype"
+                  label="Usertype"
                   lazy-rules
                   :rules="[val => val !== null && val !== '' && val !== undefined || 'Please select usertype!']"
-                  :options="[{label: 'Unit Requestor', value: 'Unit Requestor'},
-                            {label: 'Unit Head', value: 'Unit Head'},
-                            {label: 'Administrative Staff', value: 'Administrative Staff'},
-                            {label: 'Foreman', value: 'Foreman'},
-                            {label: 'Inventory Staff', value: 'Inventory Staff'},
-                            {label: 'Worker', value: 'Worker'},
-                            {label: 'Root', value: 'Root'},
-                            ]">
+                  :options="[
+                  {label: 'Unit Requestor', value: 'Unit Requestor'},
+                  {label: 'Unit Head', value: 'Unit Head'},
+                  {label: 'CDMO Head', value: 'CDMO Head'},
+                  {label: 'Foreman', value: 'Foreman'},
+                  {label: 'Inventory Staff', value: 'Inventory Staff'},
+                  {label: 'Worker', value: 'Worker'},
+                  {label: 'Admin', value: 'Admin'}
+                  ]">
                   <template v-slot:prepend>
                     <q-icon name="face"/>
                   </template>
                 </q-select>
                 <q-separator/>
                 <q-card-section>
-                  <div class="text-h6 text-weight-light">{{ usertype.value }}  Log In</div>
+                  <span class="text-h6 text-weight-light" v-if="usertype.value">{{ usertype.value }}  Log In</span><br>
                     <q-input
                       outlined
                       clearable
@@ -62,16 +63,42 @@
                         <q-icon name="lock"/>
                       </template>
                       <template v-slot:append>
-                        <q-icon v-if="password" :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd"/>
+                        <q-icon v-if="password"
+                        :name="isPwd ? 'visibility_off' : 'visibility'"
+                        class="cursor-pointer"
+                        @click="isPwd = !isPwd"/>
                       </template>
                     </q-input>
                 </q-card-section>
                </q-form>
-              <div style="margin-top: -15px">
-              <q-card-actions align="center">
-                <q-btn class="full-width text-weight-light" label="LOGIN"  color="secondary" @click="onLogin"/>
-              </q-card-actions>
-            </div>
+              <div style="margin-top: -20px">
+                <q-card-actions>
+                  <q-btn unelevated class="full-width" label="LOGIN"  color="secondary" @click="onLogin" icon-right="login"/>
+                  <q-btn flat no-caps class="text-weight-light" label="Forgot Password" @click="forgot_dialog=true" icon-right="help"/>
+                </q-card-actions>
+              </div>
+
+              <q-dialog v-model="forgot_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                <q-card style="width: 350px">
+                  <q-bar class="bg-secondary text-white" style="height: 60px">
+                    <div class="text-h6 text-weight-medium">Forgot your Password?</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup />
+                  </q-bar>
+                  <q-card-section>
+                    <span class="text-subtitle text-grey text-weight-light">Provide an email to receive reset information</span><br>
+                    <q-input class="q-pa-xs" outlined dense clearable color="secondary" type="email" v-model="forEmail" placeholder="Email Address">
+                       <template v-slot:prepend>
+                        <q-icon name="email"/>
+                      </template>
+                    </q-input>
+                  </q-card-section>
+                  <q-card-actions align="right">
+                    <q-btn flat class="q-ma-sm" label="Submit" color="secondary" @click="resetPassword"/>
+                  </q-card-actions>
+                </q-card>
+              </q-dialog>
+
             </q-card>
           </div>
         </div>
@@ -79,52 +106,92 @@
 </template>
 
 <script>
-import { LocalStorage, Loading } from 'quasar'
-import { firebaseAuth, db } from 'boot/firebase'
+import { Loading } from 'quasar'
+import { db, firebaseAuth } from 'boot/firebase'
 
 export default {
   data () {
     return {
+      forEmail: null,
       usertype: '',
       email: null,
       password: null,
       isPwd: true,
-      error: '',
-      layout: false,
-      dialog: false,
-      sentEmail: false
+      forgot_dialog: false
     }
   },
-  created () {
-    db.collection('account').get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        const userRef = {
-          id: doc.id,
-          userId: doc.data().userId,
-          user: doc.data().user
-        }
-        this.userId = userRef.userId
-        this.id = userRef.id
-        this.user = userRef.user
-      })
-    })
-  },
   methods: {
-    addAuth () {
-      const user = JSON.parse(LocalStorage.getItem('user'))
-      let setRef = db.collection('account').where('userId', '==', user.uid)
-
-      setRef.get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          doc.ref.update({
-            userId: user.uid,
-            email: this.email,
-            usertype: this.usertype.value
-          })
+    onWelcome (id, usertype) {
+      const account = db.collection('account').doc(id.claims.user_id)
+      if (id.claims.email_verified) {
+        account.set({
+          signedIn: id.authTime
+        }, { merge: true })
+        this.$q.dialog({
+          title: 'WELCOME BACK,' + ' ' + id.claims.name + '!',
+          bgcolor: 'secondary',
+          message: 'You are logged in as' + ' ' + usertype,
+          ok: {
+            outline: true,
+            color: 'secondary',
+            label: 'Got It',
+            icon: 'face'
+          }
         })
-      })
+      } else {
+        account.set({
+          signedIn: id.authTime
+        }, { merge: true })
+        this.$q.dialog({
+          persistent: true,
+          title: 'WELCOME,' + ' ' + id.claims.name + '!',
+          bgcolor: 'secondary',
+          message: 'You are logged in as' + ' ' + usertype + '. ' + 'Please verify your email address by clicking the button below',
+          ok: {
+            outline: true,
+            color: 'secondary',
+            label: 'Verify Email',
+            icon: 'email'
+          },
+          cancel: {
+            flat: true,
+            color: 'secondary',
+            label: 'Later'
+          }
+        }).onOk(async () => {
+          await this.emailVerify()
+        })
+      }
+    },
+    async emailVerify () {
+      const currentUser = firebaseAuth.currentUser
+
+      await currentUser.sendEmailVerification()
+        .then(() => {
+          this.$q.notify({
+            icon: 'sentiment_satisfied_alt',
+            color: 'accent',
+            message: 'A link was sent to ' + currentUser.email
+          })
+          firebaseAuth.signOut()
+        }).catch((error) => {
+          this.$q.notify(error)
+        })
+    },
+    async resetPassword () {
+      const emailAddress = this.forEmail
+
+      await firebaseAuth.sendPasswordResetEmail(emailAddress)
+        .then(() => {
+          this.$q.notify({
+            icon: 'sentiment_satisfied_alt',
+            color: 'accent',
+            message: 'A link was sent to ' + emailAddress
+          })
+          this.forgot_dialog = false
+        })
         .catch(error => {
-          console.error('Error message: ', error)
+          this.$q.notify(error)
         })
     },
     async onLogin () {
@@ -133,131 +200,69 @@ export default {
           this.$refs.usertype.validate()
           this.$refs.email.validate()
           this.$refs.password.validate()
-        } else if (this.usertype.value === 'Unit Requestor') {
-          Loading.show()
-          await firebaseAuth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then(
-              user => {
-                this.$router.push('/UserHomepage')
-                Loading.hide()
-                this.$q.dialog({
-                  title: 'Welcome!',
-                  color: 'secondary',
-                  message: 'You are logged in as Unit Requestor',
-                  ok: 'OK'
-                })
-              })
-          this.addAuth()
-        } else if (this.usertype.value === 'Unit Head') {
-          Loading.show()
-          await firebaseAuth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then(
-              user => {
-                this.$router.push('/HeadHomepage')
-                Loading.hide()
-                this.$q.dialog({
-                  title: 'Welcome!',
-                  color: 'secondary',
-                  message: 'You are logged in as Unit Head',
-                  ok: 'OK'
-                })
-              })
-          this.addAuth()
-        } else if (this.usertype.value === 'Administrative Staff') {
-          Loading.show()
-          await firebaseAuth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then(
-              user => {
-                this.$router.push('/AdministrativeHomepage')
-                Loading.hide()
-                this.$q.dialog({
-                  title: 'Welcome!',
-                  color: 'secondary',
-                  message: 'You are logged in as Administrative Staff',
-                  ok: 'OK'
-                })
-              })
-          this.addAuth()
-        } else if (this.usertype.value === 'Foreman') {
-          Loading.show()
-          await firebaseAuth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then(
-              user => {
-                this.$router.push('/ForemanHomepage')
-                Loading.hide()
-                this.$q.dialog({
-                  title: 'Welcome!',
-                  color: 'secondary',
-                  message: 'You are logged in as Foreman',
-                  ok: 'OK'
-                })
-              })
-          this.addAuth()
-        } else if (this.usertype.value === 'Inventory Staff') {
-          Loading.show()
-          await firebaseAuth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then(
-              user => {
-                this.$router.push('/InventoryHomepage')
-                Loading.hide()
-                this.$q.dialog({
-                  title: 'Welcome!',
-                  color: 'secondary',
-                  message: 'You are logged in as Inventory Staff',
-                  ok: 'OK'
-                })
-              })
-          this.addAuth()
-        } else if (this.usertype.value === 'Worker') {
-          Loading.show()
-          await firebaseAuth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then(
-              user => {
-                this.$router.push('/WorkerHomepage')
-                Loading.hide()
-                this.$q.dialog({
-                  title: 'Welcome!',
-                  color: 'secondary',
-                  message: 'You are logged in as Worker',
-                  ok: 'OK'
-                })
-              })
-          this.addAuth()
-        } else if (this.usertype.value === 'Root') {
-          Loading.show()
-          await firebaseAuth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then(
-              user => {
-                this.$router.push('/RootHomepage')
-                Loading.hide()
-                this.$q.dialog({
-                  title: 'Welcome!',
-                  color: 'secondary',
-                  message: 'You are logged in as Superuser',
-                  ok: 'OK'
-                })
-              })
-          this.addAuth()
-        } else {
-          Loading.hide()
-          this.$q.dialog({
-            title: 'Alert!',
-            color: 'secondary',
-            message: 'Usertype or Email or Password is incorrect!',
-            ok: 'Try Again'
-          })
         }
+        await firebaseAuth.signInWithEmailAndPassword(this.email, this.password)
+          .then(
+            user => {
+              Loading.show()
+              firebaseAuth.currentUser.getIdTokenResult(true)
+                .then((idTokenResult) => {
+                  if (this.usertype.value === 'Unit Requestor' && idTokenResult.claims.requestor) {
+                    this.$router.push('/UserHomepage')
+                    Loading.hide()
+                    this.onWelcome(idTokenResult, this.usertype.value)
+                  } else if (this.usertype.value === 'Unit Head' && idTokenResult.claims.unit_head) {
+                    this.$router.push('/HeadHomepage')
+                    Loading.hide()
+                    this.onWelcome(idTokenResult, this.usertype.value)
+                  } else if (this.usertype.value === 'CDMO Head' && idTokenResult.claims.cdmo_head) {
+                    this.$router.push('/CDMOHomepage')
+                    Loading.hide()
+                    this.onWelcome(idTokenResult, this.usertype.value)
+                  } else if (this.usertype.value === 'Inventory Staff' && idTokenResult.claims.inventory) {
+                    this.$router.push('/InventoryHomepage')
+                    Loading.hide()
+                    this.onWelcome(idTokenResult, this.usertype.value)
+                  } else if (this.usertype.value === 'Foreman' && idTokenResult.claims.foreman) {
+                    this.$router.push('/ForemanHomepage')
+                    Loading.hide()
+                    this.onWelcome(idTokenResult, this.usertype.value)
+                  } else if (this.usertype.value === 'Worker' && idTokenResult.claims.worker) {
+                    this.$router.push('/WorkerHomepage')
+                    Loading.hide()
+                    this.onWelcome(idTokenResult, this.usertype.value)
+                  } else if (this.usertype.value === 'Admin' && idTokenResult.claims.admin) {
+                    this.$router.push('/AdminHomepage')
+                    Loading.hide()
+                    this.$q.dialog({
+                      title: 'WELCOME!',
+                      color: 'secondary',
+                      message: 'You are logged in as Admin',
+                      ok: {
+                        outline: true,
+                        color: 'secondary',
+                        label: 'Got It',
+                        icon: 'face'
+                      }
+                    })
+                  } else {
+                    Loading.hide()
+                    firebaseAuth.signOut()
+                    this.$q.notify({
+                      icon: 'error',
+                      message: 'Selected usertype is incorrect.'
+                    })
+                  }
+                })
+                .catch(error => {
+                  this.$q.notify(error)
+                })
+            })
+          .catch(error => {
+            this.$q.notify(error)
+          })
       } catch (error) {
-        alert(error)
-        Loading.hide()
-        console.log(error)
+        this.$q.notify(error)
       }
     }
   }

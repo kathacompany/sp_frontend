@@ -4,14 +4,14 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5 class="text-weight-light">INVENTORY OF MATERIALS</h5>{{ date }}<br><br>
-              <q-input v-if="!plumbingData.length || !transportationData.length || !groundsData.length || !electricityData.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Material Name">
+              <h5 class="text-weight-light">INVENTORY OF MATERIALS</h5><span class="text-weight-medium">{{ date }}</span><br><br>
+              <q-input v-if="plumbingData.length || transportationData.length || groundsData.length || electricityData.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
               <br>
-             <q-card>
+              <q-card>
                 <q-tabs
                   v-model="tab"
                   dense
@@ -21,63 +21,16 @@
                   align="justify"
                   narrow-indicator
                 >
-                  <q-tab name="tab 1" label="Tab 1" />
-                  <q-tab name="tab 2" label="Tab 2" />
-                  <q-tab name="tab 3" label="Tab 3" />
-                  <q-tab name="tab 4" label="Tab 4" />
+                  <q-tab name="tab 1" label="Plumbing" icon="plumbing"/>
+                  <q-tab name="tab 2" label="Electricity" icon="electrical_services"/>
+                  <q-tab name="tab 3" label="Grounds" icon="construction"/>
+                  <q-tab name="tab 4" label="Transportation" icon="commute"/>
                 </q-tabs>
 
                 <q-separator />
 
                 <q-tab-panels v-model="tab" animated>
                   <q-tab-panel name="tab 1">
-                    <div class="q-pa-md">
-                      <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
-                    </div>
-
-                      <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
-                        <q-card style="width: 350px">
-                          <q-bar class="bg-secondary text-white" style="height: 60px">
-                            <div class="text-h6 text-weight-light">Add Material</div>
-                            <q-space />
-                            <q-btn icon="close" flat round dense v-close-popup />
-                          </q-bar>
-                          <q-card-section>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Material Name"/>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description"/>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measurement"/>
-                             <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
-                            <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
-                          </q-card-section>
-                          <q-card-actions class="justify-center q-pa-xs">
-                            <q-btn no-caps class="text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
-                          </q-card-actions>
-                        </q-card>
-                      </q-dialog>
-
-                      <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
-                        <q-card style="width: 350px">
-                          <q-bar class="bg-secondary text-white" style="height: 60px">
-                            <div class="text-h6 text-weight-light">Edit Material</div>
-                            <q-space />
-                            <q-btn icon="close" flat round dense v-close-popup />
-                          </q-bar>
-
-                          <q-card-section>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Material Name"/>
-                            <q-input class="q-pa-xs" readonly outlined dense color="accent" v-model="editedItem.stockNo" label="Stock No."/>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description"/>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measurement"/>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
-                            <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
-                            <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
-                          </q-card-section>
-                          <q-card-actions class="justify-center q-pa-xs">
-                            <q-btn no-caps class="text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
-                          </q-card-actions>
-                        </q-card>
-                      </q-dialog>
 
                   <div style="width: 100%;">
                   <q-banner v-if="!plumbingData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
@@ -85,24 +38,34 @@
                       <q-icon name="sentiment_dissatisfied" color="accent" />
                     </template>
                   <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
+                    <template v-slot:action>
+                      <q-btn class="text-weight-light q-ma-sm" flat icon="add_box" color="secondary" label="Material" @click="add_dialog=true"/>
+                    </template>
                   </q-banner>
                   <q-table
-                    class="my-sticky-header-table"
+                    title="Plumbing Materials"
+                    :table-style="'counter-reset: cssRowCounter '"
                     :data="plumbingData"
                     :columns="columns"
                     row-key="name"
                     :filter="filter"
                     :separator="separator"
                     v-else
-                    hide-bottom
                     dense
-                    ref="plumbing"
-                    title="Plumbing Materials"
                   >
                     <template v-slot:top-right>
                       <q-btn
+                        no-caps
+                        unelevated
+                        class="text-weight-light q-ma-sm"
+                        icon="add_box"
                         color="secondary"
-                        icon-right="archive"
+                        label="Material"
+                        @click="add_dialog=true"
+                      />
+                      <q-btn
+                        color="secondary"
+                        icon="archive"
                         label="csv"
                         no-caps
                         flat
@@ -112,6 +75,7 @@
                     </template>
                     <template v-slot:header="props">
                       <q-tr :props="props">
+                        <q-th class="text-italic text-accent" auto-width>Stock ID</q-th>
                         <q-th
                           v-for="col in props.cols"
                           :key="col.name"
@@ -121,12 +85,13 @@
                           {{ col.label }}
                         </q-th>
                         <q-th>
-                          <span class="text-italic text-accent">Actions</span>
+                          <span class="text-italic text-accent">Action</span>
                         </q-th>
                       </q-tr>
                     </template>
                     <template v-slot:body="props">
                       <q-tr :props="props">
+                        <q-td><span class="text-secondary text-weight-bold rowNumber">-P</span></q-td>
                         <q-td
                           v-for="col in props.cols"
                           :key="col.name"
@@ -136,19 +101,10 @@
                         </q-td>
                          <q-td>
                           <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                          <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                            <q-space/>
-                          </q-btn>
                         </q-td>
                       </q-tr>
                     </template>
                   </q-table>
-                </div>
-              </q-tab-panel>
-
-              <q-tab-panel name="tab 2">
-                <div class="q-pa-md">
-                  <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
                 </div>
 
                 <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
@@ -159,15 +115,15 @@
                       <q-btn icon="close" flat round dense v-close-popup />
                     </q-bar>
                     <q-card-section>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Material Name"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measurement"/>
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Item" @input="val => { defaultItem.name = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description" @input="val => { defaultItem.description = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measure" @input="val => { defaultItem.unit = val.toLowerCase() }"/>
                        <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
-                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
                     </q-card-section>
-                    <q-card-actions class="justify-center q-pa-xs">
-                      <q-btn no-caps class="text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                    <q-card-actions>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
@@ -181,19 +137,22 @@
                     </q-bar>
 
                     <q-card-section>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Material Name"/>
-                      <q-input class="q-pa-xs" readonly outlined dense color="accent" v-model="editedItem.stockNo" label="Stock No."/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measurement"/>
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Item" @input="val => { editedItem.name = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description" @input="val => { editedItem.description = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measure" @input="val => { editedItem.unit = val.toLowerCase() }"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
-                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
                     </q-card-section>
-                    <q-card-actions class="justify-center q-pa-xs">
-                      <q-btn no-caps class="text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
+                    <q-card-actions>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
+
+              </q-tab-panel>
+
+              <q-tab-panel name="tab 2">
 
                 <div style="width: 100%;">
                   <q-banner v-if="!electricityData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
@@ -201,24 +160,34 @@
                       <q-icon name="sentiment_dissatisfied" color="accent" />
                     </template>
                   <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
+                    <template v-slot:action>
+                      <q-btn class="text-weight-light q-ma-sm" flat icon="add_box" color="secondary" label="Material" @click="add_dialog=true"/>
+                    </template>
                   </q-banner>
                   <q-table
-                    class="my-sticky-header-table"
+                    title="Electricity Materials"
+                    :table-style="'counter-reset: cssRowCounter '"
                     :data="electricityData"
                     :columns="columns"
                     row-key="name"
                     :filter="filter"
                     :separator="separator"
                     v-else
-                    hide-bottom
                     dense
-                    ref="electric"
-                    title="Electricity Materials"
                   >
                     <template v-slot:top-right>
                       <q-btn
+                        no-caps
+                        unelevated
+                        class="text-weight-light q-ma-sm"
+                        icon="add_box"
                         color="secondary"
-                        icon-right="archive"
+                        label="Material"
+                        @click="add_dialog=true"
+                      />
+                      <q-btn
+                        color="secondary"
+                        icon="archive"
                         label="csv"
                         no-caps
                         flat
@@ -228,6 +197,7 @@
                     </template>
                     <template v-slot:header="props">
                       <q-tr :props="props">
+                        <q-th class="text-italic text-accent" auto-width>Stock ID</q-th>
                         <q-th
                           v-for="col in props.cols"
                           :key="col.name"
@@ -237,12 +207,13 @@
                           {{ col.label }}
                         </q-th>
                         <q-th>
-                          <span class="text-italic text-accent">Actions</span>
+                          <span class="text-italic text-accent">Action</span>
                         </q-th>
                       </q-tr>
                     </template>
                     <template v-slot:body="props">
                       <q-tr :props="props">
+                        <q-td><span class="text-secondary text-weight-bold rowNumber">-E</span></q-td>
                         <q-td
                           v-for="col in props.cols"
                           :key="col.name"
@@ -252,19 +223,10 @@
                         </q-td>
                          <q-td>
                           <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                          <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                            <q-space/>
-                          </q-btn>
                         </q-td>
                       </q-tr>
                     </template>
                   </q-table>
-                </div>
-              </q-tab-panel>
-
-              <q-tab-panel name="tab 3">
-                <div class="q-pa-md">
-                  <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
                 </div>
 
                 <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
@@ -275,15 +237,15 @@
                       <q-btn icon="close" flat round dense v-close-popup />
                     </q-bar>
                     <q-card-section>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Material Name"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measurement"/>
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Item" @input="val => { defaultItem.name = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description" @input="val => { defaultItem.description = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measure" @input="val => { defaultItem.unit = val.toLowerCase() }"/>
                        <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
-                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
                     </q-card-section>
-                    <q-card-actions class="justify-center q-pa-xs">
-                      <q-btn no-caps class="text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                    <q-card-actions>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
@@ -297,19 +259,22 @@
                     </q-bar>
 
                     <q-card-section>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Material Name"/>
-                      <q-input class="q-pa-xs" readonly outlined dense color="accent" v-model="editedItem.stockNo" label="Stock No."/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measurement"/>
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Item" @input="val => { editedItem.name = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description" @input="val => { editedItem.description = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measure" @input="val => { editedItem.unit = val.toLowerCase() }"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
-                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
                     </q-card-section>
-                    <q-card-actions class="justify-center q-pa-xs">
-                      <q-btn no-caps class="text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
+                    <q-card-actions>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
+
+              </q-tab-panel>
+
+              <q-tab-panel name="tab 3">
 
                 <div style="width: 100%;">
                   <q-banner v-if="!groundsData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
@@ -317,24 +282,34 @@
                       <q-icon name="sentiment_dissatisfied" color="accent" />
                     </template>
                   <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
+                    <template v-slot:action>
+                      <q-btn class="text-weight-light q-ma-sm" flat icon="add_box" color="secondary" label="Material" @click="add_dialog=true"/>
+                    </template>
                   </q-banner>
                   <q-table
-                    class="my-sticky-header-table"
+                    title="Grounds Materials"
+                    :table-style="'counter-reset: cssRowCounter '"
                     :data="groundsData"
                     :columns="columns"
                     row-key="name"
                     :filter="filter"
                     :separator="separator"
                     v-else
-                    hide-bottom
                     dense
-                    ref="grounds"
-                    title="Grounds Materials"
                   >
                     <template v-slot:top-right>
                       <q-btn
+                        no-caps
+                        unelevated
+                        class="text-weight-light q-ma-sm"
+                        icon="add_box"
                         color="secondary"
-                        icon-right="archive"
+                        label="Material"
+                        @click="add_dialog=true"
+                      />
+                      <q-btn
+                        color="secondary"
+                        icon="archive"
                         label="csv"
                         no-caps
                         flat
@@ -344,6 +319,7 @@
                     </template>
                     <template v-slot:header="props">
                       <q-tr :props="props">
+                        <q-th class="text-italic text-accent" auto-width>Stock ID</q-th>
                         <q-th
                           v-for="col in props.cols"
                           :key="col.name"
@@ -353,12 +329,13 @@
                           {{ col.label }}
                         </q-th>
                         <q-th>
-                          <span class="text-italic text-accent">Actions</span>
+                          <span class="text-italic text-accent">Action</span>
                         </q-th>
                       </q-tr>
                     </template>
                     <template v-slot:body="props">
                       <q-tr :props="props">
+                        <q-td><span class="text-secondary text-weight-bold rowNumber">-G</span></q-td>
                         <q-td
                           v-for="col in props.cols"
                           :key="col.name"
@@ -368,19 +345,10 @@
                         </q-td>
                          <q-td>
                           <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                          <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                            <q-space/>
-                          </q-btn>
                         </q-td>
                       </q-tr>
                     </template>
                   </q-table>
-                </div>
-              </q-tab-panel>
-
-              <q-tab-panel name="tab 4">
-                <div class="q-pa-md">
-                  <q-btn no-caps float="right" class="text-weight-light q-mr-sm" icon="queue" color="secondary" label="Add Material" @click="add_dialog=true"/>
                 </div>
 
                 <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
@@ -391,15 +359,15 @@
                       <q-btn icon="close" flat round dense v-close-popup />
                     </q-bar>
                     <q-card-section>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Material Name"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measurement"/>
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Item" @input="val => { defaultItem.name = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description" @input="val => { defaultItem.description = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measure" @input="val => { defaultItem.unit = val.toLowerCase() }"/>
                        <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
-                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
                     </q-card-section>
-                    <q-card-actions class="justify-center q-pa-xs">
-                      <q-btn no-caps class="text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                    <q-card-actions>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
@@ -413,19 +381,22 @@
                     </q-bar>
 
                     <q-card-section>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Material Name"/>
-                      <q-input class="q-pa-xs" readonly outlined dense color="accent" v-model="editedItem.stockNo" label="Stock No."/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description"/>
-                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measurement"/>
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Item" @input="val => { editedItem.name = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description" @input="val => { editedItem.description = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measure" @input="val => { editedItem.unit = val.toLowerCase() }"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
-                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
                     </q-card-section>
-                    <q-card-actions class="justify-center q-pa-xs">
-                      <q-btn no-caps class="text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
+                    <q-card-actions>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
+
+              </q-tab-panel>
+
+              <q-tab-panel name="tab 4">
 
                 <div style="width: 100%;">
                   <q-banner v-if="!transportationData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
@@ -433,24 +404,34 @@
                       <q-icon name="sentiment_dissatisfied" color="accent" />
                     </template>
                   <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
+                    <template v-slot:action>
+                      <q-btn class="text-weight-light q-ma-sm" flat icon="add_box" color="secondary" label="Material" @click="add_dialog=true"/>
+                    </template>
                   </q-banner>
                   <q-table
-                    class="my-sticky-header-table"
+                    title="Transportation Materials"
+                    :table-style="'counter-reset: cssRowCounter '"
                     :data="transportationData"
                     :columns="columns"
                     row-key="name"
                     :filter="filter"
                     :separator="separator"
                     v-else
-                    hide-bottom
                     dense
-                    ref="transpo"
-                    title="Transportation Materials"
                   >
                     <template v-slot:top-right>
                       <q-btn
+                        no-caps
+                        unelevated
+                        class="text-weight-light q-ma-sm"
+                        icon="add_box"
                         color="secondary"
-                        icon-right="archive"
+                        label="Material"
+                        @click="add_dialog=true"
+                      />
+                      <q-btn
+                        color="secondary"
+                        icon="archive"
                         label="csv"
                         no-caps
                         flat
@@ -460,6 +441,7 @@
                     </template>
                     <template v-slot:header="props">
                         <q-tr :props="props">
+                          <q-th class="text-italic text-accent" auto-width>Stock ID</q-th>
                           <q-th
                             v-for="col in props.cols"
                             :key="col.name"
@@ -469,12 +451,13 @@
                             {{ col.label }}
                           </q-th>
                           <q-th>
-                            <span class="text-italic text-accent">Actions</span>
+                            <span class="text-italic text-accent">Action</span>
                           </q-th>
                         </q-tr>
                       </template>
                       <template v-slot:body="props">
                         <q-tr :props="props">
+                          <q-td><span class="text-secondary text-weight-bold rowNumber">-T</span></q-td>
                           <q-td
                             v-for="col in props.cols"
                             :key="col.name"
@@ -484,14 +467,55 @@
                           </q-td>
                           <q-td>
                             <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
-                            <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
-                              <q-space/>
-                            </q-btn>
                         </q-td>
                       </q-tr>
                     </template>
                   </q-table>
                 </div>
+
+                <q-dialog v-model="add_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                  <q-card style="width: 350px">
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Add Material</div>
+                      <q-space />
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
+                    <q-card-section>
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="defaultItem.category" :options="options" label="Category" />
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.name" label="Item" @input="val => { defaultItem.name = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.description" label="Description" @input="val => { defaultItem.description = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.unit" label="Unit of Measure" @input="val => { defaultItem.unit = val.toLowerCase() }"/>
+                       <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="defaultItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="defaultItem.quantity" label="Quantity" />
+                    </q-card-section>
+                    <q-card-actions>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+
+                <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
+                  <q-card style="width: 350px">
+                    <q-bar class="bg-secondary text-white" style="height: 60px">
+                      <div class="text-h6 text-weight-light">Edit Material</div>
+                      <q-space />
+                      <q-btn icon="close" flat round dense v-close-popup />
+                    </q-bar>
+
+                    <q-card-section>
+                      <q-select outlined class="q-pa-xs" dense clearable color="accent" v-model="editedItem.category" :options="options" label="Category" />
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.name" label="Item" @input="val => { editedItem.name = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.description" label="Description" @input="val => { editedItem.description = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.unit" label="Unit of Measure" @input="val => { editedItem.unit = val.toLowerCase() }"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" v-model="editedItem.value" label="Unit Cost (PhP)" mask="#.##" fill-mask="0" reverse-fill-mask input-class="text-right"/>
+                      <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
+                    </q-card-section>
+                    <q-card-actions>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+
               </q-tab-panel>
             </q-tab-panels>
           </q-card>
@@ -502,15 +526,6 @@
 </q-page-container>
 </q-layout>
 </template>
-
-<style lang="sass">
-
-  th:first-child,
-  td:first-child
-    position: sticky
-    left: 0
-    z-index: 1
-</style>
 
 <script>
 import { db } from 'boot/firebase'
@@ -550,16 +565,16 @@ export default {
       editedItem: {
         name: '',
         description: '',
-        stockNo: 0,
         unit: '',
         value: 0,
+        updated: '',
         quantity: 0,
         category: ''
       },
       defaultItem: {
+        issued: '',
         name: '',
         description: '',
-        stockNo: 0,
         unit: '',
         value: 0,
         quantity: 0,
@@ -573,13 +588,14 @@ export default {
         'Plumbing', 'Electricity', 'Grounds', 'Transportation'
       ],
       columns: [
-        { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
-        { name: 'description', label: 'Description', field: 'description', align: 'left' },
-        // { name: 'stockNo', label: 'Stock No.', field: 'stockNo', align: 'left' },
-        { name: 'unit', label: 'Unit of Measurement', field: 'unit', align: 'left' },
-        { name: 'value', label: 'Unit Cost (PhP)', field: 'value', align: 'left' },
-        { name: 'quantity', label: 'Quantity', field: 'quantity', align: 'left' },
-        { name: 'category', label: 'Category', field: 'category', align: 'left' }
+        { name: 'name', label: 'Item', field: 'name', align: 'left', sortable: true },
+        { name: 'description', label: 'Item Description', field: 'description', align: 'left', sortable: true },
+        { name: 'unit', label: 'Unit of Measure', field: 'unit', align: 'left', sortable: true },
+        { name: 'value', label: 'Unit Cost (PhP)', field: 'value', align: 'left', sortable: true },
+        { name: 'quantity', label: 'Quantity', field: 'quantity', align: 'left', sortable: true },
+        { name: 'issued', label: 'Issued to', field: 'issued', align: 'left', sortable: true },
+        { name: 'created', label: 'Created On', field: 'created', align: 'left', sortable: true },
+        { name: 'updated', label: 'Updated On', field: 'updated', align: 'left', sortable: true }
       ]
     }
   },
@@ -591,11 +607,13 @@ export default {
             id: doc.id,
             name: doc.data().name,
             description: doc.data().description,
-            stockNo: doc.data().stockNo,
             unit: doc.data().unit,
             value: doc.data().value,
             quantity: doc.data().quantity,
-            category: doc.data().category
+            category: doc.data().category,
+            created: doc.data().created,
+            updated: doc.data().updated,
+            issued: doc.data().issued
           }
           if (matData.category === 'Plumbing') {
             this.plumbingData.push(matData)
@@ -634,7 +652,7 @@ export default {
       ).join('\r\n')
 
       const status = exportFile(
-        'table-export.csv',
+        'plumbing-table-export.csv',
         content,
         'text/csv'
       )
@@ -659,7 +677,7 @@ export default {
       ).join('\r\n')
 
       const status = exportFile(
-        'table-export.csv',
+        'transportation-table-export.csv',
         content,
         'text/csv'
       )
@@ -684,7 +702,7 @@ export default {
       ).join('\r\n')
 
       const status = exportFile(
-        'table-export.csv',
+        'grounds-table-export.csv',
         content,
         'text/csv'
       )
@@ -709,7 +727,7 @@ export default {
       ).join('\r\n')
 
       const status = exportFile(
-        'table-export.csv',
+        'electricity-table-export.csv',
         content,
         'text/csv'
       )
@@ -723,75 +741,138 @@ export default {
       }
     },
     addMaterial () {
-      db.collection('materials').add({
-        name: this.defaultItem.name,
-        description: this.defaultItem.description,
-        stockNo: this.defaultItem.stockNo.inc,
-        unit: this.defaultItem.unit,
-        value: this.defaultItem.value,
-        quantity: this.defaultItem.quantity,
-        category: this.defaultItem.category
-      })
-        .then(
-          location.reload(),
-          this.$q.notify({
-            color: 'secondary',
-            message: 'Material added successfully'
-          })
-        )
-        .catch(error => {
-          console.error('Error adding material: ', error)
+      const matRef = db.collection('materials')
+      var pluralize = require('pluralize')
+      this.unit = pluralize.plural(this.defaultItem.unit)
+      if (pluralize.isPlural(this.defaultItem.name) === true) {
+        this.name = pluralize.singular(this.defaultItem.name)
+        matRef.add({
+          name: this.name,
+          description: this.defaultItem.description,
+          unit: this.unit,
+          value: this.defaultItem.value,
+          quantity: this.defaultItem.quantity,
+          category: this.defaultItem.category,
+          created: this.date,
+          updated: this.date,
+          issued: 'None'
         })
+          .then(
+            location.reload(),
+            this.$q.notify({
+              color: 'secondary',
+              message: 'Material added successfully'
+            })
+          )
+          .catch(error => {
+            console.error('Error adding material: ', error)
+          })
+      } else if (pluralize.isPlural(this.defaultItem.name) === false) {
+        matRef.add({
+          name: this.defaultItem.name,
+          description: this.defaultItem.description,
+          unit: this.unit,
+          value: this.defaultItem.value,
+          quantity: this.defaultItem.quantity,
+          category: this.defaultItem.category,
+          created: this.date,
+          updated: this.date,
+          issued: 'None'
+        })
+          .then(
+            location.reload(),
+            this.$q.notify({
+              color: 'secondary',
+              message: 'Material added successfully'
+            })
+          )
+          .catch(error => {
+            console.error('Error adding material: ', error)
+          })
+      }
     },
     updateMaterial () {
-      let docref = db.collection('materials').doc(this.activeMaterial)
-      docref.update(this.editedItem)
-        .then(
-          location.reload(),
-          this.$q.notify({
-            color: 'secondary',
-            message: 'Material updated successfully'
-          })
-        )
-        .catch(error => {
-          console.error('Error updating material: ', error)
+      const matRef = db.collection('materials').doc(this.activeMaterial)
+      var pluralize = require('pluralize')
+      this.unit = pluralize.plural(this.editedItem.unit)
+      if (pluralize.isPlural(this.editedItem.name) === true) {
+        this.name = pluralize.singular(this.editedItem.name)
+        matRef.update({
+          name: this.name,
+          description: this.editedItem.description,
+          unit: this.unit,
+          value: this.editedItem.value,
+          quantity: this.editedItem.quantity,
+          category: this.editedItem.category,
+          updated: this.date
         })
+          .then(
+            location.reload(),
+            this.$q.notify({
+              color: 'secondary',
+              message: 'Material updated successfully'
+            })
+          )
+          .catch(error => {
+            console.error('Error updating material: ', error)
+          })
+      } else if (pluralize.isPlural(this.editedItem.name) === false) {
+        matRef.update({
+          name: this.editedItem.name,
+          description: this.editedItem.description,
+          unit: this.unit,
+          value: this.editedItem.value,
+          quantity: this.editedItem.quantity,
+          category: this.editedItem.category,
+          updated: this.date
+        })
+          .then(
+            location.reload(),
+            this.$q.notify({
+              color: 'secondary',
+              message: 'Material updated successfully'
+            })
+          )
+          .catch(error => {
+            console.error('Error updating material: ', error)
+          })
+      }
     },
     toEdit (item, id) {
       this.edit_dialog = true
       this.editedItem = Object.assign({}, item)
       this.activeMaterial = this.editedItem.id
-    },
-    toDelete (id) {
-      this.$q.dialog({
-        title: 'Delete Confirm',
-        message: 'The material will be deleted. Are you sure you want to continue?',
-        cancel: {
-          label: 'No',
-          flat: true,
-          color: 'accent'
-        },
-        ok: {
-          label: 'Yes',
-          flat: true,
-          color: 'secondary'
-        },
-        persistentL: true
-      }).onOk(async () => {
-        try {
-          await db.collection('materials').doc(id).delete()
-          location.reload()
-          this.$q.notify({
-            avatar: 'delete',
-            color: 'accent',
-            message: 'Material deleted successfully'
-          })
-        } catch (error) {
-          console.log('Error deleting material', error)
-        }
-      }
-      )
     }
+    // toDelete (id) {
+    //   this.$q.dialog({
+    //     title: 'Delete Confirm',
+    //     message: 'The material will be deleted. Are you sure you want to continue?',
+    //     cancel: {
+    //       label: 'No',
+    //       flat: true,
+    //       color: 'accent'
+    //     },
+    //     ok: {
+    //       label: 'Yes',
+    //       flat: true,
+    //       color: 'secondary'
+    //     },
+    //     persistentL: true
+    //   }).onOk(async () => {
+    //     try {
+    //       await db.collection('materials').doc(id).delete()
+    //       location.reload()
+    //       this.$q.notify({
+    //         avatar: 'delete',
+    //         color: 'accent',
+    //         message: 'Material deleted successfully'
+    //       })
+    //     } catch (error) {
+    //       console.log('Error deleting material', error)
+    //     }
+    //   }
+    //   )
+    // }
   }
 }
 </script>
