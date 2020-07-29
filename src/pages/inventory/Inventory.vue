@@ -5,7 +5,7 @@
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
               <h5 class="text-weight-light">INVENTORY OF MATERIALS</h5>{{ date }}<br><br>
-              <q-input v-if="!plumbingData.length || !transportationData.length || !groundsData.length || !electricityData.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Material Name">
+              <q-input v-if="plumbingData.length || transportationData.length || groundsData.length || electricityData.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
@@ -21,10 +21,10 @@
                   align="justify"
                   narrow-indicator
                 >
-                  <q-tab name="tab 1" label="Tab 1" />
-                  <q-tab name="tab 2" label="Tab 2" />
-                  <q-tab name="tab 3" label="Tab 3" />
-                  <q-tab name="tab 4" label="Tab 4" />
+                  <q-tab name="tab 1" label="Plumbing" />
+                  <q-tab name="tab 2" label="Electricity" />
+                  <q-tab name="tab 3" label="Grounds" />
+                  <q-tab name="tab 4" label="Transportation" />
                 </q-tabs>
 
                 <q-separator />
@@ -94,7 +94,6 @@
                     :filter="filter"
                     :separator="separator"
                     v-else
-                    hide-bottom
                     dense
                     ref="plumbing"
                     title="Plumbing Materials"
@@ -210,7 +209,6 @@
                     :filter="filter"
                     :separator="separator"
                     v-else
-                    hide-bottom
                     dense
                     ref="electric"
                     title="Electricity Materials"
@@ -326,7 +324,6 @@
                     :filter="filter"
                     :separator="separator"
                     v-else
-                    hide-bottom
                     dense
                     ref="grounds"
                     title="Grounds Materials"
@@ -442,7 +439,6 @@
                     :filter="filter"
                     :separator="separator"
                     v-else
-                    hide-bottom
                     dense
                     ref="transpo"
                     title="Transportation Materials"
@@ -574,12 +570,12 @@ export default {
       ],
       columns: [
         { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
-        { name: 'description', label: 'Description', field: 'description', align: 'left' },
+        { name: 'description', label: 'Description', field: 'description', align: 'left', sortable: true },
         // { name: 'stockNo', label: 'Stock No.', field: 'stockNo', align: 'left' },
-        { name: 'unit', label: 'Unit of Measurement', field: 'unit', align: 'left' },
-        { name: 'value', label: 'Unit Cost (PhP)', field: 'value', align: 'left' },
-        { name: 'quantity', label: 'Quantity', field: 'quantity', align: 'left' },
-        { name: 'category', label: 'Category', field: 'category', align: 'left' }
+        { name: 'unit', label: 'Unit of Measurement', field: 'unit', align: 'left', sortable: true },
+        { name: 'value', label: 'Unit Cost (PhP)', field: 'value', align: 'left', sortable: true },
+        { name: 'quantity', label: 'Quantity', field: 'quantity', align: 'left', sortable: true },
+        { name: 'category', label: 'Category', field: 'category', align: 'left', sortable: true }
       ]
     }
   },

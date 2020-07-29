@@ -5,7 +5,7 @@
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
               <h5 class="text-weight-light">JOB ORDER REQUESTS</h5> {{ date }}<br><br>
-              <q-input v-if="pending.length || ongoing.length || complete.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search by Category">
+              <q-input v-if="pending.length || ongoing.length || complete.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
@@ -21,8 +21,8 @@
                   align="justify"
                   narrow-indicator
                 >
-                  <q-tab name="tab 1" label="Tab 1" />
-                  <q-tab name="tab 2" label="Tab 2" />
+                  <q-tab name="tab 1" label="Active" />
+                  <q-tab name="tab 2" label="Completed" />
                 </q-tabs>
 
                 <q-separator />
@@ -49,7 +49,6 @@
                         :selected-rows-label="getSelectedString"
                         selection="multiple"
                         :selected.sync="selected"
-                        hide-bottom
                       >
                         <template v-slot:header="props">
                           <q-tr :props="props">
@@ -129,7 +128,6 @@
                       row-key="jobId"
                       :separator="separator"
                       :filter="filter"
-                      hide-bottom
                     >
                       <template v-slot:header="props">
                         <q-tr :props="props">
@@ -187,7 +185,6 @@
                         row-key="jobId"
                         :separator="separator"
                         :filter="filter"
-                        hide-bottom
                       >
                       <template v-slot:header="props">
                           <q-tr :props="props">
@@ -267,14 +264,14 @@ export default {
       requestor: null,
       head: null,
       column: [
-        { name: 'id', field: 'jobId', align: 'left', label: 'Job Id' },
-        { name: 'date', field: 'date', align: 'left', label: 'Date Filed' },
+        // { name: 'id', field: 'jobId', align: 'left', label: 'Job Id' },
+        { name: 'date', field: 'date', align: 'left', label: 'Date Filed', sortable: true },
         { name: 'category', field: 'category', align: 'left', label: 'Category', sortable: true },
-        { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit' },
-        { name: 'location', field: 'location', align: 'left', label: 'Location' },
+        { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit', sortable: true },
+        { name: 'location', field: 'location', align: 'left', label: 'Location', sortable: true },
         { name: 'telephone', field: 'telephone', align: 'left', label: 'Telephone' },
-        { name: 'foreman', field: 'foreman', align: 'left', label: 'Foreman' },
-        { name: 'status', field: 'status', align: 'left', label: 'Status' }
+        { name: 'foreman', field: 'foreman', align: 'left', label: 'Foreman', sortable: true },
+        { name: 'status', field: 'status', align: 'left', label: 'Status', sortable: true }
       ]
     }
   },

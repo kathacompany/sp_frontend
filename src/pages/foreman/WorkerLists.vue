@@ -104,11 +104,6 @@
                               <q-td>
                                 <q-btn flat dense icon="edit" color="secondary" @click="toEdit(props.row)"/>
 
-<<<<<<< HEAD
-                                  <q-card-section>
-                                    <q-input outlined dense clearable class="q-pa-xs" color="accent" v-model="editedItem.name" label="Name" />
-                                    <q-select outlined dense class="q-pa-xs" color="accent" v-model="editedItem.area" :options="options" label="Area"/>
-=======
                                    <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
                                     <q-card style="width: 350px">
                                       <q-bar class="bg-secondary text-white" style="height: 60px">
@@ -116,7 +111,6 @@
                                         <q-space />
                                         <q-btn icon="close" flat round dense v-close-popup />
                                       </q-bar>
->>>>>>> 1bdae143d36696ff729838529de83814e13b78f0
 
                                       <q-card-section>
                                         <q-input outlined dense clearable class="q-pa-xs" color="accent" v-model="editedItem.name" label="Name" />
@@ -184,6 +178,7 @@ export default {
       ],
       column: [
         { name: 'name', required: true, label: 'Name', field: 'name', align: 'left', sortable: true },
+        { name: 'position', required: true, label: 'Position', field: 'posiyion', align: 'left', sortable: true },
         { name: 'area', label: 'Area', field: 'area', sortable: true, align: 'left' }
       ]
     }
@@ -199,18 +194,6 @@ export default {
   },
   methods: {
     async getEmployee () {
-<<<<<<< HEAD
-      try {
-        await db.collection('worker_list').get().then(querySnapshot => {
-          querySnapshot.forEach(res => {
-            const matData = {
-              id: res.id,
-              name: res.data().name,
-              area: res.data().area
-            }
-            this.workers.push(matData)
-          })
-=======
       const user = JSON.parse(LocalStorage.getItem('user'))
       const useRef = db.collection('account').where('userId', '==', user.uid)
       useRef.get().then(querySnapshot => {
@@ -233,7 +216,6 @@ export default {
           } catch (error) {
             console.log(error)
           }
->>>>>>> 1bdae143d36696ff729838529de83814e13b78f0
         })
       })
     },
