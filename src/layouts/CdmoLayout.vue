@@ -20,19 +20,19 @@
     >
       <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
         <q-list padding class="q-mr-ma">
-          <q-item clickable v-ripple @click="$router.push('/ForemanHomepage')">
+          <q-item clickable v-ripple @click="$router.push('/CdmoHomepage')">
             <q-item-section avatar>
-              <q-icon name="home"/>
+              <q-icon name="home" color="white"/>
             </q-item-section>
 
             <q-item-section>
-             Homepage
+              Homepage
             </q-item-section>
           </q-item>
 
           <q-separator />
 
-          <q-item clickable v-ripple @click="$router.push('/ForemanJobOrders')">
+          <q-item clickable v-ripple @click="$router.push('/CdmoJobOrders')">
             <q-item-section avatar>
               <q-icon name="inbox"/>
             </q-item-section>
@@ -44,47 +44,21 @@
 
           <q-separator />
 
-         <q-item clickable v-ripple @click="$router.push('/ForemanScheduledJobs')">
-          <q-item-section avatar>
-            <q-icon name="work" />
-
-          </q-item-section>
+          <q-item clickable v-ripple @click="$router.push('/CdmoAnnouncements')">
+            <q-item-section avatar>
+              <q-icon name="assignment"/>
+            </q-item-section>
 
             <q-item-section>
-              Scheduled Jobs
+              Add Announcement
             </q-item-section>
           </q-item>
 
           <q-separator />
 
-          <q-item clickable v-ripple @click="$router.push('/ForemanMaterialRequests')">
+          <q-item clickable v-ripple @click="$router.push('/CdmoAccount')">
             <q-item-section avatar>
-              <q-icon name="shopping_cart" />
-
-            </q-item-section>
-
-            <q-item-section>
-              Material Requests
-            </q-item-section>
-          </q-item>
-
-          <q-separator />
-
-          <q-item clickable v-ripple @click="$router.push('/ForemanWorkerLists')">
-            <q-item-section avatar>
-              <q-icon name="people" />
-            </q-item-section>
-
-            <q-item-section>
-              Worker Lists
-            </q-item-section>
-          </q-item>
-
-          <q-separator />
-
-          <q-item clickable v-ripple @click="$router.push('/ForemanAccount')">
-            <q-item-section avatar>
-              <q-icon name="person" />
+              <q-icon name="person"/>
             </q-item-section>
 
             <q-item-section>
@@ -99,7 +73,7 @@
               <q-icon name="person_remove"/>
             </q-item-section>
 
-             <q-item-section @click="logoutUser">
+            <q-item-section @click="logoutUser">
               Log Out
             </q-item-section>
           </q-item>

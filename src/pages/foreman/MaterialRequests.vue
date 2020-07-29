@@ -4,7 +4,7 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5 class="text-weight-light">MATERIAL REQUESTS</h5>{{ date }}<br><br>
+              <h5 class="text-weight-light">MATERIAL REQUESTS</h5><span class="text-weight-medium">{{ date }}</span><br><br>
 
                <q-card>
                 <q-tabs
@@ -16,6 +16,10 @@
                   align="justify"
                   narrow-indicator
                 >
+                <q-tab name="tab 1" label="Ongoing Requests" icon="add_shopping_cart">
+                </q-tab>
+                <q-tab name="tab 2" label="Done Requests" icon="assignment_turned_in">
+                </q-tab>
                 </q-tabs>
 
                 <q-separator />
@@ -28,38 +32,74 @@
                         <template v-slot:avatar>
                           <q-icon name="remove_shopping_cart" color="accent" />
                         </template>
-                       <span class="text-h6 text-grey text-weight-thin">No Requested Materials!</span>
+                        <span class="text-h6 text-grey text-weight-thin">No Requested Materials!</span>
                       </q-banner>
-                      <q-list bordered class="rounded-borders" style="width: 600px" v-for="data in matData" :key="data.id">
-                      <q-item>
+                      <q-list bordered separator class="rounded-borders" style="width: 600px">
+                        <q-item v-for="data in matData" :key="data.id">
 
-                      <q-item-section avatar center>
-                        <q-icon name="shopping_cart" color="black" size="30px" />
-                      </q-item-section>
+                          <q-item-section avatar center>
+                            <q-icon name="shopping_cart" color="black" size="30px" />
+                          </q-item-section>
 
-                      <q-item-section class="col-2 gt-sm">
-                        <q-item-label caption lines="2">Request/s, Material/s</q-item-label>
-                        <q-item-label class="q-mt-sm">{{ data.materials.map(({request}) => request).join(', ') }}</q-item-label>
-                        <q-item-label class="q-mt-sm">{{ data.materials.map(({material}) => material).join(', ') }}</q-item-label>
-                      </q-item-section>
+                          <q-item-section class="col-2 gt-sm">
+                            <q-item-label caption lines="2">Request/s, Material/s</q-item-label>
+                            <q-item-label class="q-mt-sm">{{ data.materials.map(({request}) => request).join(', ') }}</q-item-label>
+                            <q-item-label class="q-mt-sm">{{ data.materials.map(({material}) => material).join(', ') }}</q-item-label>
+                          </q-item-section>
 
-                      <q-item-section center>
-                        <q-item-label lines="1">
-                          <span class="text-weight-medium">{{ data.jobId }}</span>
-                        </q-item-label>
-                        <q-item-label class="text-weight-light text-secondary">
-                          status: > {{ data.status }}
-                        </q-item-label>
-                      </q-item-section>
+                          <q-item-section center>
+                            <q-item-label lines="1">
+                              <span class="text-weight-medium">JOB ID: {{ data.jobId }}</span>
+                            </q-item-label>
+                            <q-item-label class="text-weight-light text-secondary">
+                              status: > {{ data.status }}
+                            </q-item-label>
+                          </q-item-section>
 
-                      <q-item-section side>
-                        <div class="text-grey-8 q-gutter-xs">
-                          <q-btn class="gt-xs" size="12px" flat dense round icon="delete" color="accent" @click="toDelete(data.jobId)"/>
-                        </div>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </div>
+                          <q-item-section side>
+                            <div class="text-grey-8 q-gutter-xs">
+                              <q-btn class="gt-xs" size="12px" flat dense round icon="delete" color="accent" @click="toDelete(data.jobId)"/>
+                            </div>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+                </q-tab-panel>
+
+                <q-tab-panel name="tab 2">
+
+                  <div style="width: 100%;">
+                    <q-banner v-if="!comData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                      <template v-slot:avatar>
+                        <q-icon name="remove_shopping_cart" color="accent" />
+                      </template>
+                      <span class="text-h6 text-grey text-weight-thin">No Requested Materials!</span>
+                    </q-banner>
+                    <q-list bordered separator class="rounded-borders" style="width: 600px">
+                      <q-item v-for="data in comData" :key="data.id">
+
+                        <q-item-section avatar center>
+                          <q-icon name="shopping_cart" color="black" size="30px" />
+                        </q-item-section>
+
+                        <q-item-section class="col-2 gt-sm">
+                          <q-item-label caption lines="2">Request/s, Material/s</q-item-label>
+                          <q-item-label class="q-mt-sm">{{ data.materials.map(({request}) => request).join(', ') }}</q-item-label>
+                          <q-item-label class="q-mt-sm">{{ data.materials.map(({material}) => material).join(', ') }}</q-item-label>
+                        </q-item-section>
+
+                        <q-item-section center>
+                          <q-item-label lines="1">
+                            <span class="text-weight-medium">JOB ID: {{ data.jobId }}</span>
+                          </q-item-label>
+                          <q-item-label class="text-weight-light text-secondary">
+                            status: > {{ data.status }}
+                          </q-item-label>
+                        </q-item-section>
+
+                      </q-item>
+                    </q-list>
+                  </div>
               </q-tab-panel>
             </q-tab-panels>
           </q-card>
@@ -71,18 +111,9 @@
 </q-layout>
 </template>
 
-<style lang="sass">
-
-  th:first-child,
-  td:first-child
-    position: sticky
-    left: 0
-    z-index: 1
-</style>
-
 <script>
 import { db } from 'boot/firebase'
-import { date } from 'quasar'
+import { LocalStorage, date } from 'quasar'
 
 export default {
   data () {
@@ -99,6 +130,7 @@ export default {
         material: '',
         request: 0
       },
+      comData: [],
       matData: [],
       columns: [
         { name: 'material', label: 'Material', field: 'materials', align: 'left', sortable: true },
@@ -108,7 +140,8 @@ export default {
     }
   },
   async created () {
-    const matRef = db.collection('material_requests')
+    const user = JSON.parse(LocalStorage.getItem('user'))
+    const matRef = db.collection('material_requests').where('foreId', '==', user.uid)
 
     try {
       await matRef.get().then(querySnapshot => {
@@ -125,7 +158,11 @@ export default {
             status: doc.data().status,
             materials: matReq
           }
-          this.matData.push(matData)
+          if (matData.status === 'Done') {
+            this.comData.push(matData)
+          } else {
+            this.matData.push(matData)
+          }
         })
       })
     } catch (error) {
@@ -141,39 +178,6 @@ export default {
   methods: {
     getSelectedString () {
       return this.selected.length === 0 ? '' : `${this.selected.length} request${this.selected.length > 1 ? 's' : ''} selected of ${this.pending.length}`
-    },
-    addMaterial () {
-      db.collection('materials').add(this.defaultItem)
-        .then(
-          location.reload(),
-          this.$q.notify({
-            color: 'secondary',
-            message: 'Material added successfully'
-          })
-        )
-        .catch(error => {
-          console.error('Error adding material: ', error)
-        })
-    },
-    updateMaterial () {
-      let docref = db.collection('materials').doc(this.activeMaterial)
-      docref.update(this.editedItem)
-        .then(
-          location.reload(),
-          this.$q.notify({
-            color: 'secondary',
-            message: 'Material updated successfully'
-          })
-        )
-        .catch(error => {
-          console.error('Error updating material: ', error)
-        })
-    },
-    toEdit (item, id) {
-      this.edit_dialog = true
-      this.editedItem = Object.assign({}, item)
-      this.activeReq = this.editedItem.id
-      console.log(this.activeReq)
     },
     toDelete (jobId) {
       this.$q.dialog({

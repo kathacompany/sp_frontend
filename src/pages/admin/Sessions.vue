@@ -4,8 +4,8 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5 class="text-weight-light">SCHEDULED JOBS</h5><span class="text-weight-medium">{{ date }}</span><br><br>
-              <q-input v-if="schedule.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search">
+              <h5 class="text-weight-light">SESSION LOGS</h5><span class="text-weight-medium">{{ date }}</span><br><br>
+              <q-input v-if="sessions.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
@@ -25,32 +25,31 @@
                 </q-tabs>
 
                 <q-separator />
-                <q-tab-panels v-model="tab" animated>
 
+                <q-tab-panels v-model="tab" animated>
                   <q-tab-panel name="tab 1">
                     <div style="width: 100%;">
-                      <q-banner v-if="!schedule.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                      <q-banner v-if="!sessions.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                         <template v-slot:avatar>
-                          <q-icon name="event_busy" color="accent" />
+                          <q-icon name="sentiment_dissatisfied" color="accent" />
                         </template>
-                      <span class="text-h6 text-grey text-weight-thin">No Scheduled Works!</span>
+                      <span class="text-h6 text-grey text-weight-thin">No Records Found!</span>
                       </q-banner>
                       <q-table
-                        title="Scheduled Works"
+                        title="JOPSIS Users"
                         :table-style="'counter-reset: cssRowCounter '"
-                        class="my-sticky-column-table"
+                        :data="sessions"
+                        :columns="column"
+                        row-key="name"
+                        :filter="filter"
+                        :separator="separator"
                         v-else
                         dense
-                        :separator="separator"
-                        :data="schedule"
-                        :columns="column"
-                        row-key="jobId"
-                        :filter="filter"
                       >
                         <template v-slot:header="props">
                           <q-tr :props="props">
                             <q-th class="text-italic text-accent" auto-width>#</q-th>
-                            <q-th auto-width/>
+                            <q-th class="text-italic text-accent" auto-width>Provider</q-th>
                             <q-th
                               v-for="col in props.cols"
                               :key="col.name"
@@ -64,20 +63,13 @@
                         <template v-slot:body="props">
                           <q-tr :props="props">
                             <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
-                            <q-td auto-width>
-                              <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
-                            </q-td>
+                            <q-td><q-icon name="email" color="accent" size="25px" /></q-td>
                             <q-td
                               v-for="col in props.cols"
                               :key="col.name"
                               :props="props"
                             >
                               {{ col.value }}
-                            </q-td>
-                          </q-tr>
-                          <q-tr v-show="props.expand" :props="props">
-                            <q-td colspan="100%">
-                              <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
                             </q-td>
                           </q-tr>
                         </template>
@@ -95,39 +87,43 @@
 </template>
 
 <script>
-import { LocalStorage, date } from 'quasar'
+import { date } from 'quasar'
 import { db } from 'boot/firebase'
 
 export default {
   data () {
     return {
       separator: 'cell',
+      confirm: false,
+      reject: false,
       dense: false,
-      tab: 'tab 1',
       filter: '',
-      schedule: [],
+      tab: 'tab 1',
+      sessions: [],
       column: [
-        { name: 'date', field: 'date', align: 'left', label: 'Scheduled on', sortable: true },
-        { name: 'id', field: 'jobId', align: 'left', label: 'Job Id', sortable: true },
-        { name: 'location', field: 'location', align: 'left', label: 'Location', sortable: true },
-        { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit', sortable: true },
-        { name: 'requestor', field: 'requestor', align: 'left', label: 'Unit Requestor', sortable: true },
-        { name: 'foreman', field: 'foreman', align: 'left', label: 'Foreman', sortable: true }
+        { name: 'email', label: 'Identifier', field: 'email', align: 'left', sortable: true },
+        { name: 'createdOn', label: 'Created', field: 'createdOn', align: 'left', sortable: true },
+        { name: 'signedIn', label: 'Last Signed In', field: 'signedIn', align: 'left', sortable: true },
+        { name: 'userId', label: 'User Id', field: 'userId', align: 'left', sortable: true }
       ]
     }
   },
   created () {
-    const user = JSON.parse(LocalStorage.getItem('user'))
-
-    const schedRef = db.collection('scheduled_jobs').orderBy('date')
-    schedRef.get().then(querySnapshot => {
+    db.collection('account').get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
-        const details = doc.data().details
-        for (var i = 0; i < details.length; i++) {
-          if (details[i]['workerId'] === user.uid) {
-            this.schedule.push(doc.data())
-          }
+        var createdOn = doc.data().createdOn
+        var formatedTime = createdOn.toDate().toDateString()
+        var signedIn = doc.data().signedIn
+        var formatedDate = date.formatDate(signedIn, 'ddd MMM D YYYY')
+        const data = {
+          id: doc.id,
+          email: doc.data().email,
+          createdOn: formatedTime,
+          usertype: doc.data().usertype,
+          userId: doc.data().userId,
+          signedIn: formatedDate
         }
+        this.sessions.push(data)
       })
     })
   },

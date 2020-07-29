@@ -4,9 +4,14 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5 class="text-weight-light">MATERIAL REQUESTS</h5>{{ date }}<br><br>
-
-               <q-card>
+              <h5 class="text-weight-light">MATERIAL REQUESTS</h5><span class="text-weight-medium">{{ date }}</span><br><br>
+              <q-input v-if="matData.length || comData.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search">
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+              <br>
+              <q-card>
                 <q-tabs
                   v-model="tab"
                   dense
@@ -16,90 +21,101 @@
                   align="justify"
                   narrow-indicator
                 >
+                <q-tab name="tab 1" label="Ongoing Requests" icon="add_shopping_cart">
+                </q-tab>
+                <q-tab name="tab 2" label="Done Requests" icon="assignment_turned_in">
+                </q-tab>
                 </q-tabs>
 
                 <q-separator />
 
                 <q-tab-panels v-model="tab" animated>
                   <q-tab-panel name="tab 1">
-
                     <div style="width: 100%;">
                       <q-banner v-if="!matData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
                         <template v-slot:avatar>
                           <q-icon name="remove_shopping_cart" color="accent" />
                         </template>
-                       <span class="text-h6 text-grey text-weight-thin">No Requested Materials!</span>
+                       <span class="text-h6 text-grey text-weight-thin">All caught up. No Requests!</span>
                       </q-banner>
-                      <q-list bordered class="rounded-borders" style="width: 600px" v-for="data in matData" :key="data.id">
-                      <q-item>
+                      <q-table
+                        title="Material Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
+                        v-else
+                        dense
+                        :data="matData"
+                        :columns="column"
+                        row-key="jobId"
+                        :filter="filter"
+                        :separator="separator"
+                        :selected-rows-label="getSelectedString"
+                        selection="single"
+                        :selected.sync="selected"
+                      >
+                        <template v-slot:top-right v-if="selected.length">
+                          <q-btn no-caps size="20px" flat icon="check_circle" class="text-weight-light" color="secondary" @click="approve=true"/>
+                          <q-btn no-caps size="20px" flat icon="cancel" class="text-weight-light" color="accent" @click="reject=true"/>
+                        </template>
+                        <template v-slot:header="props">
+                          <q-tr :props="props">
+                            <q-th key="selected"/>
+                            <q-th class="text-italic text-accent" auto-width>#</q-th>
+                            <q-th auto-width/>
+                            <q-th
+                              v-for="col in props.cols"
+                              :key="col.name"
+                              :props="props"
+                              class="text-italic text-accent"
+                            >
+                              {{ col.label }}
+                            </q-th>
+                          </q-tr>
+                        </template>
+                        <template v-slot:body="props">
+                          <q-tr :props="props">
+                            <q-td>
+                              <q-checkbox dense color="secondary" v-model="props.selected"/>
+                            </q-td>
+                            <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
+                            <q-td auto-width>
+                              <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'shopping_cart' : 'shopping_cart'" />
+                            </q-td>
+                            <q-td
+                              v-for="col in props.cols"
+                              :key="col.name"
+                              :props="props"
+                            >
+                              {{ col.value }}
+                            </q-td>
+                          </q-tr>
+                          <q-tr v-show="props.expand" :props="props">
+                            <q-td colspan="100%">
+                              <div class="text-left"><span class="text-italic text-accent">Material/s</span><br/>{{ props.row.materials.map(({material}) => material).join(', ') }}</div><br/>
+                              <div class="text-left"><span class="text-italic text-accent">Request/s</span><br/>{{ props.row.materials.map(({request}) => request).join(', ') }}</div>
+                            </q-td>
+                          </q-tr>
+                        </template>
+                      </q-table>
 
-                      <q-item-section avatar center>
-                        <span>
-                          <q-icon name="shopping_cart" color="black" size="30px" />
-                        </span>
-                      </q-item-section>
+                      <q-dialog v-model="approve" persistent transition-show="rotate" transition-hide="rotate">
+                        <q-card>
+                          <q-bar class="bg-secondary text-white" style="height: 50px">
+                            <div class="text-weight-light">Approve Confirm</div>
+                          </q-bar>
+                          <q-card-section>
+                            <span class="q-ma-sm">Approve the following request?</span>
+                          </q-card-section>
 
-                      <q-item-section class="col-2 gt-sm">
+                          <q-card-actions align="right">
+                            <q-btn flat label="Cancel" color="accent" v-close-popup />
+                            <q-btn flat label="Accept" color="secondary" @click="toApprove(selected)" v-close-popup/>
+                          </q-card-actions>
+                        </q-card>
+                      </q-dialog>
 
-                        <q-item-label caption lines="2"><span>Request/s, Material/s</span></q-item-label>
-                        <q-item-label class="text-weight-medium">{{ data.category }}</q-item-label>
-                        <q-item-label class="q-mt-sm">{{ data.materials.map(({request}) => request).join(', ') }}</q-item-label>
-                        <q-item-label class="q-mt-sm">{{ data.materials.map(({material}) => material).join(', ') }}</q-item-label>
-                      </q-item-section>
-
-                      <q-item-section center>
-                        <q-item-label lines="1">
-                          <span class="text-weight-medium">{{ data.jobId }}</span>
-                        </q-item-label>
-                        <q-item-label class="text-subtitle1 text-weight-light text-secondary">
-                          status: > {{ data.status }}
-                        </q-item-label>
-                        <q-item-label class="text-weight-light text-secondary">
-                          foreman: > {{ data.foreman }}
-                        </q-item-label>
-                      </q-item-section>
-
-                      <q-item-section side>
-                        <div class="text-grey-8 items-center q-gutter-xs">
-                          <q-checkbox
-                            v-model="selection"
-                            color="secondary"
-                            true-value="yes"
-                            false-value="no"
-                          />
-                          <span v-if="selection==='yes'">
-                            <q-btn class="gt-xs" size="20px" flat dense round icon="thumb_up_alt" color="secondary" @click="toEdit(data)"/>
-                             <q-btn flat dense size="20px" color="secondary" round icon="thumb_down_alt" class="gt-xs" @click="toEditRej(data)"/>
-                          </span>
-                        </div>
-                      </q-item-section>
-
-                        <q-dialog v-model="edit_dialog" persistent transition-show="rotate" transition-hide="rotate">
-                          <q-card style="width: 350px">
-                            <q-bar class="bg-secondary text-white" style="height: 60px">
-                              <div class="text-h6 text-weight-light">Edit Material Request</div>
-                              <q-space />
-                              <q-btn icon="close" flat round dense v-close-popup />
-                            </q-bar>
-                            <q-card-section>
-                              <div class="q-pa-sm">
-                                <span class="text-weight-medium">Approve the following material request/s: </span>
-                                <q-item-section class="col-2 gt-sm">
-                                  <q-item-label class="text-grey-6 q-mt-sm">Request/s : {{ data.materials.map(({request}) => request).join(', ') }}</q-item-label>
-                                  <q-item-label class="text-grey-6 q-mt-sm">Material/s : {{ data.materials.map(({material}) => material).join(', ') }}</q-item-label>
-                                  <q-item-label class="text-grey-6 q-mt-sm">Requested by : {{ data.foreman }}</q-item-label>
-                                </q-item-section>
-                              </div>
-                            </q-card-section>
-                            <q-card-actions class="justify-center">
-                              <q-btn no-caps @click="toApprove" color="secondary"  class="text-weight-light"  label="Accept" v-close-popup/>
-                            </q-card-actions>
-                          </q-card>
-                        </q-dialog>
-
-                        <q-dialog v-model="reject" persistent>
+                      <q-dialog v-model="reject" persistent transition-show="rotate" transition-hide="rotate">
                         <q-card style="width: 350px">
-                          <q-bar class="bg-secondary text-white" style="height: 60px">
+                          <q-bar class="bg-accent text-white" style="height: 60px">
                             <div class="text-h6 text-weight-light">Reason of Reject</div>
                             <q-space />
                             <q-btn icon="close" flat round dense v-close-popup />
@@ -110,12 +126,68 @@
                             <q-input class="q-pa-xs" outlined dense clearable color="accent" type="textarea" autogrow v-model="reason" placeholder="Enter text here"/>
                           </q-card-section>
                           <q-card-actions align="right">
-                            <q-btn flat class="q-ma-sm text-weight-light" label="Submit" color="secondary" @click="onReject" v-close-popup/>
+                            <q-btn flat class="q-ma-sm text-weight-light" label="Submit" color="accent" @click="onReject(selected)" v-close-popup/>
                           </q-card-actions>
                         </q-card>
                       </q-dialog>
-                    </q-item>
-                  </q-list>
+                    </div>
+                  </q-tab-panel>
+
+                  <q-tab-panel name="tab 2">
+                    <div style="width: 100%;">
+                      <q-banner v-if="!comData.length" class="bg-grey-2 q-pa-md" style="min-width: 800px; height: 150px">
+                        <template v-slot:avatar>
+                          <q-icon name="remove_shopping_cart" color="accent" />
+                        </template>
+                       <span class="text-h6 text-grey text-weight-thin">No Done Requests!</span>
+                      </q-banner>
+                      <q-table
+                        title="Material Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
+                        v-else
+                        dense
+                        :data="comData"
+                        :columns="column"
+                        row-key="jobId"
+                        :filter="filter"
+                        :separator="separator"
+                      >
+                      <template v-slot:header="props">
+                        <q-tr :props="props">
+                          <q-th class="text-italic text-accent" auto-width>#</q-th>
+                          <q-th auto-width/>
+                          <q-th
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                            class="text-italic text-accent"
+                          >
+                            {{ col.label }}
+                          </q-th>
+                        </q-tr>
+                      </template>
+                      <template v-slot:body="props">
+                        <q-tr :props="props">
+                          <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
+                          <q-td auto-width>
+                            <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'shopping_cart' : 'shopping_cart'" />
+                          </q-td>
+                          <q-td
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                          >
+                            {{ col.value }}
+                          </q-td>
+                        </q-tr>
+                        <q-tr v-show="props.expand" :props="props">
+                          <q-td colspan="100%">
+                            <div class="text-left"><span class="text-italic text-accent">Material/s</span><br/>{{ props.row.materials.map(({material}) => material).join(', ') }}</div><br/>
+                            <div class="text-left"><span class="text-italic text-accent">Request/s</span><br/>{{ props.row.materials.map(({request}) => request).join(', ') }}</div>
+                          </q-td>
+                        </q-tr>
+                      </template>
+                  </q-table>
                 </div>
               </q-tab-panel>
             </q-tab-panels>
@@ -128,15 +200,6 @@
 </q-layout>
 </template>
 
-<style lang="sass">
-
-  th:first-child,
-  td:first-child
-    position: sticky
-    left: 0
-    z-index: 1
-</style>
-
 <script>
 import { db } from 'boot/firebase'
 import { date } from 'quasar'
@@ -144,37 +207,41 @@ import { date } from 'quasar'
 export default {
   data () {
     return {
-      selected: [],
+      editedIndex: -1,
+      filter: '',
       separator: 'cell',
       tab: 'tab 1',
       reject: false,
-      reason: '',
+      approve: false,
+      done: false,
       dense: false,
-      selection: 'no',
-      edit_dialog: false,
-      editedIndex: -1,
-      filter: '',
-      activeMaterial: null,
+      reason: '',
       editedItem: {
-        material: '',
-        request: 0
+        status: '',
+        foreman: '',
+        category: '',
+        materials: ''
       },
+      selected: [],
+      comData: [],
       matData: [],
-      columns: [
-        { name: 'material', label: 'Material', field: 'materials', align: 'left', sortable: true },
-        { name: 'jobId', label: 'jobId', field: 'jobId', align: 'left', sortable: true },
-        { name: 'status', label: 'Status', field: 'status', align: 'left' }
+      column: [
+        { name: 'foreman', label: 'Requested By', field: 'foreman', align: 'left', sortable: true },
+        { name: 'category', label: 'Category', field: 'category', align: 'left', sortable: true },
+        { name: 'id', label: 'Job Id', field: 'jobId', align: 'left', sortable: true },
+        { name: 'status', label: 'Status', field: 'status', align: 'left', sortable: true }
       ]
     }
   },
   async created () {
-    const matRef = db.collection('material_requests')
+    const matRef = db.collection('material_requests').orderBy('category')
 
     try {
       await matRef.get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
           const matReq = (doc.data().material).map(item => {
             const container = {}
+            container.matId = item.matId
             container.material = item.material
             container.request = item.request
             return container
@@ -187,7 +254,11 @@ export default {
             category: doc.data().category,
             materials: matReq
           }
-          this.matData.push(matData)
+          if (matData.status === 'Done') {
+            this.comData.push(matData)
+          } else {
+            this.matData.push(matData)
+          }
         })
       })
     } catch (error) {
@@ -202,7 +273,7 @@ export default {
   },
   methods: {
     getSelectedString () {
-      return this.selected.length === 0 ? '' : `${this.selected.length} request${this.selected.length > 1 ? 's' : ''} selected of ${this.pending.length}`
+      return this.selected.length === 0 ? '' : `${this.selected.length} request${this.selected.length > 1 ? 's' : ''} selected of ${this.matData.length}`
     },
     addMaterial () {
       db.collection('materials').add(this.defaultItem)
@@ -217,78 +288,53 @@ export default {
           console.error('Error adding material: ', error)
         })
     },
-    toEdit (data, jobId) {
-      this.edit_dialog = true
-      this.editedItem = Object.assign({}, data)
-      this.activeReq = this.editedItem.id
-    },
-    toApprove () {
-      const matRef = db.collection('material_requests').doc(this.activeReq)
-      matRef.update({
-        status: 'for Release'
-      })
-        .then(
-          location.reload(),
-          this.$q.notify({
-            color: 'secondary',
-            message: 'Status updated'
+    toApprove (selected) {
+      for (var i = 0; i < selected.length; i++) {
+        const jobId = selected[i]['jobId']
+        const foreman = selected[i]['foreman']
+        const mat = selected[i]['materials']
+        for (i = 0; i < mat.length; i++) {
+          const matId = (mat[i]['matId'])
+          const item = db.collection('materials').doc(matId)
+          item.update({
+            issued: foreman
           })
-        )
-        .catch(error => {
-          console.error('Error: ', error)
-        })
-    },
-    toEditRej (data, jobId) {
-      this.reject = true
-      this.editedItem = Object.assign({}, data)
-      this.activeReq = this.editedItem.id
-    },
-    onReject () {
-      const matRef = db.collection('material_requests').doc(this.activeReq)
-      this.status = 'Rejected! ' + '(' + this.reason + ')'
-      matRef.update({
-        status: this.status
-      })
-        .then(
-          location.reload(),
-          this.$q.notify({
-            color: 'secondary',
-            message: 'Status updated'
-          })
-        )
-        .catch(error => {
-          console.error('Error: ', error)
-        })
-    },
-    toDelete (jobId) {
-      this.$q.dialog({
-        title: 'Delete Confirm',
-        message: 'The request  will be cancelled. Are you sure you want to continue?',
-        cancel: {
-          label: 'No',
-          flat: true,
-          color: 'accent'
-        },
-        ok: {
-          label: 'Yes',
-          flat: true,
-          color: 'secondary'
-        },
-        persistentL: true
-      }).onOk(async () => {
-        try {
-          await db.collection('material_requests').doc(jobId).delete()
-          location.reload()
-          this.$q.notify({
-            avatar: 'delete',
-            color: 'accent',
-            message: 'Request cancelled'
-          })
-        } catch (error) {
-          console.log('Error deleting material', error)
         }
+        const matRef = db.collection('material_requests').doc(jobId)
+        matRef.update({
+          status: 'Approve! for Release'
+        })
+          .then(
+            location.reload(),
+            this.$q.notify({
+              color: 'secondary',
+              message: 'Status updated'
+            })
+          )
+          .catch(error => {
+            console.error('Error: ', error)
+          })
       }
-      )
+    },
+    onReject (selected) {
+      for (var i = 0; i < selected.length; i++) {
+        const jobId = selected[i]['jobId']
+        this.status = 'Rejected! ' + '(' + this.reason + ')'
+        const matRef = db.collection('material_requests').doc(jobId)
+        matRef.update({
+          status: this.status
+        })
+          .then(
+            location.reload(),
+            this.$q.notify({
+              color: 'secondary',
+              message: 'Status updated'
+            })
+          )
+          .catch(error => {
+            console.error('Error: ', error)
+          })
+      }
     }
   }
 }

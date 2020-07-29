@@ -19,7 +19,6 @@
               ref="calendar"
               :disabled-weekdays="[0,6]"
               :day-style="modifiedStyle"
-              @input="toEdit"
               @change="onChange"
             >
               <template #day="{ date }">
@@ -30,7 +29,8 @@
                     class="q-event"
                     :class="badgeClasses(event, 'day')"
                     :style="badgeStyles(event, 'day')"
-                  >
+                    @click.stop.prevent="showEvent(event)"
+                    >
                     <q-icon v-if="event.icon" :name="event.icon" class="q-mr-xs"></q-icon><span class="ellipsis">{{ event.title }}</span>
                   </q-badge>
                 </template>
@@ -56,7 +56,7 @@
                     <div class="col q-pa-md text-subtitle2 text-grey-7">
                       <div class="row">
                         <div class="col-3" >Date:</div>
-                        <div class="text-weight-light">{{ selectedDate }}</div>
+                        <div class="text-weight-light">{{ editedItem.date }}</div>
                       </div>
                       <div class="row">
                         <div class="col-3" >Job Id:</div>
@@ -64,7 +64,7 @@
                       </div>
                       <div class="row text-subtitle2 text-grey-7">
                         <div class="col-3" >Workers:</div>
-                        <div class="text-weight-light" v-if="editedItem.details">{{ editedItem.details.map(({worker}) => worker).join(', ') }}</div>
+                        <div class="text-weight-light" v-if="editedItem.details.length">{{ editedItem.details.map(({worker}) => worker).join(', ') }}</div>
                         <div class="text-weight-light" v-else>N/a</div>
                       </div>
                       <div class="row text-subtitle2 text-grey-7">
@@ -91,6 +91,7 @@
 
 import { makeDate, parseDate, parseTimestamp, addToDate, isBetweenDates, daysInMonth } from '@quasar/quasar-ui-qcalendar'
 import { db } from 'boot/firebase'
+import { LocalStorage } from 'quasar'
 
 const CURRENT_DAY = new Date()
 
@@ -182,7 +183,8 @@ export default {
     }
   },
   created () {
-    const schedRef = db.collection('scheduled_jobs').orderBy('date')
+    const user = JSON.parse(LocalStorage.getItem('user'))
+    const schedRef = db.collection('scheduled_jobs').where('foreId', '==', user.uid)
     schedRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const date = parseTimestamp(doc.data().date)
@@ -234,7 +236,7 @@ export default {
         this.showSimulatedReturnData = true
       }, 700)
     },
-    toEdit (selectedDate) {
+    showEvent (event) {
       this.showSchedWorkDataLoading()
       this.date_dialog = true
 
@@ -242,8 +244,8 @@ export default {
       schedRef.get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
           const eventsDate = doc.data().date
-          if (eventsDate === selectedDate) {
-            this.editedItem = Object.assign({}, doc.data())
+          if (eventsDate === event.date) {
+            this.editedItem = Object.assign({}, event)
           }
         })
       })

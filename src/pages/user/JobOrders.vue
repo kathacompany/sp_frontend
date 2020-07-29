@@ -4,7 +4,7 @@
         <q-page class="window-height window-width row justify-center">
           <div class="q-gutter-sm flex text-center">
             <div style="width: 100%; height: 50%;">
-              <h5 class="text-weight-light">JOB ORDER REQUESTS</h5> {{ date }}<br><br>
+              <h5 class="text-weight-light">JOB ORDER REQUESTS</h5><span class="text-weight-medium">{{ date }}</span><br><br>
               <q-input v-if="jobs.length || pending.length || ongoing.length || complete.length" outlined clearable color="secondary" dense debounce="300" v-model="filter" placeholder="Search">
                 <template v-slot:append>
                   <q-icon name="search" />
@@ -21,12 +21,15 @@
                   align="justify"
                   narrow-indicator
                 >
-                  <q-tab name="tab 1" label="Active" />
-                  <q-tab name="tab 2" label="Rejected" />
-                  <q-tab name="tab 3" label="Completed" />
+                  <q-tab name="tab 1" label="Active" icon="assignment">
+                  </q-tab>
+                  <q-tab name="tab 2" label="With Actions" icon="assignment_return">
+                  </q-tab>
+                  <q-tab name="tab 3" label="Completed" icon="assignment_turned_in">
+                  </q-tab>
                 </q-tabs>
 
-                <q-separator />
+                <q-separator/>
 
                 <q-tab-panels v-model="tab" animated>
                   <q-tab-panel name="tab 1">
@@ -35,13 +38,14 @@
                         <template v-slot:avatar>
                           <q-icon name="event_busy" color="accent" />
                         </template>
-                       <span class="text-h6 text-grey text-weight-thin">No Filed Request!</span>
+                        <span class="text-h6 text-grey text-weight-thin">No Filed Requests!</span>
                         <template v-slot:action>
                           <q-btn flat icon="post_add" color="secondary" label="FILE A REQUEST" @click="$router.push('/UserFileJobOrder')"/>
                         </template>
                       </q-banner>
                       <q-table
-                        title="Job Orders"
+                        title="Job Order Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
                         class="my-sticky-header-table"
                         :data="jobs"
                         v-else
@@ -54,6 +58,7 @@
                       >
                         <template v-slot:header="props">
                           <q-tr :props="props">
+                            <q-th class="text-italic text-accent" auto-width>#</q-th>
                             <q-th auto-width/>
                             <q-th
                               v-for="col in props.cols"
@@ -70,6 +75,7 @@
                         </template>
                         <template v-slot:body="props">
                           <q-tr :props="props">
+                            <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                             <q-td auto-width>
                               <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                             </q-td>
@@ -91,28 +97,23 @@
                                     <q-btn icon="close" flat round dense v-close-popup />
                                   </q-bar>
                                   <q-card-section>
-                                  <q-input outlined dense ref="date" color="accent" v-model="editedItem.date" mask="date" placeholder="Date Filed" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']">
-                                    <template v-slot:append>
-                                      <q-icon name="today" class="cursor-pointer"/>
-                                      <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                        <q-date v-model="editedItem.date" @input="() => $refs.qDateProxy.hide()"/>
-                                      </q-popup-proxy>
-                                    </template>
+
+                                    <q-input class="q-pa-xs" clearable outlined dense ref="date" color="accent" placeholder="Date Filed" v-model="editedItem.date" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']" readonly>
                                     </q-input>
                                     <q-select outlined dense class="q-pa-xs"  ref="category" color="accent" v-model="editedItem.category" :options="options" label="Category" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
                                     <q-input class="q-pa-xs" outlined dense clearable ref="description" color="accent" type="textarea" autogrow v-model="editedItem.description" label="Description" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
-                                    <q-input class="q-pa-xs" outlined dense clearable ref="unit" color="accent" v-model="editedItem.unit" label="Requesting Unit" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
-                                    <q-input class="q-pa-xs" outlined dense clearable ref="location" color="accent" v-model="editedItem.location" label="Location" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
-                                    <q-input class="q-pa-xs" outlined dense clearable ref="telephone" color="accent" mask="(###) ### - ####" fill-mask v-model="editedItem.telephone" label="Telephone" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
+                                    <q-input class="q-pa-xs" outlined dense clearable ref="unit" color="accent" v-model="editedItem.unit" label="Requesting Unit" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']" readonly/>
+                                    <q-input class="q-pa-xs" outlined dense clearable ref="location" color="accent" v-model="editedItem.location" label="Location" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']" readonly/>
+                                    <q-input class="q-pa-xs" outlined dense clearable ref="telephone" color="accent" mask="(###) ### - ####" fill-mask v-model="editedItem.telephone" label="Telephone" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']" readonly/>
 
                                   </q-card-section>
-                                  <q-card-actions class="justify-center">
-                                    <q-btn no-caps @click="updateJob" color="secondary"  class="text-weight-light"  label="Save Changes"/>
+                                  <q-card-actions>
+                                    <q-btn no-caps unelevated @click="updateJob" color="secondary" class="full-width text-weight-light"  label="Save Changes"/>
                                   </q-card-actions>
                                 </q-card>
                               </q-dialog>
 
-                              <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.id)">
+                              <q-btn flat dense icon="delete" color="accent" @click="toDelete(props.row.jobId)">
                                 <q-space/>
                               </q-btn>
                             </q-td>
@@ -133,10 +134,11 @@
                         <template v-slot:avatar>
                           <q-icon name="event_busy" color="accent" />
                         </template>
-                       <span class="text-h6 text-grey text-weight-thin">No Pending Request!</span>
+                       <span class="text-h6 text-grey text-weight-thin">No Pending Requests!</span>
                       </q-banner>
                       <q-table
-                        title="Pending"
+                        title="Pending Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
                         class="my-sticky-column-table"
                         v-else
                         dense
@@ -148,6 +150,7 @@
                       >
                         <template v-slot:header="props">
                           <q-tr :props="props">
+                            <q-th class="text-italic text-accent" auto-width>#</q-th>
                             <q-th auto-width/>
                             <q-th
                               v-for="col in props.cols"
@@ -161,6 +164,7 @@
                         </template>
                         <template v-slot:body="props">
                           <q-tr :props="props">
+                            <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                             <q-td auto-width>
                               <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                             </q-td>
@@ -188,10 +192,11 @@
                         <template v-slot:avatar>
                           <q-icon name="event_busy" color="accent" />
                         </template>
-                       <span class="text-h6 text-grey text-weight-thin">No Ongoing Request!</span>
+                       <span class="text-h6 text-grey text-weight-thin">No Ongoing Requests!</span>
                       </q-banner>
                       <q-table
-                        title="Ongoing"
+                        title="Ongoing Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
                         class="my-sticky-column-table"
                         v-else
                         dense
@@ -203,6 +208,7 @@
                       >
                         <template v-slot:header="props">
                           <q-tr :props="props">
+                            <q-th class="text-italic text-accent" auto-width>#</q-th>
                             <q-th auto-width/>
                             <q-th
                               v-for="col in props.cols"
@@ -216,6 +222,7 @@
                         </template>
                         <template v-slot:body="props">
                           <q-tr :props="props">
+                            <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                             <q-td auto-width>
                               <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                             </q-td>
@@ -244,10 +251,11 @@
                         <template v-slot:avatar>
                           <q-icon name="event_busy" color="accent" />
                         </template>
-                      <span class="text-h6 text-grey text-weight-thin">No Rejected Request!</span>
+                      <span class="text-h6 text-grey text-weight-thin">No Rejected Requests!</span>
                       </q-banner>
                       <q-table
-                        title="Rejected"
+                        title="Rejected Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
                         class="my-sticky-column-table"
                         v-else
                         dense
@@ -259,6 +267,7 @@
                       >
                         <template v-slot:header="props">
                           <q-tr :props="props">
+                            <q-th class="text-italic text-accent" auto-width>#</q-th>
                             <q-th auto-width/>
                             <q-th
                               v-for="col in props.cols"
@@ -275,6 +284,7 @@
                         </template>
                         <template v-slot:body="props">
                           <q-tr :props="props">
+                            <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                             <q-td auto-width>
                               <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                             </q-td>
@@ -296,23 +306,18 @@
                                     <q-btn icon="close" flat round dense v-close-popup />
                                   </q-bar>
                                   <q-card-section>
-                                    <q-input outlined dense ref="date" color="accent" v-model="editedItem.date" mask="date" placeholder="Date Filed" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']">
-                                    <template v-slot:append>
-                                      <q-icon name="today" class="cursor-pointer"/>
-                                      <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                                        <q-date v-model="editedItem.date" @input="() => $refs.qDateProxy.hide()"/>
-                                      </q-popup-proxy>
-                                    </template>
-                                    </q-input>
-                                    <q-select outlined dense class="q-pa-xs"  ref="category" color="accent" v-model="editedItem.category" :options="options" label="Category" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
-                                    <q-input class="q-pa-xs" outlined dense clearable ref="description" color="accent" type="textarea" autogrow v-model="editedItem.description" label="Description" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
-                                    <q-input class="q-pa-xs" outlined dense clearable ref="unit" color="accent" v-model="editedItem.unit" label="Requesting Unit" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
-                                    <q-input class="q-pa-xs" outlined dense clearable ref="location" color="accent" v-model="editedItem.location" label="Location" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
-                                    <q-input class="q-pa-xs" outlined dense clearable ref="telephone" color="accent" mask="(###) ### - ####" fill-mask v-model="editedItem.telephone" label="Telephone" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
+
+                                  <q-input class="q-pa-xs" clearable outlined dense ref="date" color="accent" placeholder="Date Filed" v-model="editedItem.date" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']" readonly>
+                                  </q-input>
+                                  <q-select outlined dense class="q-pa-xs"  ref="category" color="accent" v-model="editedItem.category" :options="options" label="Category" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
+                                  <q-input class="q-pa-xs" outlined dense clearable ref="description" color="accent" type="textarea" autogrow v-model="editedItem.description" label="Description" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']"/>
+                                  <q-input class="q-pa-xs" outlined dense clearable ref="unit" color="accent" v-model="editedItem.unit" label="Requesting Unit" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']" readonly/>
+                                  <q-input class="q-pa-xs" outlined dense clearable ref="location" color="accent" v-model="editedItem.location" label="Location" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']" readonly/>
+                                  <q-input class="q-pa-xs" outlined dense clearable ref="telephone" color="accent" mask="(###) ### - ####" fill-mask v-model="editedItem.telephone" label="Telephone" lazy-rules :rules="[val => val !== null && val !== '' && val !== undefined || 'Input is required']" readonly/>
 
                                   </q-card-section>
-                                  <q-card-actions class="justify-center">
-                                    <q-btn no-caps @click="atSend" color="secondary"  class="text-weight-light"  label="Send Changes"/>
+                                  <q-card-actions>
+                                    <q-btn no-caps unelevated @click="atSend" color="secondary"  class="full-width text-weight-light"  label="Send Changes"/>
                                   </q-card-actions>
                                 </q-card>
                               </q-dialog>
@@ -338,10 +343,11 @@
                         <template v-slot:avatar>
                           <q-icon name="event_busy" color="accent" />
                         </template>
-                      <span class="text-h6 text-grey text-weight-thin">No Request!</span>
+                      <span class="text-h6 text-grey text-weight-thin">No Requests for Confirmation!</span>
                       </q-banner>
                       <q-table
-                        title="Confirmations"
+                        title="For Confirmation Requests"
+                        :table-style="'counter-reset: cssRowCounter '"
                         class="my-sticky-column-table"
                         v-else
                         dense
@@ -354,11 +360,15 @@
                         selection="multiple"
                         :selected.sync="selected"
                       >
+                        <template v-slot:top-right v-if="selected.length">
+                         <q-btn no-caps unelevated icon="thumb_up_alt" label="Confirm" class="q-ma-sm text-weight-light bg-secondary text-white"  v-if="selected.length" @click="confirm=true"/>
+                        </template>
                         <template v-slot:header="props">
                           <q-tr :props="props">
                             <q-th key="selected">
                               <q-checkbox dense color="secondary" v-model="props.selected"/>
                             </q-th>
+                            <q-th class="text-italic text-accent" auto-width>#</q-th>
                             <q-th auto-width/>
                             <q-th
                               v-for="col in props.cols"
@@ -375,6 +385,7 @@
                             <q-td>
                               <q-checkbox dense color="secondary" v-model="props.selected"/>
                             </q-td>
+                            <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                             <q-td auto-width>
                               <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                             </q-td>
@@ -388,6 +399,7 @@
                           </q-tr>
                           <q-tr v-show="props.expand" :props="props">
                             <q-td colspan="100%">
+                              <div class="text-left"><span class="text-italic text-accent">Findings</span><br/>{{ props.row.description}}</div><br/>
                               <div class="text-left"><span class="text-italic text-accent">Findings</span><br/>{{ props.row.findings}}</div><br/>
                               <div class="text-left"><span class="text-italic text-accent">Recommendations</span><br>{{ props.row.rec}}</div><br>
                               <div class="text-left"><span class="text-italic text-accent">Action</span><br/>{{ props.row.action}}</div>
@@ -395,9 +407,8 @@
                           </q-tr>
                         </template>
                       </q-table>
-                      <q-btn no-caps icon="thumb_up_alt" label="Confirm" class="q-ma-sm text-weight-light bg-secondary text-white"  v-if="selected.length" @click="confirm=true"/>
 
-                      <q-dialog v-model="confirm" persistent>
+                      <q-dialog v-model="confirm" persistent transition-show="rotate" transition-hide="rotate">
                         <q-card>
                           <q-card-section class="row items-center">
                             <div class="text-h6">Confirm Completion</div>
@@ -421,10 +432,11 @@
                           <template v-slot:avatar>
                             <q-icon name="event_busy" color="accent" />
                           </template>
-                        <span class="text-h6 text-grey text-weight-thin">No Completed Request!</span>
+                        <span class="text-h6 text-grey text-weight-thin">No Completed Requests!</span>
                         </q-banner>
                         <q-table
-                          title="Completed"
+                          title="Completed Requests"
+                          :table-style="'counter-reset: cssRowCounter '"
                           class="my-sticky-column-table"
                           v-else
                           dense
@@ -436,6 +448,7 @@
                         >
                           <template v-slot:header="props">
                             <q-tr :props="props">
+                              <q-th class="text-italic text-accent" auto-width>#</q-th>
                               <q-th auto-width/>
                               <q-th
                                 v-for="col in props.cols"
@@ -449,6 +462,7 @@
                           </template>
                           <template v-slot:body="props">
                             <q-tr :props="props">
+                              <q-td><span class="text-secondary text-weight-bold rowNumber"/></q-td>
                               <q-td auto-width>
                                 <q-btn round dense color="accent" @click="props.expand = !props.expand" :icon="props.expand ? 'description' : 'description'" />
                               </q-td>
@@ -462,7 +476,11 @@
                             </q-tr>
                             <q-tr v-show="props.expand" :props="props">
                               <q-td colspan="100%">
-                                <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div>
+                              <div class="text-left"><span class="text-italic text-accent">Description</span><br>{{ props.row.description}}</div><br/>
+                              <div class="text-left"><span class="text-italic text-accent">Findings</span><br>{{ props.row.findings}}</div><br>
+                              <div class="text-left"><span class="text-italic text-accent">Recommendations</span><br>{{ props.row.rec}}</div><br>
+                              <div class="text-left"><span class="text-italic text-accent">Action</span><br>{{ props.row.action}}</div><br>
+                              <div class="text-left"><span class="text-italic text-accent">Unit Head</span><br>{{ props.row.head}}</div>
                               </q-td>
                             </q-tr>
                           </template>
@@ -479,26 +497,14 @@
   </q-layout>
 </template>
 
-<style lang="sass">
-.my-sticky-header-table
-  .q-table__top,
-  thead tr:first-child th
-    background-color: #e8a87c
-
-  th:first-child,
-  td:first-child
-    position: sticky
-    z-index: 1
-  thead tr:first-child th
-    top: 0
-</style>
-
 <script>
 import { LocalStorage, date } from 'quasar'
 import { db } from 'boot/firebase'
 
 export default {
   data () {
+    let timeStamp = Date.now()
+    let rightNow = date.formatDate(timeStamp, 'YYYY-MM-DD')
     return {
       expanded: [],
       separator: 'cell',
@@ -516,7 +522,7 @@ export default {
       complete: [],
       name: {},
       editedItem: {
-        date: '',
+        date: rightNow,
         category: '',
         unit: '',
         location: '',
@@ -527,9 +533,8 @@ export default {
         'Plumbing', 'Electricity', 'Grounds', 'Transportation'
       ],
       column: [
-        // { name: 'id', field: 'jobId', align: 'left', label: 'Job Id' },
-        { name: 'date', field: 'date', align: 'left', label: 'Date Filed', sortable: true },
         { name: 'category', field: 'category', align: 'left', label: 'Category', sortable: true },
+        { name: 'date', field: 'date', align: 'left', label: 'Date Filed', sortable: true },
         { name: 'unit', field: 'unit', align: 'left', label: 'Requesting Unit', sortable: true },
         { name: 'location', field: 'location', align: 'left', label: 'Location', sortable: true },
         { name: 'telephone', field: 'telephone', align: 'left', label: 'Telephone' },
@@ -537,7 +542,7 @@ export default {
         { name: 'status', field: 'status', align: 'left', label: 'Status', sortable: true }
       ],
       atCol: [
-        // { name: 'id', field: 'jobId', align: 'left', label: 'Job Id' },
+        { name: 'category', field: 'category', align: 'left', label: 'Category', sortable: true },
         { name: 'date', field: 'date', align: 'left', label: 'Date Sent', sortable: true },
         { name: 'foreman', field: 'foreman', align: 'left', label: 'Foreman', sortable: true },
         { name: 'status', field: 'status', align: 'left', label: 'Status', sortable: true }
@@ -545,35 +550,40 @@ export default {
     }
   },
   created () {
-    const jobRef = db.collection('job_orders').orderBy('date')
-    const penRef = db.collection('pending_jobs').orderBy('date')
-    const onRef = db.collection('ongoing_jobs').orderBy('date')
-    const atRef = db.collection('attested_jobs').orderBy('date')
-    const rejRef = db.collection('rejected_jobs').orderBy('date')
-    const comRef = db.collection('complete_jobs').orderBy('date')
     const user = JSON.parse(LocalStorage.getItem('user'))
+
     const useRef = db.collection('account').where('userId', '==', user.uid)
     useRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         this.requestor = doc.data().fullname
       })
     })
+    const atRef = db.collection('attested_jobs').where('userId', '==', user.uid)
     atRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
-        const data = {
-          id: doc.id,
-          jobId: doc.data().jobId,
-          info: doc.data().info,
-          rec: doc.data().rec,
-          action: doc.data().action,
-          findings: doc.data().findings,
-          date: doc.data().date,
-          foreman: doc.data().foreman,
-          status: doc.data().status
-        }
-        this.attested.push(data)
+        LocalStorage.set('info', JSON.stringify(doc.data().info))
+      })
+      const info = JSON.parse(LocalStorage.getItem('info'))
+      atRef.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const data = {
+            id: doc.id,
+            jobId: doc.data().jobId,
+            info: doc.data().info,
+            rec: doc.data().rec,
+            action: doc.data().action,
+            findings: doc.data().findings,
+            date: doc.data().date,
+            foreman: doc.data().foreman,
+            status: doc.data().status,
+            category: info.category,
+            description: info.description
+          }
+          this.attested.push(data)
+        })
       })
     })
+    const rejRef = db.collection('rejected_jobs').where('userId', '==', user.uid)
     rejRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const data = {
@@ -592,22 +602,7 @@ export default {
         this.rejected.push(data)
       })
     })
-    comRef.get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        const data = {
-          jobId: doc.data().jobId,
-          category: doc.data().category,
-          unit: doc.data().unit,
-          location: doc.data().location,
-          description: doc.data().description,
-          date: doc.data().date,
-          telephone: doc.data().telephone,
-          foreman: doc.data().foreman,
-          status: doc.data().status
-        }
-        this.complete.push(data)
-      })
-    })
+    const jobRef = db.collection('job_orders').where('userId', '==', user.uid)
     jobRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const data = {
@@ -625,6 +620,7 @@ export default {
         this.jobs.push(data)
       })
     })
+    const penRef = db.collection('pending_jobs').where('userId', '==', user.uid)
     penRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const data = {
@@ -641,6 +637,7 @@ export default {
         this.pending.push(data)
       })
     })
+    const onRef = db.collection('ongoing_jobs').where('userId', '==', user.uid)
     onRef.get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         const data = {
@@ -657,6 +654,27 @@ export default {
         this.ongoing.push(data)
       })
     })
+    const comRef = db.collection('complete_jobs').where('userId', '==', user.uid)
+    comRef.get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        const data = {
+          jobId: doc.data().jobId,
+          category: doc.data().category,
+          unit: doc.data().unit,
+          location: doc.data().location,
+          description: doc.data().description,
+          date: doc.data().date,
+          telephone: doc.data().telephone,
+          foreman: doc.data().foreman,
+          head: doc.data().head,
+          status: doc.data().status,
+          findings: doc.data().findings,
+          rec: doc.data().rec,
+          action: doc.data().action
+        }
+        this.complete.push(data)
+      })
+    })
   },
   computed: {
     date () {
@@ -668,8 +686,13 @@ export default {
     getSelectedString () {
       return this.selected.length === 0 ? '' : `${this.selected.length} request${this.selected.length > 1 ? 's' : ''} selected of ${this.jobs.length}`
     },
-    updateJob () {
-      let docref = db.collection('job_orders').doc(this.activeJob)
+    toEdit (item, id) {
+      this.edit_dialog = true
+      this.editedItem = Object.assign({}, item)
+      this.activeJob = this.editedItem.jobId
+    },
+    async updateJob () {
+      const docRef = db.collection('job_orders').doc(this.activeJob)
       if (this.editedItem.date === '' || this.editedItem.category === '' || this.editedItem.telephone === '' || this.editedItem.location === '' || this.editedItem.description === '' || this.editedItem.unit === '' || this.editedItem.date === undefined || this.editedItem.category === undefined || this.editedItem.telephone === undefined || this.editedItem.location === undefined || this.editedItem.description === undefined || this.editedItem.unit === undefined || this.editedItem.date === null || this.editedItem.category === null || this.editedItem.telephone === null || this.editedItem.location === null || this.editedItem.description === null || this.editedItem.unit === null) {
         this.$refs.date.validate()
         this.$refs.category.validate()
@@ -678,7 +701,15 @@ export default {
         this.$refs.location.validate()
         this.$refs.telephone.validate()
       } else {
-        docref.update(this.editedItem)
+        await docRef.update({
+          category: this.editedItem.category,
+          date: this.editedItem.date,
+          telephone: this.editedItem.telephone,
+          unit: this.editedItem.unit,
+          location: this.editedItem.location,
+          description: this.editedItem.description,
+          foreman: this.editedItem.foreman
+        })
           .then(
             location.reload(),
             this.$q.notify({
@@ -691,12 +722,7 @@ export default {
           })
       }
     },
-    toEdit (item, id) {
-      this.edit_dialog = true
-      this.editedItem = Object.assign({}, item)
-      this.activeJob = this.editedItem.jobId
-    },
-    toDelete (id) {
+    toDelete (jobId) {
       this.$q.dialog({
         title: 'Cancel Confirm',
         message: 'The job filed will be cancelled. Are you sure you want to continue?',
@@ -713,7 +739,7 @@ export default {
         persistentL: true
       }).onOk(async () => {
         try {
-          await db.collection('job_orders').doc(id).delete()
+          await db.collection('job_orders').doc(jobId).delete()
           this.$q.notify({
             color: 'accent',
             message: 'Job cancelled successfully'
@@ -752,32 +778,6 @@ export default {
         }
       })
     },
-    async onConfirm () {
-      const comRef = db.collection('complete_jobs')
-      const atRef = db.collection('attested_jobs')
-      this.status = 'Certified by ' + this.requestor
-
-      Object.keys(this.selected).forEach(doc => {
-        comRef.add({
-          job: this.selected[doc].jobId,
-          info: this.selected[doc].info,
-          rec: this.selected[doc].rec,
-          action: this.selected[doc].action,
-          findings: this.selected[doc].findings,
-          confirmed: this.selected[doc].date,
-          conducted: this.selected[doc].foreman,
-          certified: this.status
-        })
-          .then(
-            atRef.doc(this.selected[doc].id).delete(),
-            this.$q.notify({
-              color: 'secondary',
-              message: 'Forwarded Successfully'
-            }),
-            location.reload()
-          )
-      })
-    },
     toEditRej (item, id) {
       this.edit_dialog = true
       this.editedItem = Object.assign({}, item)
@@ -796,7 +796,7 @@ export default {
         this.$refs.location.validate()
         this.$refs.telephone.validate()
       } else {
-        jobRef.add({
+        await jobRef.add({
           userId: user.uid,
           status: 'changed! for Unit Head approval',
           jobId: this.editedItem.jobId,
@@ -825,6 +825,32 @@ export default {
             console.error('Error fowarding job order: ', error)
           })
       }
+    },
+    onConfirm () {
+      const comRef = db.collection('complete_jobs')
+      const atRef = db.collection('attested_jobs')
+      this.status = 'Certified by ' + this.requestor
+
+      Object.keys(this.selected).forEach(doc => {
+        comRef.add({
+          job: this.selected[doc].jobId,
+          info: this.selected[doc].info,
+          rec: this.selected[doc].rec,
+          action: this.selected[doc].action,
+          findings: this.selected[doc].findings,
+          confirmed: this.selected[doc].date,
+          conducted: this.selected[doc].foreman,
+          certified: this.status
+        })
+          .then(
+            atRef.doc(this.selected[doc].id).delete(),
+            this.$q.notify({
+              color: 'secondary',
+              message: 'Forwarded Successfully'
+            }),
+            location.reload()
+          )
+      })
     }
   }
 }

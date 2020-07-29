@@ -87,12 +87,8 @@ export default {
           details: doc.data().details,
           audience: doc.data().audience
         }
-        for (var i = 0; i < annData.audience.length; i++) {
-          if (annData.audience[i] === 'Unit Head') {
-            this.showSchedWorkDataLoading()
-            this.announcements.push(annData)
-          }
-        }
+        this.showSchedWorkDataLoading()
+        this.announcements.push(annData)
       })
     })
   },
