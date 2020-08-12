@@ -112,16 +112,16 @@ export default {
     db.collection('account').get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         var createdOn = doc.data().createdOn
-        var formatedTime = createdOn.toDate().toDateString()
+        var formatedCOn = createdOn.toDate().toDateString()
         var signedIn = doc.data().signedIn
-        var formatedDate = date.formatDate(signedIn, 'ddd MMM D YYYY')
+        var formatedSIn = date.formatDate(signedIn, 'ddd MMM D YYYY')
         const data = {
           id: doc.id,
           email: doc.data().email,
-          createdOn: formatedTime,
+          createdOn: formatedCOn,
           usertype: doc.data().usertype,
           userId: doc.data().userId,
-          signedIn: formatedDate
+          signedIn: formatedSIn
         }
         this.sessions.push(data)
       })

@@ -1,7 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const FieldValue = require('firebase-admin').firestore.FieldValue;
-// var serviceAccount = require("C:\Users\welcome\Desktop\sp_frontend\jopsis-941ba-firebase-adminsdk-sg8ow-bbaa31c14d.json");
 
 admin.initializeApp();
 
@@ -76,6 +75,7 @@ function userIsAdmin(callerUid) {
     claims['admin'] = true;
     claims['JOPSIS_user'] = true;
 
+    //Just Change the userId '5IJW135UOEhYBMkt1wqcpRfSlJQ2' for the new Admin
     return admin.auth().setCustomUserClaims('5IJW135UOEhYBMkt1wqcpRfSlJQ2', claims);
 }
 
