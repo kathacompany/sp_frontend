@@ -77,6 +77,6 @@ quasar build
 See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
 
 ### Useful links for documentation, guides, downloads, etc.
-See [Quasar Framework](https://quasar.dev/introduction-to-quasar).
-See [Firebase guides](https://firebase.google.com/docs/guides).
-See [Download npm and Node.js](https://www.npmjs.com/get-npm).
+* See [Quasar Framework](https://quasar.dev/introduction-to-quasar).
+* See [Firebase guides](https://firebase.google.com/docs/guides).
+* See [Download npm and Node.js](https://www.npmjs.com/get-npm).
