@@ -511,7 +511,7 @@
                       <q-input class="q-pa-xs" outlined dense clearable color="accent" type="number" v-model="editedItem.quantity" label="Quantity" />
                     </q-card-section>
                     <q-card-actions>
-                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="addMaterial" color="secondary" label="Add Material" v-close-popup/>
+                      <q-btn no-caps unelevated class="full-width text-weight-light" @click="updateMaterial" color="secondary" label="Save Changes" v-close-popup/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
@@ -744,6 +744,7 @@ export default {
       const matRef = db.collection('materials')
       var pluralize = require('pluralize')
       this.unit = pluralize.plural(this.defaultItem.unit)
+
       if (pluralize.isPlural(this.defaultItem.name) === true) {
         this.name = pluralize.singular(this.defaultItem.name)
         matRef.add({
@@ -791,10 +792,16 @@ export default {
           })
       }
     },
+    toEdit (item, id) {
+      this.edit_dialog = true
+      this.editedItem = Object.assign({}, item)
+      this.activeMaterial = this.editedItem.id
+    },
     updateMaterial () {
       const matRef = db.collection('materials').doc(this.activeMaterial)
       var pluralize = require('pluralize')
       this.unit = pluralize.plural(this.editedItem.unit)
+
       if (pluralize.isPlural(this.editedItem.name) === true) {
         this.name = pluralize.singular(this.editedItem.name)
         matRef.update({
@@ -837,11 +844,6 @@ export default {
             console.error('Error updating material: ', error)
           })
       }
-    },
-    toEdit (item, id) {
-      this.edit_dialog = true
-      this.editedItem = Object.assign({}, item)
-      this.activeMaterial = this.editedItem.id
     }
     // toDelete (id) {
     //   this.$q.dialog({

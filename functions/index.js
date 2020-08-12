@@ -75,6 +75,7 @@ function userIsAdmin(callerUid) {
     claims['admin'] = true;
     claims['JOPSIS_user'] = true;
 
+    //Just Change the userId '5IJW135UOEhYBMkt1wqcpRfSlJQ2' for the new Admin
     return admin.auth().setCustomUserClaims('5IJW135UOEhYBMkt1wqcpRfSlJQ2', claims);
 }
 

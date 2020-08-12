@@ -103,7 +103,7 @@
                             <div class="text-weight-light">Approve Confirm</div>
                           </q-bar>
                           <q-card-section>
-                            <span class="q-ma-sm">Approve the following request?</span>
+                            <span class="q-ma-sm text-grey">Approve the following request?</span>
                           </q-card-section>
 
                           <q-card-actions align="right">
@@ -244,6 +244,7 @@ export default {
             container.matId = item.matId
             container.material = item.material
             container.request = item.request
+            container.quantity = item.quantity
             return container
           })
           const matData = {
@@ -275,45 +276,50 @@ export default {
     getSelectedString () {
       return this.selected.length === 0 ? '' : `${this.selected.length} request${this.selected.length > 1 ? 's' : ''} selected of ${this.matData.length}`
     },
-    addMaterial () {
-      db.collection('materials').add(this.defaultItem)
-        .then(
-          location.reload(),
-          this.$q.notify({
-            color: 'secondary',
-            message: 'Material added successfully'
-          })
-        )
-        .catch(error => {
-          console.error('Error adding material: ', error)
-        })
-    },
     toApprove (selected) {
       for (var i = 0; i < selected.length; i++) {
         const jobId = selected[i]['jobId']
         const foreman = selected[i]['foreman']
         const mat = selected[i]['materials']
+
         for (i = 0; i < mat.length; i++) {
-          const matId = (mat[i]['matId'])
-          const item = db.collection('materials').doc(matId)
-          item.update({
-            issued: foreman
-          })
-        }
-        const matRef = db.collection('material_requests').doc(jobId)
-        matRef.update({
-          status: 'Approve! for Release'
-        })
-          .then(
-            location.reload(),
+          const matId = mat[i]['matId']
+          const request = parseInt(mat[i]['request'])
+          const quantity = parseInt(mat[i]['quantity'])
+
+          if (quantity <= request) {
             this.$q.notify({
-              color: 'secondary',
-              message: 'Status updated'
+              color: 'accent',
+              message: 'Not enough quantity, Reject request!'
             })
-          )
-          .catch(error => {
-            console.error('Error: ', error)
-          })
+          } else if (quantity > request) {
+            try {
+              const item = db.collection('materials').doc(matId)
+              const matRef = db.collection('material_requests').doc(jobId)
+
+              db.collection('materials').get().then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                  const total = parseInt(quantity - request)
+
+                  item.update({
+                    issued: foreman,
+                    quantity: total
+                  })
+                  matRef.update({
+                    status: 'Approve! for Release'
+                  })
+                  location.reload()
+                  this.$q.notify({
+                    color: 'secondary',
+                    message: 'Status updated'
+                  })
+                })
+              })
+            } catch (error) {
+              console.error('Error: ', error)
+            }
+          }
+        }
       }
     },
     onReject (selected) {
